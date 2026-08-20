@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 대시보드 — 캘린더 &amp; 유튜브 스튜디오</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page-plane: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --muted: #898781;
+    --gridline: #e1e0d9;
+    --baseline: #c3c2b7;
+    --series-1: #2a78d6;
+    --good: #0ca30c;
+    --warning: #a06600;
+    --critical: #d03b3b;
+    --border: rgba(11,11,11,0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --surface-1: #1a1a19;
+      --page-plane: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --muted: #898781;
+      --gridline: #2c2c2a;
+      --baseline: #383835;
+      --series-1: #3987e5;
+      --good: #0ca30c;
+      --warning: #fab219;
+      --critical: #e66767;
+      --border: rgba(255,255,255,0.10);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page-plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 960px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .topbar h1 { font-size: 20px; font-weight: 600; margin: 0; }
+
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .card h2 { font-size: 15px; font-weight: 600; margin: 0 0 14px; color: var(--text-primary); }
+
+  .center-card { max-width: 480px; margin: 60px auto; text-align: center; }
+  .center-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+
+  .btn-primary, .btn-secondary, .btn-ghost {
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    border-radius: 8px; cursor: pointer; padding: 10px 18px; border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--series-1); color: #fff; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary { background: transparent; color: var(--text-primary); border-color: var(--border); padding: 8px 14px; }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border: none; padding: 8px 10px; }
+
+  .fine-print { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .warning-box, .error-text {
+    font-size: 13px; color: var(--critical); background: rgba(208,59,59,0.08);
+    border: 1px solid rgba(208,59,59,0.25); border-radius: 8px; padding: 10px 12px; margin-top: 12px;
+  }
+  .signin-error { font-size: 13px; color: var(--critical); margin-top: 10px; }
+
+  .toolbar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .muted-text { color: var(--muted); font-size: 13px; margin-right: auto; }
+
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px; margin-bottom: 20px;
+  }
+  .stat-tile {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 600; color: var(--text-primary); }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .grid-2col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .grid-2col { grid-template-columns: 1fr; } }
+
+  .line-chart { width: 100%; height: auto; display: block; overflow: visible; }
+  .gridline { stroke: var(--gridline); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 10px; }
+  .line-path { fill: none; stroke: var(--series-1); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .end-dot, .hover-dot { fill: var(--series-1); stroke: var(--surface-1); stroke-width: 2; }
+  .crosshair { stroke: var(--baseline); stroke-width: 1; }
+
+  #views-chart { position: relative; }
+  .chart-tooltip {
+    position: absolute; transform: translate(-50%, -130%);
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 6px;
+    padding: 4px 8px; font-size: 12px; white-space: nowrap; pointer-events: none;
+    transition: opacity 0.1s; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .chart-tooltip strong { color: var(--text-primary); font-weight: 600; }
+  .chart-tooltip span { color: var(--text-secondary); }
+
+  .link-btn {
+    background: none; border: none; color: var(--series-1); font-size: 12px;
+    cursor: pointer; padding: 0; margin-top: 10px; font-family: inherit;
+  }
+  .table-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--gridline); }
+  .tabular { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+
+  .plain-list { list-style: none; margin: 0; padding: 0; }
+  .video-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--gridline); font-size: 13px; }
+  .video-row:last-child { border-bottom: none; }
+  .video-title { color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .video-views { flex-shrink: 0; color: var(--text-secondary); }
+
+  .day-header { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 6px; }
+  .day-header:first-child { margin-top: 0; }
+  .event-row { display: flex; gap: 12px; padding: 6px 0; font-size: 13px; }
+  .event-time { flex-shrink: 0; width: 64px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .event-title { color: var(--text-primary); }
+
+  footer.fine-print { text-align: center; margin-top: 30px; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <h1>내 대시보드</h1>
+    </div>
+
+    <main id="app">
+      <section id="signed-out-view" class="card center-card">
+        <p id="reauth-message" hidden>세션이 만료됐어요. 다시 로그인해주세요.</p>
+        <p>Google 계정으로 로그인하면 캘린더 일정과 유튜브 스튜디오 데이터를 이 페이지에서 실시간으로 볼 수 있어요.</p>
+        <button id="signin-btn" class="btn-primary">Google 계정으로 로그인</button>
+        <p id="signin-error" class="signin-error" hidden></p>
+        <p class="fine-print">
+          요청 권한: 캘린더 읽기 전용 · 유튜브 채널 정보 읽기 전용 · 유튜브 애널리틱스(스튜디오) 읽기 전용<br>
+          로그인 정보는 이 브라우저 밖으로 전송되거나 저장되지 않아요. 페이지를 새로 열면 다시 로그인해야 해요.
+        </p>
+        <p id="config-warning" class="warning-box" hidden>
+          아직 설정이 끝나지 않았어요. 이 파일 맨 아래 스크립트에서 CLIENT_ID 값을 Google Cloud에서 발급받은 클라이언트 ID로 바꿔주세요.
+        </p>
+      </section>
+
+      <section id="signed-in-view" hidden>
+        <div class="toolbar">
+          <span id="last-updated" class="muted-text"></span>
+          <button id="refresh-btn" class="btn-secondary">새로고침</button>
+          <button id="signout-btn" class="btn-ghost">로그아웃</button>
+        </div>
+
+        <div class="kpi-row" id="kpi-row"></div>
+
+        <div class="grid-2col">
+          <div class="card" id="views-chart-card">
+            <h2>최근 28일 조회수</h2>
+            <div id="views-chart"></div>
+            <div id="views-table" hidden></div>
+            <button class="link-btn" id="toggle-table-btn">표로 보기</button>
+            <p id="views-error" class="error-text" hidden></p>
+          </div>
+
+          <div class="card" id="videos-card">
+            <h2>최근 업로드 동영상</h2>
+            <ul id="videos-list" class="plain-list"></ul>
+            <p id="videos-error" class="error-text" hidden></p>
+          </div>
+        </div>
+
+        <div class="card" id="calendar-card">
+          <h2>일정 (오늘 ~ 7일)</h2>
+          <div id="calendar-list"></div>
+          <p id="calendar-error" class="error-text" hidden></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="fine-print">
+      이 페이지는 서버 없이 브라우저에서 직접 Google API를 호출해요. 데이터는 어디에도 저장되지 않아요.
+    </footer>
+  </div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ====================================================================
+// 여기를 수정하세요: Google Cloud에서 발급받은 OAuth 클라이언트 ID로 교체
+// ====================================================================
+const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+// ====================================================================
+
+const SCOPES = [
+  'https://www.googleapis.com/auth/calendar.readonly',
+  'https://www.googleapis.com/auth/youtube.readonly',
+  'https://www.googleapis.com/auth/yt-analytics.readonly'
+].join(' ');
+
+let tokenClient = null;
+let accessToken = null;
+let refreshTimer = null;
+let refreshPromise = null;
+let authExpired = false;
+const state = {};
+
+function $(id) { return document.getElementById(id); }
+
+function compactNumber(n) {
+  if (typeof n !== 'number' || Number.isNaN(n)) return '–';
+  return new Intl.NumberFormat('ko-KR', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+}
+
+function formatDayHeader(dateObj) {
+  const today = new Date();
+  const isToday = dateObj.toDateString() === today.toDateString();
+  const label = dateObj.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+  return isToday ? `오늘 · ${label}` : label;
+}
+
+function createStatTile(label, value, sub) {
+  const tile = document.createElement('div');
+  tile.className = 'stat-tile';
+  const labelEl = document.createElement('div');
+  labelEl.className = 'stat-label';
+  labelEl.textContent = label;
+  const valueEl = document.createElement('div');
+  valueEl.className = 'stat-value';
+  valueEl.textContent = value;
+  tile.appendChild(labelEl);
+  tile.appendChild(valueEl);
+  if (sub) {
+    const subEl = document.createElement('div');
+    subEl.className = 'stat-sub';
+    subEl.textContent = sub;
+    tile.appendChild(subEl);
+  }
+  return tile;
+}
+
+function updateKpis() {
+  const row = $('kpi-row');
+  row.innerHTML = '';
+  row.appendChild(createStatTile('구독자', state.subscriberCount != null ? compactNumber(state.subscriberCount) : '–'));
+  row.appendChild(createStatTile('전체 조회수', state.viewCount != null ? compactNumber(state.viewCount) : '–'));
+  let delta = null;
+  if (state.last28Views != null && state.prev28Views) {
+    const pct = Math.round(((state.last28Views - state.prev28Views) / state.prev28Views) * 100);
+    delta = `${pct >= 0 ? '+' : ''}${pct}% · 이전 28일 대비`;
+  }
+  row.appendChild(createStatTile('최근 28일 조회수', state.last28Views != null ? compactNumber(state.last28Views) : '–', delta));
+  row.appendChild(createStatTile('오늘 일정', state.todayCount != null ? `${state.todayCount}건` : '–'));
+}
+
+function renderViewsChart(rows) {
+  const container = $('views-chart');
+  const tableContainer = $('views-table');
+  container.innerHTML = '';
+  tableContainer.innerHTML = '';
+
+  if (!rows.length) {
+    container.textContent = '표시할 데이터가 없어요.';
+    return;
+  }
+
+  const width = 600, height = 200, padding = { top: 10, right: 10, bottom: 10, left: 40 };
+  const values = rows.map(r => r[1]);
+  const maxV = Math.max(...values, 1);
+  const innerW = width - padding.left - padding.right;
+  const innerH = height - padding.top - padding.bottom;
+
+  function xFor(i) { return padding.left + (rows.length === 1 ? innerW / 2 : (i / (rows.length - 1)) * innerW); }
+  function yFor(v) { return padding.top + innerH - (v / maxV) * innerH; }
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('class', 'line-chart');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', '최근 28일 일별 조회수 추이');
+
+  const gridSteps = 3;
+  for (let s = 0; s <= gridSteps; s++) {
+    const v = (maxV / gridSteps) * s;
+    const y = yFor(v);
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', padding.left); line.setAttribute('x2', width - padding.right);
+    line.setAttribute('y1', y); line.setAttribute('y2', y);
+    line.setAttribute('class', 'gridline');
+    svg.appendChild(line);
+
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('x', padding.left - 6); label.setAttribute('y', y);
+    label.setAttribute('class', 'axis-label');
+    label.setAttribute('text-anchor', 'end');
+    label.setAttribute('dominant-baseline', 'middle');
+    label.textContent = compactNumber(Math.round(v));
+    svg.appendChild(label);
+  }
+
+  const pathD = rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i)} ${yFor(r[1])}`).join(' ');
+  const path = document.createElementNS(svgNS, 'path');
+  path.setAttribute('d', pathD);
+  path.setAttribute('class', 'line-path');
+  svg.appendChild(path);
+
+  const lastIdx = rows.length - 1;
+  const endDot = document.createElementNS(svgNS, 'circle');
+  endDot.setAttribute('cx', xFor(lastIdx)); endDot.setAttribute('cy', yFor(rows[lastIdx][1]));
+  endDot.setAttribute('r', 4);
+  endDot.setAttribute('class', 'end-dot');
+  svg.appendChild(endDot);
+
+  const crosshair = document.createElementNS(svgNS, 'line');
+  crosshair.setAttribute('y1', padding.top); crosshair.setAttribute('y2', height - padding.bottom);
+  crosshair.setAttribute('class', 'crosshair');
+  crosshair.style.opacity = '0';
+  svg.appendChild(crosshair);
+
+  const hoverDot = document.createElementNS(svgNS, 'circle');
+  hoverDot.setAttribute('r', 4);
+  hoverDot.setAttribute('class', 'hover-dot');
+  hoverDot.style.opacity = '0';
+  svg.appendChild(hoverDot);
+
+  const hitRect = document.createElementNS(svgNS, 'rect');
+  hitRect.setAttribute('x', padding.left); hitRect.setAttribute('y', padding.top);
+  hitRect.setAttribute('width', innerW); hitRect.setAttribute('height', innerH);
+  hitRect.setAttribute('fill', 'transparent');
+  svg.appendChild(hitRect);
+
+  container.appendChild(svg);
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'chart-tooltip';
+  tooltip.style.opacity = '0';
+  container.appendChild(tooltip);
+
+  function handleMove(clientX) {
+    const rect = svg.getBoundingClientRect();
+    const relX = ((clientX - rect.left) / rect.width) * width;
+    let idx = Math.round(((relX - padding.left) / innerW) * (rows.length - 1));
+    idx = Math.max(0, Math.min(rows.length - 1, idx));
+    const [dateStr, v] = rows[idx];
+    const cx = xFor(idx), cy = yFor(v);
+    crosshair.setAttribute('x1', cx); crosshair.setAttribute('x2', cx);
+    crosshair.style.opacity = '1';
+    hoverDot.setAttribute('cx', cx); hoverDot.setAttribute('cy', cy);
+    hoverDot.style.opacity = '1';
+
+    const d = new Date(dateStr);
+    const label = d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+    tooltip.textContent = '';
+    const strong = document.createElement('strong');
+    strong.textContent = `${v.toLocaleString('ko-KR')}회`;
+    const span = document.createElement('span');
+    span.textContent = ` · ${label}`;
+    tooltip.appendChild(strong);
+    tooltip.appendChild(span);
+    tooltip.style.opacity = '1';
+    tooltip.style.left = `${(cx / width) * 100}%`;
+    tooltip.style.top = `${(cy / height) * 100}%`;
+  }
+
+  hitRect.addEventListener('pointermove', (e) => handleMove(e.clientX));
+  hitRect.addEventListener('pointerleave', () => {
+    crosshair.style.opacity = '0';
+    hoverDot.style.opacity = '0';
+    tooltip.style.opacity = '0';
+  });
+
+  rows.forEach(([dateStr, v]) => {
+    const row = document.createElement('div');
+    row.className = 'table-row';
+    const d = new Date(dateStr);
+    const dEl = document.createElement('span');
+    dEl.textContent = d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+    const vEl = document.createElement('span');
+    vEl.className = 'tabular';
+    vEl.textContent = v.toLocaleString('ko-KR');
+    row.appendChild(dEl); row.appendChild(vEl);
+    tableContainer.appendChild(row);
+  });
+}
+
+let tableShown = false;
+$('toggle-table-btn').addEventListener('click', () => {
+  tableShown = !tableShown;
+  $('views-table').hidden = !tableShown;
+  $('views-chart').hidden = tableShown;
+  $('toggle-table-btn').textContent = tableShown ? '차트로 보기' : '표로 보기';
+});
+
+function renderRecentVideos(items) {
+  const list = $('videos-list');
+  list.innerHTML = '';
+  if (!items.length) {
+    const li = document.createElement('li');
+    li.textContent = '표시할 동영상이 없어요.';
+    list.appendChild(li);
+    return;
+  }
+  items.forEach(v => {
+    const li = document.createElement('li');
+    li.className = 'video-row';
+    const title = document.createElement('span');
+    title.className = 'video-title';
+    title.textContent = v.snippet ? v.snippet.title : '(제목 없음)';
+    const views = document.createElement('span');
+    views.className = 'video-views tabular';
+    views.textContent = (v.statistics && v.statistics.viewCount) ? `${Number(v.statistics.viewCount).toLocaleString('ko-KR')}회` : '–';
+    li.appendChild(title); li.appendChild(views);
+    list.appendChild(li);
+  });
+}
+
+function renderCalendar(items) {
+  const container = $('calendar-list');
+  container.innerHTML = '';
+  if (!items.length) {
+    container.textContent = '앞으로 7일간 일정이 없어요.';
+    return;
+  }
+  let lastDayKey = null;
+  items.forEach(ev => {
+    const start = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
+    const dayKey = start.toDateString();
+    if (dayKey !== lastDayKey) {
+      lastDayKey = dayKey;
+      const header = document.createElement('div');
+      header.className = 'day-header';
+      header.textContent = formatDayHeader(start);
+      container.appendChild(header);
+    }
+    const row = document.createElement('div');
+    row.className = 'event-row';
+    const time = document.createElement('span');
+    time.className = 'event-time';
+    time.textContent = ev.start.dateTime ? start.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '종일';
+    const title = document.createElement('span');
+    title.className = 'event-title';
+    title.textContent = ev.summary || '(제목 없음)';
+    row.appendChild(time); row.appendChild(title);
+    container.appendChild(row);
+  });
+}
+
+function silentRefresh() {
+  if (refreshPromise) return refreshPromise;
+  refreshPromise = new Promise((resolve) => {
+    const prevCallback = tokenClient.callback;
+    let settled = false;
+    const finish = () => { if (!settled) { settled = true; tokenClient.callback = prevCallback; resolve(); } };
+    tokenClient.callback = (resp) => {
+      if (resp && resp.access_token) accessToken = resp.access_token;
+      finish();
+    };
+    tokenClient.requestAccessToken({ prompt: '' });
+    setTimeout(finish, 5000);
+  }).finally(() => { refreshPromise = null; });
+  return refreshPromise;
+}
+
+async function authFetch(url, options = {}) {
+  const withAuth = (opts) => ({ ...opts, headers: { ...(opts.headers || {}), Authorization: `Bearer ${accessToken}` } });
+  let res = await fetch(url, withAuth(options));
+  if (res.status === 401) {
+    await silentRefresh();
+    res = await fetch(url, withAuth(options));
+    if (res.status === 401) authExpired = true;
+  }
+  return res;
+}
+
+async function loadYouTube() {
+  $('videos-error').hidden = true;
+  $('views-error').hidden = true;
+  try {
+    const chRes = await authFetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&mine=true');
+    if (!chRes.ok) throw new Error('channel_' + chRes.status);
+    const chData = await chRes.json();
+    const channel = chData.items && chData.items[0];
+    if (!channel) throw new Error('no_channel');
+    state.subscriberCount = Number(channel.statistics.subscriberCount);
+    state.viewCount = Number(channel.statistics.viewCount);
+    updateKpis();
+
+    const end = new Date();
+    const start = new Date(end.getTime() - 55 * 24 * 60 * 60 * 1000);
+    const fmt = d => d.toISOString().slice(0, 10);
+    const analyticsUrl = 'https://youtubeanalytics.googleapis.com/v2/reports?' + new URLSearchParams({
+      ids: 'channel==MINE', startDate: fmt(start), endDate: fmt(end),
+      metrics: 'views', dimensions: 'day', sort: 'day'
+    });
+    const anRes = await authFetch(analyticsUrl);
+    if (!anRes.ok) throw new Error('analytics_' + anRes.status);
+    const anData = await anRes.json();
+    const rows = anData.rows || [];
+    const last28 = rows.slice(-28);
+    const prev28 = rows.slice(0, Math.max(rows.length - 28, 0));
+    state.last28Views = last28.reduce((s, r) => s + r[1], 0);
+    state.prev28Views = prev28.reduce((s, r) => s + r[1], 0);
+    updateKpis();
+    renderViewsChart(last28);
+
+    const uploadsId = channel.contentDetails && channel.contentDetails.relatedPlaylists && channel.contentDetails.relatedPlaylists.uploads;
+    if (uploadsId) {
+      const plRes = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=5&playlistId=${uploadsId}`);
+      if (!plRes.ok) throw new Error('playlist_' + plRes.status);
+      const plData = await plRes.json();
+      const ids = (plData.items || []).map(i => i.snippet.resourceId.videoId).filter(Boolean).join(',');
+      if (ids) {
+        const vRes = await authFetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}`);
+        if (!vRes.ok) throw new Error('videos_' + vRes.status);
+        const vData = await vRes.json();
+        renderRecentVideos(vData.items || []);
+      } else {
+        renderRecentVideos([]);
+      }
+    } else {
+      renderRecentVideos([]);
+    }
+  } catch (err) {
+    console.error(err);
+    $('videos-error').hidden = false;
+    $('videos-error').textContent = '유튜브 데이터를 가져오지 못했어요. YouTube Data API / YouTube Analytics API가 활성화되어 있는지 확인해주세요.';
+    $('views-error').hidden = false;
+    $('views-error').textContent = '조회수 데이터를 가져오지 못했어요.';
+  }
+}
+
+async function loadCalendar() {
+  $('calendar-error').hidden = true;
+  try {
+    const now = new Date();
+    const weekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?' + new URLSearchParams({
+      timeMin: now.toISOString(), timeMax: weekLater.toISOString(),
+      singleEvents: 'true', orderBy: 'startTime', maxResults: '25'
+    });
+    const res = await authFetch(url);
+    if (!res.ok) throw new Error('calendar_' + res.status);
+    const data = await res.json();
+    const items = data.items || [];
+    const todayStr = now.toDateString();
+    state.todayCount = items.filter(ev => {
+      const d = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
+      return d.toDateString() === todayStr;
+    }).length;
+    updateKpis();
+    renderCalendar(items);
+  } catch (err) {
+    console.error(err);
+    $('calendar-error').hidden = false;
+    $('calendar-error').textContent = '캘린더 데이터를 가져오지 못했어요. Google Calendar API가 활성화되어 있는지 확인해주세요.';
+  }
+}
+
+async function loadAll() {
+  authExpired = false;
+  $('last-updated').textContent = '업데이트 중…';
+  updateKpis();
+  await Promise.allSettled([loadYouTube(), loadCalendar()]);
+  if (authExpired) {
+    $('signed-in-view').hidden = true;
+    $('signed-out-view').hidden = false;
+    $('reauth-message').hidden = false;
+    if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+  } else {
+    $('last-updated').textContent = `마지막 업데이트: ${new Date().toLocaleTimeString('ko-KR')}`;
+  }
+}
+
+function handleTokenResponse(resp) {
+  if (!resp || resp.error) {
+    $('signin-error').hidden = false;
+    $('signin-error').textContent = '로그인에 실패했어요. 다시 시도해주세요.';
+    return;
+  }
+  accessToken = resp.access_token;
+  $('signin-error').hidden = true;
+  $('reauth-message').hidden = true;
+  $('signed-out-view').hidden = true;
+  $('signed-in-view').hidden = false;
+  loadAll();
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(loadAll, 5 * 60 * 1000);
+}
+
+function boot() {
+  if (!CLIENT_ID || CLIENT_ID.indexOf('YOUR_') === 0) {
+    $('config-warning').hidden = false;
+    $('signin-btn').disabled = true;
+    return;
+  }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: handleTokenResponse,
+    error_callback: (err) => {
+      console.error(err);
+      $('signin-error').hidden = false;
+      $('signin-error').textContent = '로그인 창을 열지 못했어요. 팝업이 차단되지 않았는지 확인해주세요.';
+    }
+  });
+  $('signin-btn').addEventListener('click', () => tokenClient.requestAccessToken());
+}
+
+$('refresh-btn').addEventListener('click', loadAll);
+$('signout-btn').addEventListener('click', () => {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken, () => {});
+  accessToken = null;
+  if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+  $('signed-in-view').hidden = true;
+  $('signed-out-view').hidden = false;
+});
+
+(function waitForGis() {
+  if (window.google && google.accounts && google.accounts.oauth2) {
+    boot();
+  } else {
+    setTimeout(waitForGis, 100);
+  }
+})();
+</script>
+</body>
+</html>
