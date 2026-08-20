@@ -206,6 +206,9 @@
 // 여기를 수정하세요: Google Cloud에서 발급받은 OAuth 클라이언트 ID로 교체
 // ====================================================================
 const CLIENT_ID = '525359194157-5b7i2n6cphveliqjnklavmddopg9p0ek.apps.googleusercontent.com';
+// 통계를 보여줄 유튜브 채널 ID ('웅달 책방'). 로그인 계정이 이 채널의 소유자가 아니라
+// 편집자(관리자)로 등록되어 있어도, 채널 ID를 직접 지정하면 정상적으로 데이터를 가져와요.
+const YOUTUBE_CHANNEL_ID = 'UCbOIEn95Rvnk97KRtSFqvbQ';
 // ====================================================================
 
 const SCOPES = [
@@ -493,7 +496,7 @@ async function loadYouTube() {
   $('videos-error').hidden = true;
   $('views-error').hidden = true;
   try {
-    const chRes = await authFetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&mine=true');
+    const chRes = await authFetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${YOUTUBE_CHANNEL_ID}`);
     if (!chRes.ok) throw new Error('channel_' + chRes.status);
     const chData = await chRes.json();
     const channel = chData.items && chData.items[0];
@@ -506,7 +509,7 @@ async function loadYouTube() {
     const start = new Date(end.getTime() - 55 * 24 * 60 * 60 * 1000);
     const fmt = d => d.toISOString().slice(0, 10);
     const analyticsUrl = 'https://youtubeanalytics.googleapis.com/v2/reports?' + new URLSearchParams({
-      ids: 'channel==MINE', startDate: fmt(start), endDate: fmt(end),
+      ids: `channel==${YOUTUBE_CHANNEL_ID}`, startDate: fmt(start), endDate: fmt(end),
       metrics: 'views', dimensions: 'day', sort: 'day'
     });
     const anRes = await authFetch(analyticsUrl);
