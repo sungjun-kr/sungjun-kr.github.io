@@ -549,16 +549,41 @@ async function loadYouTube() {
 async function loadCalendar() {
   $('calendar-error').hidden = true;
   try {
+    // 내가 소유한 모든 캘린더(개인 기본 캘린더 + 직접 만든 캘린더)를 모아서 보여줘요.
+    // 구독만 한 캘린더(공휴일 등)는 내 일정이 아니므로 제외해요.
+    const listRes = await authFetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?minAccessRole=owner&maxResults=50');
+    if (!listRes.ok) throw new Error('calendarlist_' + listRes.status);
+    const listData = await listRes.json();
+    const owned = (listData.items || []).filter(c => c.accessRole === 'owner');
+    const calendarIds = owned.length ? owned.map(c => c.id) : ['primary'];
+
     const now = new Date();
     const weekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?' + new URLSearchParams({
+    const qs = new URLSearchParams({
       timeMin: now.toISOString(), timeMax: weekLater.toISOString(),
       singleEvents: 'true', orderBy: 'startTime', maxResults: '25'
     });
-    const res = await authFetch(url);
-    if (!res.ok) throw new Error('calendar_' + res.status);
-    const data = await res.json();
-    const items = data.items || [];
+
+    const results = await Promise.allSettled(calendarIds.map(async id => {
+      const res = await authFetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?${qs}`);
+      if (!res.ok) throw new Error('calendar_' + res.status);
+      const data = await res.json();
+      return data.items || [];
+    }));
+
+    if (results.length && results.every(r => r.status === 'rejected')) {
+      throw new Error('all_calendars_failed');
+    }
+
+    let items = [];
+    results.forEach(r => { if (r.status === 'fulfilled') items = items.concat(r.value); });
+    items.sort((a, b) => {
+      const ta = new Date(a.start.dateTime || a.start.date).getTime();
+      const tb = new Date(b.start.dateTime || b.start.date).getTime();
+      return ta - tb;
+    });
+    items = items.slice(0, 25);
+
     const todayStr = now.toDateString();
     state.todayCount = items.filter(ev => {
       const d = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
