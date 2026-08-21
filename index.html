@@ -611,16 +611,17 @@ function renderArchive(channels) {
 
 // 당월 평균 대비 성과 구간을 색으로 구분해요.
 //  +50% 이상 파랑 / +20% 이상 초록 / -20% 이하 노랑 / -50% 이하 빨강 / 그 사이는 기본색
+//  표시는 소수점 첫째 자리까지, 색상 판정은 정수로 반올림한 값 기준이에요.
 function perfLevel(value, avg) {
   if (typeof value !== 'number' || typeof avg !== 'number' || !avg) return { cls: null, sub: null };
-  const ratio = value / avg;
-  const pct = Math.round((ratio - 1) * 100);
-  const sign = pct > 0 ? '+' : '';
-  const sub = `평균 대비 ${sign}${pct}%`;
-  if (ratio >= 1.5) return { cls: 'perf-high', sub };
-  if (ratio >= 1.2) return { cls: 'perf-good', sub };
-  if (ratio <= 0.5) return { cls: 'perf-bad', sub };
-  if (ratio <= 0.8) return { cls: 'perf-warn', sub };
+  const exact = (value / avg - 1) * 100;
+  const shown = exact.toFixed(1);
+  const sub = `평균 대비 ${exact > 0 ? '+' : ''}${shown}%`;
+  const pct = Math.round(exact);   // 색상은 반올림한 정수 기준
+  if (pct >= 50) return { cls: 'perf-high', sub };
+  if (pct >= 20) return { cls: 'perf-good', sub };
+  if (pct <= -50) return { cls: 'perf-bad', sub };
+  if (pct <= -20) return { cls: 'perf-warn', sub };
   return { cls: null, sub };
 }
 
