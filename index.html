@@ -17,6 +17,11 @@
   --series-1: #2a78d6;
   --critical: #d03b3b;
   --good: #0ca30c;
+  --warning: #a06600;
+  --perf-blue: #1f6fd0;
+  --perf-green: #0a8f0a;
+  --perf-yellow: #a06600;
+  --perf-red: #d03b3b;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -31,6 +36,11 @@
     --series-1: #3987e5;
     --critical: #e66767;
     --good: #24c724;
+    --warning: #fab219;
+    --perf-blue: #5aa9ff;
+    --perf-green: #3ddc3d;
+    --perf-yellow: #fab219;
+    --perf-red: #ff7b7b;
   }
 }
 * { box-sizing: border-box; }
@@ -89,6 +99,19 @@ input[type="password"], input[type="text"] {
 .stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
 .stat-value { font-size: 20px; font-weight: 600; }
 .stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* 당월 평균 대비 성과 색상 */
+.perf-high { color: var(--perf-blue); }
+.perf-good { color: var(--perf-green); }
+.perf-warn { color: var(--perf-yellow); }
+.perf-bad  { color: var(--perf-red); }
+
+.legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -8px 0 18px; }
+.legend .lg { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+.legend .lg.perf-high { color: var(--perf-blue); }
+.legend .lg.perf-good { color: var(--perf-green); }
+.legend .lg.perf-warn { color: var(--perf-yellow); }
+.legend .lg.perf-bad  { color: var(--perf-red); }
 .video-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .video-table th, .video-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gridline); }
 .video-table th { color: var(--muted); font-weight: 600; font-size: 12px; }
@@ -362,17 +385,30 @@ function render() {
   }
   // 요약 (집계 완료된 게스트 기준)
   const g5 = current.guests;
+  const totV = g5.reduce((s, g) => s + (g.totalViews || 0), 0);
+  // 당월 게스트당 평균 조회수 — 각 게스트 총 조회수의 색상 기준선
+  const monthAvgViews = g5.length ? totV / g5.length : null;
   if (g5.length) {
     const sumRow = document.createElement('div');
     sumRow.className = 'kpi-row';
-    const totV = g5.reduce((s, g) => s + (g.totalViews || 0), 0);
     const totVid = g5.reduce((s, g) => s + (g.videoCount || (g.videos || []).length), 0);
     sumRow.appendChild(statTile('집계 완료 게스트', `${g5.length}명`));
     sumRow.appendChild(statTile('합계 조회수', fmtNum(totV)));
-    sumRow.appendChild(statTile('게스트당 평균 조회수', fmtNum(Math.round(totV / g5.length))));
+    sumRow.appendChild(statTile('게스트당 평균 조회수', fmtNum(Math.round(monthAvgViews))));
     sumRow.appendChild(statTile('영상당 평균 조회수', totVid ? fmtNum(Math.round(totV / totVid)) : '–', `영상 ${totVid}편`));
     sumRow.appendChild(statTile('업로드 예정', `${(current.pending || []).length}명`));
     listEl.appendChild(sumRow);
+
+    // 색상 범례
+    const legend = document.createElement('div');
+    legend.className = 'legend';
+    legend.innerHTML = '<span class="fine-print">당월 게스트 평균 대비 총 조회수:</span>'
+      + '<span class="lg perf-high">+50% 이상</span>'
+      + '<span class="lg perf-good">+20% 이상</span>'
+      + '<span class="lg">평균권</span>'
+      + '<span class="lg perf-warn">−20% 이하</span>'
+      + '<span class="lg perf-bad">−50% 이하</span>';
+    listEl.appendChild(legend);
   }
 
   current.guests.forEach((g, idx) => {
@@ -410,7 +446,12 @@ function render() {
     // 항상 보이는 요약 지표
     const kpiRow = document.createElement('div');
     kpiRow.className = 'kpi-row';
-    kpiRow.appendChild(statTile('총 조회수', fmtNum(g.totalViews)));
+    // 총 조회수는 당월 게스트 평균과 비교해 색으로 표시해요.
+    const perf = perfLevel(g.totalViews, monthAvgViews);
+    const totalTile = statTile('총 조회수', fmtNum(g.totalViews), perf.sub);
+    const totalValEl = totalTile.querySelector('.stat-value');
+    if (perf.cls) totalValEl.classList.add(perf.cls);
+    kpiRow.appendChild(totalTile);
     kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
     kpiRow.appendChild(statTile('평균 클릭률', fmtPct(g.avgCtr)));
     kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
@@ -566,6 +607,21 @@ function renderArchive(channels) {
 
     listEl.appendChild(card);
   });
+}
+
+// 당월 평균 대비 성과 구간을 색으로 구분해요.
+//  +50% 이상 파랑 / +20% 이상 초록 / -20% 이하 노랑 / -50% 이하 빨강 / 그 사이는 기본색
+function perfLevel(value, avg) {
+  if (typeof value !== 'number' || typeof avg !== 'number' || !avg) return { cls: null, sub: null };
+  const ratio = value / avg;
+  const pct = Math.round((ratio - 1) * 100);
+  const sign = pct > 0 ? '+' : '';
+  const sub = `평균 대비 ${sign}${pct}%`;
+  if (ratio >= 1.5) return { cls: 'perf-high', sub };
+  if (ratio >= 1.2) return { cls: 'perf-good', sub };
+  if (ratio <= 0.5) return { cls: 'perf-bad', sub };
+  if (ratio <= 0.8) return { cls: 'perf-warn', sub };
+  return { cls: null, sub };
 }
 
 function statTile(label, value, sub) {
