@@ -64,9 +64,22 @@ input[type="password"], input[type="text"] {
   background: var(--surface-1); color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer;
 }
 .month-tab.active { background: var(--series-1); color: #fff; border-color: var(--series-1); }
-.guest-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.guest-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; }
 .guest-card h3 { margin: 0 0 4px; font-size: 16px; }
-.guest-date { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+.guest-date { color: var(--muted); font-size: 12px; }
+
+.guest-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; background: none; border: none; padding: 0 0 12px; margin: 0;
+  font-family: inherit; text-align: left; cursor: pointer; color: inherit;
+}
+.guest-toggle.no-detail { cursor: default; }
+.guest-toggle-left { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.guest-name { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+.guest-toggle:hover:not(.no-detail) .guest-name { color: var(--series-1); }
+.chevron { color: var(--muted); font-size: 13px; flex-shrink: 0; transition: transform 0.15s; }
+.guest-card.open .chevron { transform: rotate(180deg); }
+.detail-panel { margin-top: 14px; padding-top: 4px; border-top: 1px solid var(--gridline); }
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
 .stat-tile { background: var(--page-plane); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
 .stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
@@ -287,20 +300,39 @@ function render() {
     listEl.appendChild(sumRow);
   }
 
-  current.guests.forEach(g => {
+  current.guests.forEach((g, idx) => {
     const card = document.createElement('div');
     card.className = 'guest-card';
 
-    const h3 = document.createElement('h3');
-    h3.textContent = g.name;
-    card.appendChild(h3);
-
-    const dateEl = document.createElement('div');
-    dateEl.className = 'guest-date';
+    const vidCount = g.videoCount || (g.videos || []).length;
     const d = g.eventDate ? new Date(g.eventDate).toLocaleDateString('ko-KR') : '';
-    dateEl.textContent = `${d} · 영상 ${g.videoCount || (g.videos || []).length}개` + (g.note ? ` · ${g.note}` : '');
-    card.appendChild(dateEl);
 
+    // 클릭 가능한 헤더 (이름 + 요약)
+    const header = document.createElement('button');
+    header.className = 'guest-toggle';
+    header.type = 'button';
+    header.setAttribute('aria-expanded', 'false');
+
+    const left = document.createElement('div');
+    left.className = 'guest-toggle-left';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'guest-name';
+    nameEl.textContent = g.name;
+    const metaEl = document.createElement('span');
+    metaEl.className = 'guest-date';
+    metaEl.textContent = `${d} · 영상 ${vidCount}편` + (g.note ? ` · ${g.note}` : '');
+    left.appendChild(nameEl);
+    left.appendChild(metaEl);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '▾';
+
+    header.appendChild(left);
+    header.appendChild(chevron);
+    card.appendChild(header);
+
+    // 항상 보이는 요약 지표
     const kpiRow = document.createElement('div');
     kpiRow.className = 'kpi-row';
     kpiRow.appendChild(statTile('총 조회수', fmtNum(g.totalViews)));
@@ -309,7 +341,12 @@ function render() {
     kpiRow.appendChild(statTile('평균 시청률', fmtPct(g.avgViewPct)));
     card.appendChild(kpiRow);
 
+    // 클릭 시 펼쳐지는 편별 상세
     if (g.videos && g.videos.length) {
+      const panel = document.createElement('div');
+      panel.className = 'detail-panel';
+      panel.hidden = true;
+
       const table = document.createElement('table');
       table.className = 'video-table';
       table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
@@ -320,7 +357,18 @@ function render() {
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
-      card.appendChild(table);
+      panel.appendChild(table);
+      card.appendChild(panel);
+
+      header.addEventListener('click', () => {
+        const open = panel.hidden;
+        panel.hidden = !open;
+        header.setAttribute('aria-expanded', String(open));
+        card.classList.toggle('open', open);
+      });
+    } else {
+      header.classList.add('no-detail');
+      chevron.hidden = true;
     }
 
     listEl.appendChild(card);
