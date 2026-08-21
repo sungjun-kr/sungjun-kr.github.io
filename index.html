@@ -118,6 +118,12 @@ input[type="password"], input[type="text"] {
 .grade-C { background: #a06600; }
 .grade-D { background: #8a8a85; }
 
+/* 전월 대비 등급 변화 */
+.grade-chg { margin-left: 6px; font-size: 11px; font-weight: 700; vertical-align: 2px; }
+.chg-up   { color: var(--perf-green); }
+.chg-down { color: var(--perf-red); }
+.chg-same { color: var(--muted); }
+
 .legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -8px 0 18px; }
 .legend .lg { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
 .legend .lg.perf-high { color: var(--perf-blue); }
@@ -156,9 +162,9 @@ footer.fine-print { text-align: center; margin-top: 30px; }
     <section id="dashboard-view" hidden>
       <div class="toolbar">
         <span id="last-updated" class="muted-text"></span>
-        <button id="sync-btn" class="btn-secondary" hidden>데이터 새로 가져오기</button>
+        <button id="refresh-btn" class="btn-secondary">새로고침</button>
+        <button id="refresh-all-btn" class="btn-secondary" hidden>전체 새로고침</button>
         <button id="publish-btn" class="btn-secondary" hidden>게시하기</button>
-        <button id="exit-btn" class="btn-ghost">나가기</button>
       </div>
       <p id="sync-status" class="fine-print" hidden></p>
       <div id="scope-tabs" class="month-tabs scope-tabs"></div>
@@ -184,7 +190,9 @@ const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 �
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
 const SET_WINDOW_DAYS = 14;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
 const REACH_REPORT_TYPE = 'channel_reach_basic_a1';  // 클릭률(썸네일 노출 CTR) 리포트
-const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민)\s*$/;
+const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민|고문|무극선생|선생|애널리스트|연구원|의원|변호사|회계사|관장|본부장|실장|위원장|사장|국장|처장)\s*$/;
+// 이름 사이에 끼어드는 소속명 (예: "김경록 미래에셋 고문" → "김경록")
+const AFFILIATION_RE = /\s*(미래에셋|삼성증권|한국투자|키움|NH투자|신한|하나|KB|메리츠)\s*/g;
 // 저장소 채널들. channelId는 관리자 로그인 후 자동으로 채워져요.
 const ARCHIVE_CHANNELS = [
   { key: '투자',   name: '웅달책방_투자',   channelId: 'UCK2Em4sKzvTZXsMM9BCS4_A' },
@@ -281,14 +289,108 @@ $('admin-link').addEventListener('click', () => {
   location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
 });
 
-$('exit-btn').addEventListener('click', () => {
-  sessionStorage.removeItem('guestAuthed');
-  sessionStorage.removeItem('gToken');
-  accessToken = null;
-  isAdmin = false;
-  $('dashboard-view').hidden = true;
-  $('gate-view').hidden = false;
-  $('admin-badge').hidden = true;
+// 새로고침 — 지금 보고 있는 섹터(월)만 다시 가져와요.
+$('refresh-btn').addEventListener('click', async () => {
+  const btn = $('refresh-btn');
+  if (btn.disabled) return;
+  if (isAdmin && accessToken) {
+    await refreshCurrentSector();
+  } else {
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = '불러오는 중…';
+    await loadPublishedData();
+    btn.textContent = label;
+    btn.disabled = false;
+  }
+});
+
+// 현재 보고 있는 섹터 이름 (버튼 라벨용)
+function currentSectorLabel() {
+  const monthLbl = (() => {
+    const ms = activeScope === 'archive'
+      ? (((publishedData.archive && publishedData.archive.channels) || []).find(c => c.key === activeArchive) || {}).months || []
+      : (publishedData.months || []);
+    const m = ms.find(x => x.month === activeMonth);
+    return m ? m.label.replace(/^\d{4}년\s*/, '') : '';
+  })();
+  if (activeScope === 'archive') return `${activeArchive} ${monthLbl}`.trim();
+  return monthLbl;
+}
+
+function updateRefreshLabel() {
+  const s = currentSectorLabel();
+  $('refresh-btn').textContent = s ? `${s} 새로고침` : '새로고침';
+  const allBtn = $('refresh-all-btn');
+  allBtn.hidden = !(isAdmin && accessToken);
+  allBtn.textContent = activeScope === 'archive' ? '저장소 전체 새로고침' : '본채널 전체 새로고침';
+}
+
+// 갱신 대상 월 목록 — 이미 있는 달 + 캘린더에 일정이 있는 달을 합쳐요 (새 달도 자동 포함).
+async function monthsToRefreshMain() {
+  const have = (publishedData.months || []).map(m => m.month);
+  let fromCal = [];
+  try {
+    const events = await calendarCached();
+    fromCal = [...new Set(events.map(e => monthKey(e.date)))];
+  } catch (err) { console.warn('캘린더 월 목록 실패:', err.message); }
+  return [...new Set([...have, ...fromCal])].sort();
+}
+
+function monthsToRefreshArchive() {
+  const chans = (publishedData.archive && publishedData.archive.channels) || [];
+  const have = chans.flatMap(c => (c.months || []).map(m => m.month));
+  const now = new Date();
+  const cur = monthKey(now);
+  return [...new Set([...have, cur])].sort();
+}
+
+// 현재 섹터(본채널/저장소) 전체를 순서대로 갱신해요.
+$('refresh-all-btn').addEventListener('click', async () => {
+  const btn = $('refresh-all-btn');
+  if (btn.disabled || !isAdmin || !accessToken) return;
+  const label = btn.textContent;
+  btn.disabled = true;
+  $('refresh-btn').disabled = true;
+  $('sync-status').hidden = false;
+  const t0 = Date.now();
+  clearRefreshCache();
+  let done = 0, failed = [];
+  try {
+    if (activeScope === 'archive') {
+      const months = monthsToRefreshArchive();
+      const total = ARCHIVE_CHANNELS.length * months.length;
+      for (const c of ARCHIVE_CHANNELS) {
+        for (const m of months) {
+          btn.textContent = `수집 중… (${done + 1}/${total})`;
+          $('sync-status').textContent = `저장소 「${c.key}」 ${m} 수집 중…`;
+          try { await refreshArchiveMonth(c.key, m); } catch (err) { failed.push(`${c.key} ${m}`); }
+          done++;
+        }
+      }
+    } else {
+      const months = await monthsToRefreshMain();
+      for (const m of months) {
+        btn.textContent = `수집 중… (${done + 1}/${months.length})`;
+        $('sync-status').textContent = `본채널 ${m} 수집 중…`;
+        try { await refreshMainMonth(m); } catch (err) { failed.push(m); }
+        done++;
+      }
+    }
+    render();
+    const secs = ((Date.now() - t0) / 1000).toFixed(1);
+    $('sync-status').textContent = `전체 갱신 완료 — ${done}개 섹터 / ${secs}초`
+      + (failed.length ? ` · 건너뜀: ${failed.join(', ')}` : '')
+      + ' · "게시하기"를 눌러야 다른 사람에게도 반영돼요.';
+  } catch (err) {
+    console.error(err);
+    $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    $('refresh-btn').disabled = false;
+    btn.textContent = label;
+    updateRefreshLabel();
+  }
 });
 
 // 구글 로그인에서 돌아왔는지 확인 (URL #access_token=...)
@@ -327,7 +429,6 @@ async function enterDashboard(admin) {
   $('gate-view').hidden = true;
   $('dashboard-view').hidden = false;
   $('admin-badge').hidden = !admin;
-  $('sync-btn').hidden = !admin;
   $('publish-btn').hidden = !admin;
   await loadPublishedData();
 }
@@ -346,9 +447,21 @@ async function loadPublishedData() {
 }
 
 function render() {
-  $('last-updated').textContent = publishedData.updatedAt
-    ? `마지막 업데이트: ${new Date(publishedData.updatedAt).toLocaleString('ko-KR')}`
+  renderInner();
+  // 보고 있는 섹터의 마지막 업데이트 시각과 버튼 라벨을 맞춰요.
+  const ms = activeScope === 'archive'
+    ? (((publishedData.archive && publishedData.archive.channels) || []).find(c => c.key === activeArchive) || {}).months || []
+    : (publishedData.months || []);
+  const cur = ms.find(m => m.month === activeMonth);
+  const stamp = (cur && cur.updatedAt) || publishedData.updatedAt;
+  const sector = currentSectorLabel();
+  $('last-updated').textContent = stamp
+    ? `${sector ? sector + ' ' : ''}마지막 업데이트: ${new Date(stamp).toLocaleString('ko-KR')}`
     : '아직 게시된 데이터가 없어요.';
+  updateRefreshLabel();
+}
+
+function renderInner() {
 
   // 최상위 섹터: 본채널 / 저장소
   const archive = (publishedData.archive && publishedData.archive.channels) || [];
@@ -389,6 +502,8 @@ function render() {
   });
 
   const current = months.find(m => m.month === activeMonth);
+  const curIdx = months.findIndex(m => m.month === activeMonth);
+  const prevMonth = curIdx > 0 ? months[curIdx - 1] : null;   // 등급 변화 비교용 직전 달
   const listEl = $('guest-list');
   listEl.innerHTML = '';
   if (!current || !current.guests.length) {
@@ -460,6 +575,18 @@ function render() {
       badge.textContent = grade;
       badge.title = `총 조회수 ${fmtNum(g.totalViews)} → ${grade}등급`;
       nameEl.appendChild(badge);
+    }
+
+    // 전월 대비 등급 변화 (같은 인물이 직전 달에도 출연한 경우)
+    const chg = gradeChange(g, prevMonth);
+    if (chg) {
+      const el = document.createElement('span');
+      const dir = chg.diff > 0 ? 'up' : (chg.diff < 0 ? 'down' : 'same');
+      const arrow = chg.diff > 0 ? '▲' : (chg.diff < 0 ? '▼' : '=');
+      el.className = `grade-chg chg-${dir}`;
+      el.textContent = `${arrow} ${chg.from}→${chg.to}`;
+      el.title = `${chg.prevLabel} ${chg.prevName} ${fmtNum(chg.prevViews)} (${chg.from}) → 이번 달 ${fmtNum(g.totalViews)} (${chg.to})`;
+      nameEl.appendChild(el);
     }
 
     const metaEl = document.createElement('span');
@@ -642,6 +769,50 @@ function renderArchive(channels) {
   });
 }
 
+// 게스트 이름을 비교용 키로 정규화해요.
+// "이명찬 박사님" / "이명찬 박사" / "이명찬" → 모두 "이명찬"
+// 뒤에 붙은 (2차) 같은 표기와 공백도 제거해서 월 간 매칭이 되게 합니다.
+function guestKey(name) {
+  return String(name || '')
+    .replace(/\s*\([^)]*\)\s*$/, '')   // 끝의 (2차) 등 제거
+    .replace(/님\s*$/, '')             // 존칭 '님' 제거 (교수님 → 교수)
+    .replace(TITLE_SUFFIX_RE, '')      // 직함 제거 (박사/교수/대표 …)
+    .replace(/\s+/g, '')               // 공백 제거
+    .trim();
+}
+
+const GRADE_ORDER = { D: 0, C: 1, B: 2, A: 3, S: 4 };
+
+// 두 이름이 같은 인물인지 판단해요.
+// 별칭이 앞에 붙는 경우가 있어서("부자아빠 정재호 대표" ↔ "정재호 대표"),
+// 한쪽이 다른 쪽으로 끝나거나 이름 3글자가 겹치면 같은 인물로 봅니다.
+function sameGuest(a, b) {
+  if (!a || !b) return false;
+  if (a === b) return true;
+  if (a.length >= 2 && b.length >= 2 && (a.endsWith(b) || b.endsWith(a))) return true;
+  const share3 = (x, y) => {
+    for (let i = 0; i + 3 <= x.length; i++) if (y.includes(x.slice(i, i + 3))) return true;
+    return false;
+  };
+  return share3(a, b) || share3(b, a);
+}
+
+// 직전 달에서 같은 인물을 찾아 등급 변화를 계산해요.
+function gradeChange(guest, prevMonth) {
+  if (!prevMonth || !prevMonth.guests || !prevMonth.guests.length) return null;
+  const key = guestKey(guest.name);
+  if (!key) return null;
+  const matches = prevMonth.guests.filter(g => sameGuest(key, guestKey(g.name)));
+  if (!matches.length) return null;
+  // 같은 달에 여러 번 출연했다면 가장 최근 회차를 기준으로 비교해요.
+  const prev = matches.slice().sort((a, b) => String(a.eventDate).localeCompare(String(b.eventDate))).pop();
+  const from = gradeOf(prev.totalViews);
+  const to = gradeOf(guest.totalViews);
+  if (!from || !to) return null;
+  const diff = (GRADE_ORDER[to] ?? 0) - (GRADE_ORDER[from] ?? 0);
+  return { from, to, diff, prevName: prev.name, prevViews: prev.totalViews, prevLabel: prevMonth.label };
+}
+
 // 총 조회수 절대 기준 등급 (월 평균과 무관)
 //  20만 이상 S / 15만~ A / 10만~ B / 8만 초과~ C / 8만 이하 D
 function gradeOf(totalViews) {
@@ -709,7 +880,7 @@ function monthLabel(d) {
 
 // 게스트 이름에서 직함을 떼어 핵심 인명만 남김 (영상 제목 매칭용)
 function coreName(name) {
-  return name.replace(TITLE_SUFFIX_RE, '').trim();
+  return name.replace(AFFILIATION_RE, ' ').replace(TITLE_SUFFIX_RE, '').trim();
 }
 
 async function fetchCalendarGuestEvents() {
@@ -817,13 +988,14 @@ async function fetchNonPublicUploads(publicItems, earliestNeeded) {
 // (Analytics API의 views는 2~3일 지연되어 최근 업로드분이 크게 과소 집계돼요.)
 async function fetchViewCounts(videoIds) {
   const result = {};
-  for (let i = 0; i < videoIds.length; i += 50) {
-    const batch = videoIds.slice(i, i + 50);
-    const data = await authFetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${batch.join(',')}`);
-    (data.items || []).forEach(it => {
-      result[it.id] = Number(it.statistics.viewCount);
-    });
-  }
+  const batches = [];
+  for (let i = 0; i < videoIds.length; i += 50) batches.push(videoIds.slice(i, i + 50));
+  // 배치를 병렬로 요청해 대기 시간을 줄여요.
+  const pages = await Promise.all(batches.map(b =>
+    authFetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${b.join(',')}`).catch(() => null)));
+  pages.forEach(data => {
+    ((data && data.items) || []).forEach(it => { result[it.id] = Number(it.statistics.viewCount); });
+  });
   return result;
 }
 
@@ -832,8 +1004,9 @@ async function fetchViewCounts(videoIds) {
 async function fetchAnalyticsForVideos(videoIds) {
   if (!videoIds.length) return {};
   const result = {};
-  for (let i = 0; i < videoIds.length; i += 50) {
-    const batch = videoIds.slice(i, i + 50);
+  const batches = [];
+  for (let i = 0; i < videoIds.length; i += 50) batches.push(videoIds.slice(i, i + 50));
+  const pages = await Promise.all(batches.map(batch => {
     const qs = new URLSearchParams({
       ids: `channel==${YOUTUBE_CHANNEL_ID}`,
       startDate: '2005-01-01',
@@ -843,12 +1016,14 @@ async function fetchAnalyticsForVideos(videoIds) {
       filters: `video==${batch.join(',')}`,
       maxResults: '200'
     });
-    const data = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
-    (data.rows || []).forEach(row => {
+    return authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`).catch(() => null);
+  }));
+  pages.forEach(data => {
+    ((data && data.rows) || []).forEach(row => {
       const [videoId, avgViewDuration, avgViewPct] = row;
       result[videoId] = { avgViewDurationSec: avgViewDuration, avgViewPct };
     });
-  }
+  });
   return result;
 }
 
@@ -899,6 +1074,212 @@ async function fetchCtrByVideo() {
     console.warn('클릭률 리포트를 아직 가져올 수 없어요:', err.message);
     return {};
   }
+}
+
+// ---------------- 섹터(월) 단위 새로고침 ----------------
+
+// 한 번의 갱신 작업 안에서는 클릭률 리포트와 캘린더를 재사용해요 (CSV 재다운로드 방지).
+let _ctrCache = null, _calCache = null;
+function clearRefreshCache() { _ctrCache = null; _calCache = null; }
+async function ctrMapCached() {
+  if (!_ctrCache) _ctrCache = await fetchCtrByVideo();
+  return _ctrCache;
+}
+async function calendarCached() {
+  if (!_calCache) _calCache = await fetchCalendarGuestEvents();
+  return _calCache;
+}
+
+// 특정 기간에 올라온 영상만 조회해요. 전체 업로드 목록을 훑지 않아 훨씬 빠릅니다.
+async function fetchVideosInRange(channelId, afterISO, beforeISO) {
+  let items = [], pt = '', pages = 0;
+  do {
+    const qs = new URLSearchParams({
+      part: 'snippet', type: 'video', order: 'date', maxResults: '50',
+      channelId, publishedAfter: afterISO, publishedBefore: beforeISO
+    });
+    if (pt) qs.set('pageToken', pt);
+    const d = await authFetch(`https://www.googleapis.com/youtube/v3/search?${qs}`);
+    (d.items || []).forEach(i => items.push({
+      videoId: i.id.videoId,
+      title: i.snippet.title,
+      publishedAt: new Date(i.snippet.publishedAt)
+    }));
+    pt = d.nextPageToken || '';
+    pages++;
+  } while (pt && pages < 12);
+  return items;
+}
+
+// 지금 보고 있는 섹터만 다시 수집해요.
+async function refreshCurrentSector() {
+  const btn = $('refresh-btn');
+  const label = btn.textContent;
+  btn.disabled = true;
+  $('sync-status').hidden = false;
+  const t0 = Date.now();
+  clearRefreshCache();
+  try {
+    if (activeScope === 'archive') {
+      btn.textContent = '수집 중…';
+      $('sync-status').textContent = `저장소 「${activeArchive}」 ${activeMonth} 수집 중…`;
+      await refreshArchiveMonth(activeArchive, activeMonth);
+    } else {
+      btn.textContent = '수집 중…';
+      $('sync-status').textContent = `본채널 ${activeMonth} 수집 중…`;
+      await refreshMainMonth(activeMonth);
+    }
+    render();
+    $('sync-status').textContent = `완료 (${((Date.now() - t0) / 1000).toFixed(1)}초). "게시하기"를 눌러야 다른 사람에게도 반영돼요.`;
+  } catch (err) {
+    console.error(err);
+    $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = label;
+    updateRefreshLabel();
+  }
+}
+
+// 본채널의 한 달만 재수집
+async function refreshMainMonth(monthKeyStr) {
+  const [y, mo] = monthKeyStr.split('-').map(Number);
+  const monthStart = new Date(Date.UTC(y, mo - 1, 1, -9));
+  const monthEnd = new Date(Date.UTC(y, mo, 1, -9));
+  // 촬영일 + 14일까지 업로드분을 포함하려면 조회 범위를 넉넉히 잡아요.
+  const searchAfter = monthStart;
+  const searchBefore = new Date(monthEnd.getTime() + 16 * 86400000);
+
+  const allEvents = await calendarCached();
+  const events = allEvents.filter(e => e.date >= monthStart && e.date < monthEnd);
+  if (!events.length) throw new Error(`${monthKeyStr}에 "${CALENDAR_PREFIX}" 일정이 없어요.`);
+
+  let vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, searchAfter.toISOString(), searchBefore.toISOString());
+  // 비공개 영상 보강 (search는 공개분만 반환해요)
+  const extra = await fetchNonPublicUploads(vids, searchAfter);
+  vids = vids.concat(extra.filter(v => v.publishedAt <= searchBefore));
+
+  const used = new Set();
+  const sets = events.map(ev => {
+    const start = ev.date;
+    const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
+    const cand = vids
+      .filter(v => !used.has(v.videoId) && v.title.includes(ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
+        && v.publishedAt >= start && v.publishedAt <= end)
+      .sort((a, b) => a.publishedAt - b.publishedAt);
+    const picked = [], parts = new Set();
+    cand.forEach(v => {
+      const m = v.title.match(/([1-5])부/);
+      const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
+      if (key && !parts.has(key)) {
+        parts.add(key);
+        picked.push({ videoId: v.videoId, title: v.title, privacy: v.privacy, part: key === 'full' ? '풀버전' : key + '부', pub: v.publishedAt.toISOString().slice(0, 10) });
+      }
+    });
+    const numParts = [...parts].filter(k => k !== 'full').length;
+    const ok = parts.has('full') && numParts >= MIN_PARTS;
+    if (ok) picked.forEach(p => used.add(p.videoId));
+    return { ...ev, picked, hasFull: parts.has('full'), numParts, ok };
+  });
+
+  const ids = [...new Set(sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId)))];
+  const [viewCounts, analytics, ctrMap] = await Promise.all([
+    fetchViewCounts(ids), fetchAnalyticsForVideos(ids), ctrMapCached()
+  ]);
+
+  const guests = [], pending = [];
+  sets.forEach(s => {
+    if (!s.ok) {
+      pending.push({
+        name: s.name, eventDate: s.date.toISOString().slice(0, 10), uploaded: s.picked.length,
+        note: (s.hasFull && s.numParts === 2) ? '라이브 편집본만 업로드됨'
+            : (s.picked.length ? `일부만 업로드됨 (${s.picked.length}편)` : '미업로드')
+      });
+      return;
+    }
+    const videos = s.picked.map(p => {
+      const a = analytics[p.videoId] || {};
+      return {
+        part: p.part, pub: p.pub, privacy: p.privacy || null,
+        views: viewCounts[p.videoId] ?? null,
+        ctr: ctrMap[p.videoId] ?? null,
+        avgViewDurationSec: a.avgViewDurationSec ?? null,
+        avgViewPct: a.avgViewPct ?? null
+      };
+    }).sort((a, b) => partOrder(a.part) - partOrder(b.part));
+    const n = videos.length || 1;
+    const avg = k => { const q = videos.map(v => v[k]).filter(x => typeof x === 'number'); return q.length ? q.reduce((a, b) => a + b, 0) / q.length : null; };
+    const totalViews = videos.reduce((x, v) => x + (v.views || 0), 0);
+    const ac = avg('ctr'), ad = avg('avgViewDurationSec'), ap = avg('avgViewPct');
+    guests.push({
+      name: s.name, eventDate: s.date.toISOString().slice(0, 10), videoCount: n,
+      totalViews, avgViews: Math.round(totalViews / n),
+      avgCtr: ac == null ? null : +ac.toFixed(2),
+      avgViewDurationSec: ad == null ? null : Math.round(ad),
+      avgViewPct: ap == null ? null : +ap.toFixed(2),
+      videos
+    });
+  });
+  guests.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
+  pending.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
+
+  const label = `${y}년 ${mo}월`;
+  publishedData.months = publishedData.months || [];
+  const idx = publishedData.months.findIndex(m => m.month === monthKeyStr);
+  const entry = { month: monthKeyStr, label, guests, pending, updatedAt: new Date().toISOString() };
+  if (idx >= 0) publishedData.months[idx] = entry; else publishedData.months.push(entry);
+  publishedData.months.sort((a, b) => a.month.localeCompare(b.month));
+  publishedData.updatedAt = new Date().toISOString();
+}
+
+// 저장소 한 채널의 한 달만 재수집
+async function refreshArchiveMonth(channelKey, monthKeyStr) {
+  const entry = ARCHIVE_CHANNELS.find(c => c.key === channelKey);
+  if (!entry) throw new Error('알 수 없는 저장소 카테고리예요.');
+  const [y, mo] = monthKeyStr.split('-').map(Number);
+  const start = new Date(Date.UTC(y, mo - 1, 1, -9));
+  const end = new Date(Date.UTC(y, mo, 1, -9));
+
+  const vids = await fetchVideosInRange(entry.channelId, start.toISOString(), end.toISOString());
+  const items = vids.map(v => ({ ...v, g: archiveGroupOf(v.title) })).filter(v => v.g);
+  const ids = items.map(v => v.videoId);
+  const [views, an, ctrMap] = await Promise.all([
+    fetchViewCounts(ids), fetchArchiveAnalytics(entry.channelId, ids), ctrMapCached()
+  ]);
+
+  const rows = items.map(v => ({ g: v.g, views: views[v.videoId] ?? null, ctr: ctrMap[v.videoId] ?? null, dur: (an[v.videoId] || {}).dur ?? null }));
+  const avg = (arr, k) => { const q = arr.map(x => x[k]).filter(x => typeof x === 'number'); return q.length ? q.reduce((a, b) => a + b, 0) / q.length : null; };
+  const groups = {};
+  ARCHIVE_GROUPS.forEach(g => {
+    const arr = rows.filter(x => x.g === g);
+    if (!arr.length) return;
+    const vv = avg(arr, 'views'), cc = avg(arr, 'ctr'), dd = avg(arr, 'dur');
+    groups[g] = {
+      videoCount: arr.length,
+      avgViews: vv == null ? null : Math.round(vv),
+      avgCtr: cc == null ? null : +cc.toFixed(2),
+      avgViewDurationSec: dd == null ? null : Math.round(dd)
+    };
+  });
+  const vv = avg(rows, 'views'), cc = avg(rows, 'ctr'), dd = avg(rows, 'dur');
+  const monthEntry = {
+    month: monthKeyStr, label: `${y}년 ${mo}월`, videoCount: rows.length,
+    avgViews: vv == null ? null : Math.round(vv),
+    avgCtr: cc == null ? null : +cc.toFixed(2),
+    avgViewDurationSec: dd == null ? null : Math.round(dd),
+    groups, updatedAt: new Date().toISOString()
+  };
+
+  publishedData.archive = publishedData.archive || { channels: [] };
+  let ch = publishedData.archive.channels.find(c => c.key === channelKey);
+  if (!ch) {
+    ch = { key: entry.key, name: entry.name, channelId: entry.channelId, months: [] };
+    publishedData.archive.channels.push(ch);
+  }
+  const i = ch.months.findIndex(m => m.month === monthKeyStr);
+  if (i >= 0) ch.months[i] = monthEntry; else ch.months.push(monthEntry);
+  ch.months.sort((a, b) => a.month.localeCompare(b.month));
+  publishedData.updatedAt = new Date().toISOString();
 }
 
 // ---------------- 저장소 채널 수집 ----------------
@@ -1021,7 +1402,8 @@ async function fetchArchiveAnalytics(channelId, videoIds) {
 async function runAdminSync() {
   $('sync-status').hidden = false;
   $('sync-status').textContent = '캘린더에서 게스트 목록을 가져오는 중...';
-  $('sync-btn').disabled = true;
+  $('refresh-btn').disabled = true;
+  $('refresh-btn').textContent = '수집 중…';
   try {
     const events = await fetchCalendarGuestEvents();
     if (!events.length) {
@@ -1131,18 +1513,13 @@ async function runAdminSync() {
       m.guests.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
       m.pending.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
     });
-    // 저장소 채널 수집
+    // 저장소 채널 수집 (3개 채널 병렬)
     $('sync-status').textContent = '저장소 채널(투자/교양/부동산)을 가져오는 중...';
-    const archiveChannels = [];
-    for (const entry of ARCHIVE_CHANNELS) {
-      try {
-        $('sync-status').textContent = `저장소 「${entry.key}」 수집 중...`;
-        archiveChannels.push(await collectArchiveChannel(entry, ctrMap));
-      } catch (err) {
+    const archiveChannels = await Promise.all(ARCHIVE_CHANNELS.map(entry =>
+      collectArchiveChannel(entry, ctrMap).catch(err => {
         console.warn(`저장소 ${entry.key} 실패:`, err.message);
-        archiveChannels.push({ key: entry.key, name: entry.name, months: [], error: err.message });
-      }
-    }
+        return { key: entry.key, name: entry.name, months: [], error: err.message };
+      })));
 
     publishedData = {
       updatedAt: new Date().toISOString(),
@@ -1159,11 +1536,11 @@ async function runAdminSync() {
     console.error(err);
     $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
   } finally {
-    $('sync-btn').disabled = false;
+    $('refresh-btn').disabled = false;
+    $('refresh-btn').textContent = '새로고침';
   }
 }
 
-$('sync-btn').addEventListener('click', runAdminSync);
 
 // ---------------- 관리자: GitHub에 게시 ----------------
 
