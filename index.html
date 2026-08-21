@@ -935,9 +935,9 @@ async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
     items = items.concat(pageItems);
     pageToken = data.nextPageToken || '';
     pages++;
-    const oldestOnPage = pageItems.length ? pageItems[pageItems.length - 1].publishedAt : null;
-    if (oldestOnPage && oldestOnPage < earliestNeeded) break;
-  } while (pageToken && pages < 40);
+    // 페이지 전체가 필요 기간보다 과거일 때만 멈춰요 (순서가 뒤섞인 항목 때문에 조기 종료 방지).
+    if (pageItems.length && pageItems.every(v => v.publishedAt < earliestNeeded)) break;
+  } while (pageToken && pages < 60);
 
   // 업로드 재생목록은 공개 영상만 담고 있어요 (편집자 권한이라 비공개는 빠짐).
   // 비공개 영상은 Analytics에는 남아 있으니, 거기서 ID를 긁어와 제목을 붙여 보강해요.
@@ -1113,8 +1113,9 @@ async function fetchVideosInRange(channelId, afterISO, beforeISO) {
       publishedAt: new Date(i.snippet.publishedAt)
     }));
     page.forEach(v => { if (v.publishedAt >= after && v.publishedAt <= before) items.push(v); });
-    const oldest = page.length ? page[page.length - 1].publishedAt : null;
-    if (oldest && oldest < after) reachedOlder = true;
+    // 업로드 목록 순서가 완전한 날짜순이 아니라, 오래된 영상 하나만 섞여도 조기 종료되면 안 돼요.
+    // 페이지 전체가 필요 기간보다 과거일 때만 멈춥니다.
+    if (page.length && page.every(v => v.publishedAt < after)) reachedOlder = true;
     pt = d.nextPageToken || '';
     pages++;
   } while (pt && !reachedOlder && pages < 60);
