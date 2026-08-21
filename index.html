@@ -106,6 +106,18 @@ input[type="password"], input[type="text"] {
 .perf-warn { color: var(--perf-yellow); }
 .perf-bad  { color: var(--perf-red); }
 
+/* 총 조회수 절대 등급 배지 */
+.grade {
+  display: inline-block; margin-left: 8px; padding: 1px 8px;
+  border-radius: 5px; font-size: 12px; font-weight: 700; line-height: 1.5;
+  vertical-align: 2px; letter-spacing: 0.3px; color: #fff;
+}
+.grade-S { background: #7b3fe4; }
+.grade-A { background: #1f6fd0; }
+.grade-B { background: #0a8f0a; }
+.grade-C { background: #a06600; }
+.grade-D { background: #8a8a85; }
+
 .legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -8px 0 18px; }
 .legend .lg { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
 .legend .lg.perf-high { color: var(--perf-blue); }
@@ -409,6 +421,16 @@ function render() {
       + '<span class="lg perf-warn">−20% 이하</span>'
       + '<span class="lg perf-bad">−50% 이하</span>';
     listEl.appendChild(legend);
+
+    const gradeLegend = document.createElement('div');
+    gradeLegend.className = 'legend';
+    gradeLegend.innerHTML = '<span class="fine-print">등급(총 조회수 절대 기준):</span>'
+      + '<span class="grade grade-S">S</span><span class="lg">20만↑</span>'
+      + '<span class="grade grade-A">A</span><span class="lg">15만~20만</span>'
+      + '<span class="grade grade-B">B</span><span class="lg">10만~15만</span>'
+      + '<span class="grade grade-C">C</span><span class="lg">8만~10만</span>'
+      + '<span class="grade grade-D">D</span><span class="lg">8만 이하</span>';
+    listEl.appendChild(gradeLegend);
   }
 
   current.guests.forEach((g, idx) => {
@@ -429,6 +451,17 @@ function render() {
     const nameEl = document.createElement('span');
     nameEl.className = 'guest-name';
     nameEl.textContent = g.name;
+
+    // 이름 옆 등급 배지 (총 조회수 절대 기준)
+    const grade = gradeOf(g.totalViews);
+    if (grade) {
+      const badge = document.createElement('span');
+      badge.className = `grade grade-${grade}`;
+      badge.textContent = grade;
+      badge.title = `총 조회수 ${fmtNum(g.totalViews)} → ${grade}등급`;
+      nameEl.appendChild(badge);
+    }
+
     const metaEl = document.createElement('span');
     metaEl.className = 'guest-date';
     metaEl.textContent = `${d} · 영상 ${vidCount}편` + (g.note ? ` · ${g.note}` : '');
@@ -607,6 +640,17 @@ function renderArchive(channels) {
 
     listEl.appendChild(card);
   });
+}
+
+// 총 조회수 절대 기준 등급 (월 평균과 무관)
+//  20만 이상 S / 15만~ A / 10만~ B / 8만 초과~ C / 8만 이하 D
+function gradeOf(totalViews) {
+  if (typeof totalViews !== 'number') return null;
+  if (totalViews >= 200000) return 'S';
+  if (totalViews >= 150000) return 'A';
+  if (totalViews >= 100000) return 'B';
+  if (totalViews > 80000) return 'C';
+  return 'D';
 }
 
 // 당월 평균 대비 성과 구간을 색으로 구분해요.
