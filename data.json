@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-21T05:35:00.000Z",
+  "updatedAt": "2026-08-21T06:05:00.000Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "months": [
@@ -1158,5 +1158,97 @@
         }
       ]
     }
-  ]
+  ],
+  "archive": {
+    "channels": [
+      {
+        "key": "투자",
+        "name": "웅달책방_투자",
+        "channelId": "UCK2Em4sKzvTZXsMM9BCS4_A",
+        "months": [
+          {
+            "month": "2026-08",
+            "label": "2026년 8월",
+            "videoCount": 65,
+            "avgViews": 6931,
+            "avgCtr": null,
+            "avgViewDurationSec": 220,
+            "groups": {
+              "라이브": {
+                "videoCount": 46,
+                "avgViews": 4242,
+                "avgCtr": null,
+                "avgViewDurationSec": 179
+              },
+              "통합본": {
+                "videoCount": 19,
+                "avgViews": 13440,
+                "avgCtr": null,
+                "avgViewDurationSec": 301
+              }
+            }
+          }
+        ]
+      },
+      {
+        "key": "교양",
+        "name": "웅달책방_교양",
+        "channelId": "UCPSnZnPJIDIizqLzNBQlImw",
+        "months": [
+          {
+            "month": "2026-08",
+            "label": "2026년 8월",
+            "videoCount": 20,
+            "avgViews": 2092,
+            "avgCtr": null,
+            "avgViewDurationSec": 319,
+            "groups": {
+              "라이브": {
+                "videoCount": 2,
+                "avgViews": 4885,
+                "avgCtr": null,
+                "avgViewDurationSec": null
+              },
+              "통합본": {
+                "videoCount": 18,
+                "avgViews": 1782,
+                "avgCtr": null,
+                "avgViewDurationSec": 319
+              }
+            }
+          }
+        ]
+      },
+      {
+        "key": "부동산",
+        "name": "웅달책방_부동산",
+        "channelId": "UCddUfRViMKUSWm8-OstEGVA",
+        "months": [
+          {
+            "month": "2026-08",
+            "label": "2026년 8월",
+            "videoCount": 7,
+            "avgViews": 624,
+            "avgCtr": null,
+            "avgViewDurationSec": 254,
+            "groups": {
+              "라이브": {
+                "videoCount": 3,
+                "avgViews": 1181,
+                "avgCtr": null,
+                "avgViewDurationSec": 165
+              },
+              "통합본": {
+                "videoCount": 4,
+                "avgViews": 206,
+                "avgCtr": null,
+                "avgViewDurationSec": 276
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외."
 }
