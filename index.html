@@ -3,212 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>내 대시보드 — 캘린더 &amp; 유튜브 스튜디오</title>
+<title>게스트 성과 대시보드</title>
 <style>
+:root {
+  color-scheme: light;
+  --surface-1: #fcfcfb;
+  --page-plane: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --muted: #898781;
+  --gridline: #e1e0d9;
+  --border: rgba(11,11,11,0.10);
+  --series-1: #2a78d6;
+  --critical: #d03b3b;
+  --good: #0ca30c;
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    color-scheme: light;
-    --surface-1: #fcfcfb;
-    --page-plane: #f9f9f7;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --page-plane: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
     --muted: #898781;
-    --gridline: #e1e0d9;
-    --baseline: #c3c2b7;
-    --series-1: #2a78d6;
-    --good: #0ca30c;
-    --warning: #a06600;
-    --critical: #d03b3b;
-    --border: rgba(11,11,11,0.10);
+    --gridline: #2c2c2a;
+    --border: rgba(255,255,255,0.10);
+    --series-1: #3987e5;
+    --critical: #e66767;
+    --good: #24c724;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-      --surface-1: #1a1a19;
-      --page-plane: #0d0d0d;
-      --text-primary: #ffffff;
-      --text-secondary: #c3c2b7;
-      --muted: #898781;
-      --gridline: #2c2c2a;
-      --baseline: #383835;
-      --series-1: #3987e5;
-      --good: #0ca30c;
-      --warning: #fab219;
-      --critical: #e66767;
-      --border: rgba(255,255,255,0.10);
-    }
-  }
-
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--page-plane);
-    color: var(--text-primary);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  .page { max-width: 960px; margin: 0 auto; padding: 24px 20px 60px; }
-
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
-  }
-  .topbar h1 { font-size: 20px; font-weight: 600; margin: 0; }
-
-  .card {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  .card h2 { font-size: 15px; font-weight: 600; margin: 0 0 14px; color: var(--text-primary); }
-
-  .center-card { max-width: 480px; margin: 60px auto; text-align: center; }
-  .center-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
-
-  .btn-primary, .btn-secondary, .btn-ghost {
-    font-family: inherit; font-size: 14px; font-weight: 600;
-    border-radius: 8px; cursor: pointer; padding: 10px 18px; border: 1px solid transparent;
-  }
-  .btn-primary { background: var(--series-1); color: #fff; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-secondary { background: transparent; color: var(--text-primary); border-color: var(--border); padding: 8px 14px; }
-  .btn-ghost { background: transparent; color: var(--text-secondary); border: none; padding: 8px 10px; }
-
-  .fine-print { font-size: 12px; color: var(--muted); line-height: 1.6; }
-  .warning-box, .error-text {
-    font-size: 13px; color: var(--critical); background: rgba(208,59,59,0.08);
-    border: 1px solid rgba(208,59,59,0.25); border-radius: 8px; padding: 10px 12px; margin-top: 12px;
-  }
-  .signin-error { font-size: 13px; color: var(--critical); margin-top: 10px; }
-
-  .toolbar {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
-  }
-  .muted-text { color: var(--muted); font-size: 13px; margin-right: auto; }
-
-  .kpi-row {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px; margin-bottom: 20px;
-  }
-  .stat-tile {
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
-    padding: 16px 18px;
-  }
-  .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
-  .stat-value { font-size: 26px; font-weight: 600; color: var(--text-primary); }
-  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-  .grid-2col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
-  @media (max-width: 720px) { .grid-2col { grid-template-columns: 1fr; } }
-
-  .line-chart { width: 100%; height: auto; display: block; overflow: visible; }
-  .gridline { stroke: var(--gridline); stroke-width: 1; }
-  .axis-label { fill: var(--muted); font-size: 10px; }
-  .line-path { fill: none; stroke: var(--series-1); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .end-dot, .hover-dot { fill: var(--series-1); stroke: var(--surface-1); stroke-width: 2; }
-  .crosshair { stroke: var(--baseline); stroke-width: 1; }
-
-  #views-chart { position: relative; }
-  .chart-tooltip {
-    position: absolute; transform: translate(-50%, -130%);
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 6px;
-    padding: 4px 8px; font-size: 12px; white-space: nowrap; pointer-events: none;
-    transition: opacity 0.1s; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  }
-  .chart-tooltip strong { color: var(--text-primary); font-weight: 600; }
-  .chart-tooltip span { color: var(--text-secondary); }
-
-  .link-btn {
-    background: none; border: none; color: var(--series-1); font-size: 12px;
-    cursor: pointer; padding: 0; margin-top: 10px; font-family: inherit;
-  }
-  .table-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--gridline); }
-  .tabular { font-variant-numeric: tabular-nums; color: var(--text-secondary); }
-
-  .plain-list { list-style: none; margin: 0; padding: 0; }
-  .video-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--gridline); font-size: 13px; }
-  .video-row:last-child { border-bottom: none; }
-  .video-title { color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .video-views { flex-shrink: 0; color: var(--text-secondary); }
-
-  .day-header { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 6px; }
-  .day-header:first-child { margin-top: 0; }
-  .event-row { display: flex; gap: 12px; padding: 6px 0; font-size: 13px; }
-  .event-time { flex-shrink: 0; width: 64px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .event-title { color: var(--text-primary); }
-
-  footer.fine-print { text-align: center; margin-top: 30px; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page-plane); color: var(--text-primary); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+.page { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.topbar h1 { font-size: 20px; font-weight: 600; margin: 0; }
+.card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.center-card { max-width: 420px; margin: 80px auto; text-align: center; }
+.center-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+input[type="password"], input[type="text"] {
+  width: 100%; padding: 10px 12px; font-size: 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--page-plane); color: var(--text-primary);
+  margin-bottom: 10px; font-family: inherit;
+}
+.btn-primary, .btn-secondary, .btn-ghost {
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  border-radius: 8px; cursor: pointer; padding: 10px 18px; border: 1px solid transparent;
+}
+.btn-primary { background: var(--series-1); color: #fff; width: 100%; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: transparent; color: var(--text-primary); border-color: var(--border); padding: 8px 14px; }
+.btn-ghost { background: none; border: none; color: var(--text-secondary); font-size: 12px; cursor: pointer; padding: 6px; text-decoration: underline; }
+.fine-print { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.error-text { font-size: 13px; color: var(--critical); margin-top: 10px; }
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.muted-text { color: var(--muted); font-size: 13px; margin-right: auto; }
+.month-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.month-tab {
+  padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface-1); color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.month-tab.active { background: var(--series-1); color: #fff; border-color: var(--series-1); }
+.guest-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.guest-card h3 { margin: 0 0 4px; font-size: 16px; }
+.guest-date { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat-tile { background: var(--page-plane); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.stat-value { font-size: 20px; font-weight: 600; }
+.video-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.video-table th, .video-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gridline); }
+.video-table th { color: var(--muted); font-weight: 600; font-size: 12px; }
+.video-table td.num { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
+footer.fine-print { text-align: center; margin-top: 30px; }
 </style>
 </head>
 <body>
-  <div class="page">
-    <div class="topbar">
-      <h1>내 대시보드</h1>
-    </div>
-
-    <main id="app">
-      <section id="signed-out-view" class="card center-card">
-        <p id="reauth-message" hidden>세션이 만료됐어요. 다시 로그인해주세요.</p>
-        <p>Google 계정으로 로그인하면 캘린더 일정과 유튜브 스튜디오 데이터를 이 페이지에서 실시간으로 볼 수 있어요.</p>
-        <button id="signin-btn" class="btn-primary">Google 계정으로 로그인</button>
-        <p id="signin-error" class="signin-error" hidden></p>
-        <p class="fine-print">
-          요청 권한: 캘린더 읽기 전용 · 유튜브 채널 정보 읽기 전용 · 유튜브 애널리틱스(스튜디오) 읽기 전용<br>
-          로그인 정보는 이 브라우저 밖으로 전송되거나 저장되지 않아요. 페이지를 새로 열면 다시 로그인해야 해요.
-        </p>
-        <p id="config-warning" class="warning-box" hidden>
-          아직 설정이 끝나지 않았어요. 이 파일 맨 아래 스크립트에서 CLIENT_ID 값을 Google Cloud에서 발급받은 클라이언트 ID로 바꿔주세요.
-        </p>
-      </section>
-
-      <section id="signed-in-view" hidden>
-        <div class="toolbar">
-          <span id="last-updated" class="muted-text"></span>
-          <button id="refresh-btn" class="btn-secondary">새로고침</button>
-          <button id="signout-btn" class="btn-ghost">로그아웃</button>
-        </div>
-
-        <div class="kpi-row" id="kpi-row"></div>
-
-        <div class="grid-2col">
-          <div class="card" id="views-chart-card">
-            <h2>최근 28일 조회수</h2>
-            <div id="views-chart"></div>
-            <div id="views-table" hidden></div>
-            <button class="link-btn" id="toggle-table-btn">표로 보기</button>
-            <p id="views-error" class="error-text" hidden></p>
-          </div>
-
-          <div class="card" id="videos-card">
-            <h2>최근 업로드 동영상</h2>
-            <ul id="videos-list" class="plain-list"></ul>
-            <p id="videos-error" class="error-text" hidden></p>
-          </div>
-        </div>
-
-        <div class="card" id="calendar-card">
-          <h2>일정 (오늘 ~ 7일)</h2>
-          <div id="calendar-list"></div>
-          <p id="calendar-error" class="error-text" hidden></p>
-        </div>
-      </section>
-    </main>
-
-    <footer class="fine-print">
-      이 페이지는 서버 없이 브라우저에서 직접 Google API를 호출해요. 데이터는 어디에도 저장되지 않아요.
-    </footer>
+<div class="page">
+  <div class="topbar">
+    <h1>게스트 성과 대시보드</h1>
+    <span id="admin-badge" class="muted-text" hidden>관리자 모드</span>
   </div>
+
+  <main id="app">
+    <section id="gate-view" class="card center-card">
+      <p>비밀번호를 입력하면 대시보드를 볼 수 있어요.</p>
+      <form id="password-form">
+        <input type="password" id="password-input" placeholder="비밀번호" autocomplete="off">
+        <button type="submit" class="btn-primary">입장</button>
+      </form>
+      <p id="password-error" class="error-text" hidden>비밀번호가 올바르지 않아요.</p>
+      <button id="admin-link" class="btn-ghost">관리자이신가요? Google로 로그인</button>
+      <p id="signin-error" class="error-text" hidden></p>
+    </section>
+
+    <section id="dashboard-view" hidden>
+      <div class="toolbar">
+        <span id="last-updated" class="muted-text"></span>
+        <button id="sync-btn" class="btn-secondary" hidden>데이터 새로 가져오기</button>
+        <button id="publish-btn" class="btn-secondary" hidden>게시하기</button>
+        <button id="exit-btn" class="btn-ghost">나가기</button>
+      </div>
+      <p id="sync-status" class="fine-print" hidden></p>
+      <div id="month-tabs" class="month-tabs"></div>
+      <div id="guest-list"></div>
+    </section>
+  </main>
+
+  <footer class="fine-print">데이터는 관리자가 갱신할 때마다 최신화됩니다.</footer>
+</div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 // ====================================================================
-// 여기를 수정하세요: Google Cloud에서 발급받은 OAuth 클라이언트 ID로 교체
+// 설정
 // ====================================================================
 const CLIENT_ID = '525359194157-5b7i2n6cphveliqjnklavmddopg9p0ek.apps.googleusercontent.com';
-// 통계를 보여줄 유튜브 채널 ID ('웅달 책방'). 로그인 계정이 이 채널의 소유자가 아니라
-// 편집자(관리자)로 등록되어 있어도, 채널 ID를 직접 지정하면 정상적으로 데이터를 가져와요.
 const YOUTUBE_CHANNEL_ID = 'UCbOIEn95Rvnk97KRtSFqvbQ';
+const GUEST_PASSWORD = 'sungjun2026'; // TODO: 원하는 비밀번호로 바꾸세요
+const CALENDAR_PREFIX = '[성준]';
+const PART_LABELS = ['1부', '2부', '3부', '4부', '풀버전'];
+const GITHUB_OWNER = 'sungjun-kr';
+const GITHUB_REPO = 'youtube';
+const DATA_PATH = 'data.json';
 // ====================================================================
 
 const SCOPES = [
@@ -219,402 +137,58 @@ const SCOPES = [
 
 let tokenClient = null;
 let accessToken = null;
-let refreshTimer = null;
-let refreshPromise = null;
-let authExpired = false;
-const state = {};
+let isAdmin = false;
+let publishedData = null;
+let activeMonth = null;
 
 function $(id) { return document.getElementById(id); }
 
-function compactNumber(n) {
+function fmtNum(n) {
   if (typeof n !== 'number' || Number.isNaN(n)) return '–';
-  return new Intl.NumberFormat('ko-KR', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+  return n.toLocaleString('ko-KR');
+}
+function fmtPct(n) {
+  if (typeof n !== 'number' || Number.isNaN(n)) return '–';
+  return n.toFixed(2) + '%';
+}
+function fmtDuration(sec) {
+  if (typeof sec !== 'number' || Number.isNaN(sec)) return '–';
+  const m = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  return `${m}분 ${s}초`;
 }
 
-function formatDayHeader(dateObj) {
-  const today = new Date();
-  const isToday = dateObj.toDateString() === today.toDateString();
-  const label = dateObj.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
-  return isToday ? `오늘 · ${label}` : label;
-}
+// ---------------- 게이트 (비밀번호 / 관리자 로그인) ----------------
 
-function createStatTile(label, value, sub) {
-  const tile = document.createElement('div');
-  tile.className = 'stat-tile';
-  const labelEl = document.createElement('div');
-  labelEl.className = 'stat-label';
-  labelEl.textContent = label;
-  const valueEl = document.createElement('div');
-  valueEl.className = 'stat-value';
-  valueEl.textContent = value;
-  tile.appendChild(labelEl);
-  tile.appendChild(valueEl);
-  if (sub) {
-    const subEl = document.createElement('div');
-    subEl.className = 'stat-sub';
-    subEl.textContent = sub;
-    tile.appendChild(subEl);
+$('password-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const val = $('password-input').value;
+  if (val === GUEST_PASSWORD) {
+    sessionStorage.setItem('guestAuthed', '1');
+    $('password-error').hidden = true;
+    enterDashboard(false);
+  } else {
+    $('password-error').hidden = false;
   }
-  return tile;
-}
-
-function updateKpis() {
-  const row = $('kpi-row');
-  row.innerHTML = '';
-  row.appendChild(createStatTile('구독자', state.subscriberCount != null ? compactNumber(state.subscriberCount) : '–'));
-  row.appendChild(createStatTile('전체 조회수', state.viewCount != null ? compactNumber(state.viewCount) : '–'));
-  let delta = null;
-  if (state.last28Views != null && state.prev28Views) {
-    const pct = Math.round(((state.last28Views - state.prev28Views) / state.prev28Views) * 100);
-    delta = `${pct >= 0 ? '+' : ''}${pct}% · 이전 28일 대비`;
-  }
-  row.appendChild(createStatTile('최근 28일 조회수', state.last28Views != null ? compactNumber(state.last28Views) : '–', delta));
-  row.appendChild(createStatTile('오늘 일정', state.todayCount != null ? `${state.todayCount}건` : '–'));
-}
-
-function renderViewsChart(rows) {
-  const container = $('views-chart');
-  const tableContainer = $('views-table');
-  container.innerHTML = '';
-  tableContainer.innerHTML = '';
-
-  if (!rows.length) {
-    container.textContent = '표시할 데이터가 없어요.';
-    return;
-  }
-
-  const width = 600, height = 200, padding = { top: 10, right: 10, bottom: 10, left: 40 };
-  const values = rows.map(r => r[1]);
-  const maxV = Math.max(...values, 1);
-  const innerW = width - padding.left - padding.right;
-  const innerH = height - padding.top - padding.bottom;
-
-  function xFor(i) { return padding.left + (rows.length === 1 ? innerW / 2 : (i / (rows.length - 1)) * innerW); }
-  function yFor(v) { return padding.top + innerH - (v / maxV) * innerH; }
-
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-  svg.setAttribute('class', 'line-chart');
-  svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', '최근 28일 일별 조회수 추이');
-
-  const gridSteps = 3;
-  for (let s = 0; s <= gridSteps; s++) {
-    const v = (maxV / gridSteps) * s;
-    const y = yFor(v);
-    const line = document.createElementNS(svgNS, 'line');
-    line.setAttribute('x1', padding.left); line.setAttribute('x2', width - padding.right);
-    line.setAttribute('y1', y); line.setAttribute('y2', y);
-    line.setAttribute('class', 'gridline');
-    svg.appendChild(line);
-
-    const label = document.createElementNS(svgNS, 'text');
-    label.setAttribute('x', padding.left - 6); label.setAttribute('y', y);
-    label.setAttribute('class', 'axis-label');
-    label.setAttribute('text-anchor', 'end');
-    label.setAttribute('dominant-baseline', 'middle');
-    label.textContent = compactNumber(Math.round(v));
-    svg.appendChild(label);
-  }
-
-  const pathD = rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i)} ${yFor(r[1])}`).join(' ');
-  const path = document.createElementNS(svgNS, 'path');
-  path.setAttribute('d', pathD);
-  path.setAttribute('class', 'line-path');
-  svg.appendChild(path);
-
-  const lastIdx = rows.length - 1;
-  const endDot = document.createElementNS(svgNS, 'circle');
-  endDot.setAttribute('cx', xFor(lastIdx)); endDot.setAttribute('cy', yFor(rows[lastIdx][1]));
-  endDot.setAttribute('r', 4);
-  endDot.setAttribute('class', 'end-dot');
-  svg.appendChild(endDot);
-
-  const crosshair = document.createElementNS(svgNS, 'line');
-  crosshair.setAttribute('y1', padding.top); crosshair.setAttribute('y2', height - padding.bottom);
-  crosshair.setAttribute('class', 'crosshair');
-  crosshair.style.opacity = '0';
-  svg.appendChild(crosshair);
-
-  const hoverDot = document.createElementNS(svgNS, 'circle');
-  hoverDot.setAttribute('r', 4);
-  hoverDot.setAttribute('class', 'hover-dot');
-  hoverDot.style.opacity = '0';
-  svg.appendChild(hoverDot);
-
-  const hitRect = document.createElementNS(svgNS, 'rect');
-  hitRect.setAttribute('x', padding.left); hitRect.setAttribute('y', padding.top);
-  hitRect.setAttribute('width', innerW); hitRect.setAttribute('height', innerH);
-  hitRect.setAttribute('fill', 'transparent');
-  svg.appendChild(hitRect);
-
-  container.appendChild(svg);
-
-  const tooltip = document.createElement('div');
-  tooltip.className = 'chart-tooltip';
-  tooltip.style.opacity = '0';
-  container.appendChild(tooltip);
-
-  function handleMove(clientX) {
-    const rect = svg.getBoundingClientRect();
-    const relX = ((clientX - rect.left) / rect.width) * width;
-    let idx = Math.round(((relX - padding.left) / innerW) * (rows.length - 1));
-    idx = Math.max(0, Math.min(rows.length - 1, idx));
-    const [dateStr, v] = rows[idx];
-    const cx = xFor(idx), cy = yFor(v);
-    crosshair.setAttribute('x1', cx); crosshair.setAttribute('x2', cx);
-    crosshair.style.opacity = '1';
-    hoverDot.setAttribute('cx', cx); hoverDot.setAttribute('cy', cy);
-    hoverDot.style.opacity = '1';
-
-    const d = new Date(dateStr);
-    const label = d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
-    tooltip.textContent = '';
-    const strong = document.createElement('strong');
-    strong.textContent = `${v.toLocaleString('ko-KR')}회`;
-    const span = document.createElement('span');
-    span.textContent = ` · ${label}`;
-    tooltip.appendChild(strong);
-    tooltip.appendChild(span);
-    tooltip.style.opacity = '1';
-    tooltip.style.left = `${(cx / width) * 100}%`;
-    tooltip.style.top = `${(cy / height) * 100}%`;
-  }
-
-  hitRect.addEventListener('pointermove', (e) => handleMove(e.clientX));
-  hitRect.addEventListener('pointerleave', () => {
-    crosshair.style.opacity = '0';
-    hoverDot.style.opacity = '0';
-    tooltip.style.opacity = '0';
-  });
-
-  rows.forEach(([dateStr, v]) => {
-    const row = document.createElement('div');
-    row.className = 'table-row';
-    const d = new Date(dateStr);
-    const dEl = document.createElement('span');
-    dEl.textContent = d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
-    const vEl = document.createElement('span');
-    vEl.className = 'tabular';
-    vEl.textContent = v.toLocaleString('ko-KR');
-    row.appendChild(dEl); row.appendChild(vEl);
-    tableContainer.appendChild(row);
-  });
-}
-
-let tableShown = false;
-$('toggle-table-btn').addEventListener('click', () => {
-  tableShown = !tableShown;
-  $('views-table').hidden = !tableShown;
-  $('views-chart').hidden = tableShown;
-  $('toggle-table-btn').textContent = tableShown ? '차트로 보기' : '표로 보기';
 });
 
-function renderRecentVideos(items) {
-  const list = $('videos-list');
-  list.innerHTML = '';
-  if (!items.length) {
-    const li = document.createElement('li');
-    li.textContent = '표시할 동영상이 없어요.';
-    list.appendChild(li);
+$('admin-link').addEventListener('click', () => {
+  if (!tokenClient) {
+    $('signin-error').hidden = false;
+    $('signin-error').textContent = 'Google 로그인 준비 중이에요. 잠시 후 다시 시도해주세요.';
     return;
   }
-  items.forEach(v => {
-    const li = document.createElement('li');
-    li.className = 'video-row';
-    const title = document.createElement('span');
-    title.className = 'video-title';
-    title.textContent = v.snippet ? v.snippet.title : '(제목 없음)';
-    const views = document.createElement('span');
-    views.className = 'video-views tabular';
-    views.textContent = (v.statistics && v.statistics.viewCount) ? `${Number(v.statistics.viewCount).toLocaleString('ko-KR')}회` : '–';
-    li.appendChild(title); li.appendChild(views);
-    list.appendChild(li);
-  });
-}
+  tokenClient.requestAccessToken();
+});
 
-function renderCalendar(items) {
-  const container = $('calendar-list');
-  container.innerHTML = '';
-  if (!items.length) {
-    container.textContent = '앞으로 7일간 일정이 없어요.';
-    return;
-  }
-  let lastDayKey = null;
-  items.forEach(ev => {
-    const start = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
-    const dayKey = start.toDateString();
-    if (dayKey !== lastDayKey) {
-      lastDayKey = dayKey;
-      const header = document.createElement('div');
-      header.className = 'day-header';
-      header.textContent = formatDayHeader(start);
-      container.appendChild(header);
-    }
-    const row = document.createElement('div');
-    row.className = 'event-row';
-    const time = document.createElement('span');
-    time.className = 'event-time';
-    time.textContent = ev.start.dateTime ? start.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '종일';
-    const title = document.createElement('span');
-    title.className = 'event-title';
-    title.textContent = ev.summary || '(제목 없음)';
-    row.appendChild(time); row.appendChild(title);
-    container.appendChild(row);
-  });
-}
-
-function silentRefresh() {
-  if (refreshPromise) return refreshPromise;
-  refreshPromise = new Promise((resolve) => {
-    const prevCallback = tokenClient.callback;
-    let settled = false;
-    const finish = () => { if (!settled) { settled = true; tokenClient.callback = prevCallback; resolve(); } };
-    tokenClient.callback = (resp) => {
-      if (resp && resp.access_token) accessToken = resp.access_token;
-      finish();
-    };
-    tokenClient.requestAccessToken({ prompt: '' });
-    setTimeout(finish, 5000);
-  }).finally(() => { refreshPromise = null; });
-  return refreshPromise;
-}
-
-async function authFetch(url, options = {}) {
-  const withAuth = (opts) => ({ ...opts, headers: { ...(opts.headers || {}), Authorization: `Bearer ${accessToken}` } });
-  let res = await fetch(url, withAuth(options));
-  if (res.status === 401) {
-    await silentRefresh();
-    res = await fetch(url, withAuth(options));
-    if (res.status === 401) authExpired = true;
-  }
-  return res;
-}
-
-async function loadYouTube() {
-  $('videos-error').hidden = true;
-  $('views-error').hidden = true;
-  try {
-    const chRes = await authFetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${YOUTUBE_CHANNEL_ID}`);
-    if (!chRes.ok) throw new Error('channel_' + chRes.status);
-    const chData = await chRes.json();
-    const channel = chData.items && chData.items[0];
-    if (!channel) throw new Error('no_channel');
-    state.subscriberCount = Number(channel.statistics.subscriberCount);
-    state.viewCount = Number(channel.statistics.viewCount);
-    updateKpis();
-
-    const end = new Date();
-    const start = new Date(end.getTime() - 55 * 24 * 60 * 60 * 1000);
-    const fmt = d => d.toISOString().slice(0, 10);
-    const analyticsUrl = 'https://youtubeanalytics.googleapis.com/v2/reports?' + new URLSearchParams({
-      ids: `channel==${YOUTUBE_CHANNEL_ID}`, startDate: fmt(start), endDate: fmt(end),
-      metrics: 'views', dimensions: 'day', sort: 'day'
-    });
-    const anRes = await authFetch(analyticsUrl);
-    if (!anRes.ok) throw new Error('analytics_' + anRes.status);
-    const anData = await anRes.json();
-    const rows = anData.rows || [];
-    const last28 = rows.slice(-28);
-    const prev28 = rows.slice(0, Math.max(rows.length - 28, 0));
-    state.last28Views = last28.reduce((s, r) => s + r[1], 0);
-    state.prev28Views = prev28.reduce((s, r) => s + r[1], 0);
-    updateKpis();
-    renderViewsChart(last28);
-
-    const uploadsId = channel.contentDetails && channel.contentDetails.relatedPlaylists && channel.contentDetails.relatedPlaylists.uploads;
-    if (uploadsId) {
-      const plRes = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=5&playlistId=${uploadsId}`);
-      if (!plRes.ok) throw new Error('playlist_' + plRes.status);
-      const plData = await plRes.json();
-      const ids = (plData.items || []).map(i => i.snippet.resourceId.videoId).filter(Boolean).join(',');
-      if (ids) {
-        const vRes = await authFetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}`);
-        if (!vRes.ok) throw new Error('videos_' + vRes.status);
-        const vData = await vRes.json();
-        renderRecentVideos(vData.items || []);
-      } else {
-        renderRecentVideos([]);
-      }
-    } else {
-      renderRecentVideos([]);
-    }
-  } catch (err) {
-    console.error(err);
-    $('videos-error').hidden = false;
-    $('videos-error').textContent = '유튜브 데이터를 가져오지 못했어요. YouTube Data API / YouTube Analytics API가 활성화되어 있는지 확인해주세요.';
-    $('views-error').hidden = false;
-    $('views-error').textContent = '조회수 데이터를 가져오지 못했어요.';
-  }
-}
-
-async function loadCalendar() {
-  $('calendar-error').hidden = true;
-  try {
-    // 내가 소유한 모든 캘린더(개인 기본 캘린더 + 직접 만든 캘린더)를 모아서 보여줘요.
-    // 구독만 한 캘린더(공휴일 등)는 내 일정이 아니므로 제외해요.
-    const listRes = await authFetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?minAccessRole=owner&maxResults=50');
-    if (!listRes.ok) throw new Error('calendarlist_' + listRes.status);
-    const listData = await listRes.json();
-    const owned = (listData.items || []).filter(c => c.accessRole === 'owner');
-    const calendarIds = owned.length ? owned.map(c => c.id) : ['primary'];
-
-    const now = new Date();
-    const weekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const qs = new URLSearchParams({
-      timeMin: now.toISOString(), timeMax: weekLater.toISOString(),
-      singleEvents: 'true', orderBy: 'startTime', maxResults: '25'
-    });
-
-    const results = await Promise.allSettled(calendarIds.map(async id => {
-      const res = await authFetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?${qs}`);
-      if (!res.ok) throw new Error('calendar_' + res.status);
-      const data = await res.json();
-      return data.items || [];
-    }));
-
-    if (results.length && results.every(r => r.status === 'rejected')) {
-      throw new Error('all_calendars_failed');
-    }
-
-    let items = [];
-    results.forEach(r => { if (r.status === 'fulfilled') items = items.concat(r.value); });
-    items.sort((a, b) => {
-      const ta = new Date(a.start.dateTime || a.start.date).getTime();
-      const tb = new Date(b.start.dateTime || b.start.date).getTime();
-      return ta - tb;
-    });
-    items = items.slice(0, 25);
-
-    const todayStr = now.toDateString();
-    state.todayCount = items.filter(ev => {
-      const d = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
-      return d.toDateString() === todayStr;
-    }).length;
-    updateKpis();
-    renderCalendar(items);
-  } catch (err) {
-    console.error(err);
-    $('calendar-error').hidden = false;
-    $('calendar-error').textContent = '캘린더 데이터를 가져오지 못했어요. Google Calendar API가 활성화되어 있는지 확인해주세요.';
-  }
-}
-
-async function loadAll() {
-  authExpired = false;
-  $('last-updated').textContent = '업데이트 중…';
-  updateKpis();
-  await Promise.allSettled([loadYouTube(), loadCalendar()]);
-  if (authExpired) {
-    $('signed-in-view').hidden = true;
-    $('signed-out-view').hidden = false;
-    $('reauth-message').hidden = false;
-    if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
-  } else {
-    $('last-updated').textContent = `마지막 업데이트: ${new Date().toLocaleTimeString('ko-KR')}`;
-  }
-}
+$('exit-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('guestAuthed');
+  accessToken = null;
+  isAdmin = false;
+  $('dashboard-view').hidden = true;
+  $('gate-view').hidden = false;
+  $('admin-badge').hidden = true;
+});
 
 function handleTokenResponse(resp) {
   if (!resp || resp.error) {
@@ -623,21 +197,10 @@ function handleTokenResponse(resp) {
     return;
   }
   accessToken = resp.access_token;
-  $('signin-error').hidden = true;
-  $('reauth-message').hidden = true;
-  $('signed-out-view').hidden = true;
-  $('signed-in-view').hidden = false;
-  loadAll();
-  if (refreshTimer) clearInterval(refreshTimer);
-  refreshTimer = setInterval(loadAll, 5 * 60 * 1000);
+  enterDashboard(true);
 }
 
 function boot() {
-  if (!CLIENT_ID || CLIENT_ID.indexOf('YOUR_') === 0) {
-    $('config-warning').hidden = false;
-    $('signin-btn').disabled = true;
-    return;
-  }
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
@@ -645,28 +208,345 @@ function boot() {
     error_callback: (err) => {
       console.error(err);
       $('signin-error').hidden = false;
-      $('signin-error').textContent = '로그인 창을 열지 못했어요. 팝업이 차단되지 않았는지 확인해주세요.';
+      $('signin-error').textContent = '로그인 창을 열지 못했어요. 팝업 차단을 확인해주세요.';
     }
   });
-  $('signin-btn').addEventListener('click', () => tokenClient.requestAccessToken());
+}
+(function waitForGis() {
+  if (window.google && google.accounts && google.accounts.oauth2) boot();
+  else setTimeout(waitForGis, 100);
+})();
+
+if (sessionStorage.getItem('guestAuthed') === '1') {
+  enterDashboard(false);
 }
 
-$('refresh-btn').addEventListener('click', loadAll);
-$('signout-btn').addEventListener('click', () => {
-  if (accessToken) google.accounts.oauth2.revoke(accessToken, () => {});
-  accessToken = null;
-  if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
-  $('signed-in-view').hidden = true;
-  $('signed-out-view').hidden = false;
-});
+async function enterDashboard(admin) {
+  isAdmin = admin;
+  $('gate-view').hidden = true;
+  $('dashboard-view').hidden = false;
+  $('admin-badge').hidden = !admin;
+  $('sync-btn').hidden = !admin;
+  $('publish-btn').hidden = !admin;
+  await loadPublishedData();
+}
 
-(function waitForGis() {
-  if (window.google && google.accounts && google.accounts.oauth2) {
-    boot();
-  } else {
-    setTimeout(waitForGis, 100);
+// ---------------- 게시된 데이터 불러오기 / 렌더링 ----------------
+
+async function loadPublishedData() {
+  try {
+    const res = await fetch(`./${DATA_PATH}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('no data yet');
+    publishedData = await res.json();
+  } catch (err) {
+    publishedData = { updatedAt: null, months: [] };
   }
-})();
+  render();
+}
+
+function render() {
+  const months = publishedData.months || [];
+  $('last-updated').textContent = publishedData.updatedAt
+    ? `마지막 업데이트: ${new Date(publishedData.updatedAt).toLocaleString('ko-KR')}`
+    : '아직 게시된 데이터가 없어요.';
+
+  const tabsEl = $('month-tabs');
+  tabsEl.innerHTML = '';
+  if (!months.length) {
+    $('guest-list').innerHTML = '<div class="empty-state">아직 표시할 데이터가 없어요.' + (isAdmin ? ' "데이터 새로 가져오기"를 눌러주세요.' : '') + '</div>';
+    return;
+  }
+  if (!activeMonth || !months.find(m => m.month === activeMonth)) {
+    activeMonth = months[months.length - 1].month;
+  }
+  months.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (m.month === activeMonth ? ' active' : '');
+    btn.textContent = m.label;
+    btn.addEventListener('click', () => { activeMonth = m.month; render(); });
+    tabsEl.appendChild(btn);
+  });
+
+  const current = months.find(m => m.month === activeMonth);
+  const listEl = $('guest-list');
+  listEl.innerHTML = '';
+  if (!current || !current.guests.length) {
+    listEl.innerHTML = '<div class="empty-state">이 달에는 게스트가 없어요.</div>';
+    return;
+  }
+  current.guests.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = g.name;
+    card.appendChild(h3);
+
+    const dateEl = document.createElement('div');
+    dateEl.className = 'guest-date';
+    dateEl.textContent = g.eventDate ? new Date(g.eventDate).toLocaleDateString('ko-KR') : '';
+    card.appendChild(dateEl);
+
+    const kpiRow = document.createElement('div');
+    kpiRow.className = 'kpi-row';
+    kpiRow.appendChild(statTile('총 조회수', fmtNum(g.totalViews)));
+    kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
+    kpiRow.appendChild(statTile('평균 클릭률', fmtPct(g.avgCtr)));
+    kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
+    card.appendChild(kpiRow);
+
+    if (g.videos && g.videos.length) {
+      const table = document.createElement('table');
+      table.className = 'video-table';
+      table.innerHTML = `<thead><tr><th>영상</th><th>조회수</th><th>클릭률</th><th>평균 시청시간</th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      g.videos.forEach(v => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(v.title)}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtPct(v.ctr)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      card.appendChild(table);
+    } else {
+      const warn = document.createElement('div');
+      warn.className = 'fine-print';
+      warn.textContent = '매칭된 영상을 찾지 못했어요.';
+      card.appendChild(warn);
+    }
+
+    listEl.appendChild(card);
+  });
+}
+
+function statTile(label, value) {
+  const tile = document.createElement('div');
+  tile.className = 'stat-tile';
+  tile.innerHTML = `<div class="stat-label">${label}</div><div class="stat-value">${value}</div>`;
+  return tile;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+// ---------------- 관리자: 구글 API에서 실제 데이터 가져오기 ----------------
+
+async function authFetch(url) {
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`${url} -> ${res.status} ${body}`);
+  }
+  return res.json();
+}
+
+function monthRangeKST(year, monthIndex0) {
+  const start = new Date(Date.UTC(year, monthIndex0, 1, -9, 0, 0));
+  const end = new Date(Date.UTC(year, monthIndex0 + 1, 1, -9, 0, 0));
+  return { start, end };
+}
+function monthKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+function monthLabel(d) {
+  return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
+}
+
+async function fetchCalendarGuestEvents() {
+  const now = new Date();
+  const timeMin = new Date(now.getFullYear(), 0, 1).toISOString();
+  const timeMax = new Date(now.getFullYear() + 1, 0, 1).toISOString();
+  let items = [];
+  let pageToken = '';
+  do {
+    const qs = new URLSearchParams({
+      timeMin, timeMax, singleEvents: 'true', orderBy: 'startTime', maxResults: '2500'
+    });
+    if (pageToken) qs.set('pageToken', pageToken);
+    const data = await authFetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${qs}`);
+    items = items.concat(data.items || []);
+    pageToken = data.nextPageToken || '';
+  } while (pageToken);
+
+  return items
+    .filter(ev => ev.summary && ev.summary.trim().startsWith(CALENDAR_PREFIX))
+    .map(ev => {
+      const name = ev.summary.trim().slice(CALENDAR_PREFIX.length).trim();
+      const dateStr = ev.start.dateTime || ev.start.date;
+      return { name, date: new Date(dateStr) };
+    });
+}
+
+async function fetchUploadsPlaylistId() {
+  const data = await authFetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${YOUTUBE_CHANNEL_ID}`);
+  const ch = data.items && data.items[0];
+  if (!ch) throw new Error('채널을 찾을 수 없어요.');
+  return ch.contentDetails.relatedPlaylists.uploads;
+}
+
+async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
+  let items = [];
+  let pageToken = '';
+  let pages = 0;
+  do {
+    const qs = new URLSearchParams({ part: 'snippet', maxResults: '50', playlistId: uploadsPlaylistId });
+    if (pageToken) qs.set('pageToken', pageToken);
+    const data = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?${qs}`);
+    const pageItems = (data.items || []).map(i => ({
+      videoId: i.snippet.resourceId.videoId,
+      title: i.snippet.title,
+      publishedAt: new Date(i.snippet.publishedAt)
+    }));
+    items = items.concat(pageItems);
+    pageToken = data.nextPageToken || '';
+    pages++;
+    const oldestOnPage = pageItems.length ? pageItems[pageItems.length - 1].publishedAt : null;
+    if (oldestOnPage && oldestOnPage < earliestNeeded) break;
+  } while (pageToken && pages < 40);
+  return items;
+}
+
+async function fetchAnalyticsForVideos(videoIds) {
+  if (!videoIds.length) return {};
+  const result = {};
+  for (let i = 0; i < videoIds.length; i += 40) {
+    const batch = videoIds.slice(i, i + 40);
+    const qs = new URLSearchParams({
+      ids: `channel==${YOUTUBE_CHANNEL_ID}`,
+      startDate: '2005-01-01',
+      endDate: new Date().toISOString().slice(0, 10),
+      metrics: 'views,averageViewDuration,impressions,impressionsClickThroughRate',
+      dimensions: 'video',
+      filters: `video==${batch.join(',')}`,
+      maxResults: '200'
+    });
+    const data = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
+    (data.rows || []).forEach(row => {
+      const [videoId, views, avgViewDuration, impressions, ctr] = row;
+      result[videoId] = { views, avgViewDurationSec: avgViewDuration, ctr };
+    });
+  }
+  return result;
+}
+
+async function runAdminSync() {
+  $('sync-status').hidden = false;
+  $('sync-status').textContent = '캘린더에서 게스트 목록을 가져오는 중...';
+  $('sync-btn').disabled = true;
+  try {
+    const events = await fetchCalendarGuestEvents();
+    if (!events.length) {
+      $('sync-status').textContent = `"${CALENDAR_PREFIX}"로 시작하는 일정을 찾지 못했어요.`;
+      return;
+    }
+
+    const monthsMap = new Map();
+    events.forEach(ev => {
+      const key = monthKey(ev.date);
+      if (!monthsMap.has(key)) monthsMap.set(key, { month: key, label: monthLabel(ev.date), guests: [] });
+      monthsMap.get(key).guests.push({ name: ev.name, eventDate: ev.date.toISOString() });
+    });
+
+    $('sync-status').textContent = '유튜브 업로드 목록을 가져오는 중...';
+    const uploadsId = await fetchUploadsPlaylistId();
+    const earliestNeeded = new Date(Math.min(...events.map(e => monthRangeKST(e.date.getFullYear(), e.date.getMonth()).start.getTime())));
+    const allVideos = await fetchAllUploads(uploadsId, earliestNeeded);
+
+    $('sync-status').textContent = '게스트별 영상을 매칭하는 중...';
+    const allNeededVideoIds = [];
+    for (const monthEntry of monthsMap.values()) {
+      const [y, m] = monthEntry.month.split('-').map(Number);
+      const { start, end } = monthRangeKST(y, m - 1);
+      monthEntry.guests.forEach(g => {
+        const matched = allVideos.filter(v =>
+          v.publishedAt >= start && v.publishedAt < end &&
+          v.title.includes(g.name) &&
+          PART_LABELS.some(p => v.title.includes(p))
+        );
+        g.videos = matched.map(v => ({ videoId: v.videoId, title: v.title }));
+        g.videos.forEach(v => allNeededVideoIds.push(v.videoId));
+      });
+    }
+
+    $('sync-status').textContent = 'YouTube 애널리틱스 데이터를 가져오는 중...';
+    const analytics = await fetchAnalyticsForVideos(allNeededVideoIds);
+
+    for (const monthEntry of monthsMap.values()) {
+      monthEntry.guests.forEach(g => {
+        g.videos.forEach(v => {
+          const a = analytics[v.videoId] || {};
+          v.views = a.views ?? 0;
+          v.ctr = a.ctr ?? null;
+          v.avgViewDurationSec = a.avgViewDurationSec ?? null;
+        });
+        const n = g.videos.length || 1;
+        g.totalViews = g.videos.reduce((s, v) => s + (v.views || 0), 0);
+        g.avgViews = Math.round(g.totalViews / n);
+        const ctrVals = g.videos.map(v => v.ctr).filter(x => typeof x === 'number');
+        g.avgCtr = ctrVals.length ? ctrVals.reduce((s, x) => s + x, 0) / ctrVals.length : null;
+        const durVals = g.videos.map(v => v.avgViewDurationSec).filter(x => typeof x === 'number');
+        g.avgViewDurationSec = durVals.length ? durVals.reduce((s, x) => s + x, 0) / durVals.length : null;
+      });
+    }
+
+    const months = Array.from(monthsMap.values()).sort((a, b) => a.month.localeCompare(b.month));
+    publishedData = { updatedAt: new Date().toISOString(), months };
+    activeMonth = months.length ? months[months.length - 1].month : null;
+    render();
+    $('sync-status').textContent = '완료! 이제 "게시하기"를 눌러야 다른 사람들에게 반영돼요.';
+  } catch (err) {
+    console.error(err);
+    $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
+  } finally {
+    $('sync-btn').disabled = false;
+  }
+}
+
+$('sync-btn').addEventListener('click', runAdminSync);
+
+// ---------------- 관리자: GitHub에 게시 ----------------
+
+async function publishToGithub() {
+  if (!publishedData) return;
+  let pat = localStorage.getItem('gh_pat');
+  if (!pat) {
+    pat = prompt('GitHub Personal Access Token을 입력하세요 (repo 쓰기 권한 필요, 이 브라우저에만 저장돼요):');
+    if (!pat) return;
+    localStorage.setItem('gh_pat', pat);
+  }
+  $('sync-status').hidden = false;
+  $('sync-status').textContent = 'GitHub에 게시하는 중...';
+  try {
+    const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${DATA_PATH}`;
+    let sha = undefined;
+    const getRes = await fetch(apiUrl, { headers: { Authorization: `Bearer ${pat}` } });
+    if (getRes.ok) {
+      const getData = await getRes.json();
+      sha = getData.sha;
+    } else if (getRes.status !== 404) {
+      throw new Error(`파일 조회 실패: ${getRes.status}`);
+    }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(publishedData, null, 2))));
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${pat}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: '대시보드 데이터 업데이트', content, sha, branch: 'main' })
+    });
+    if (!putRes.ok) {
+      const body = await putRes.text().catch(() => '');
+      if (putRes.status === 401) { localStorage.removeItem('gh_pat'); }
+      throw new Error(`게시 실패: ${putRes.status} ${body}`);
+    }
+    $('sync-status').textContent = '게시 완료! 몇 분 안에 모두에게 반영돼요.';
+  } catch (err) {
+    console.error(err);
+    $('sync-status').textContent = '게시 중 오류: ' + err.message;
+  }
+}
+
+$('publish-btn').addEventListener('click', publishToGithub);
 </script>
 </body>
 </html>
