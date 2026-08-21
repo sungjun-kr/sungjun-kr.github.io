@@ -504,6 +504,22 @@ async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
   return items;
 }
 
+// 조회수는 Data API의 실시간 누적값을 씁니다.
+// (Analytics API의 views는 2~3일 지연되어 최근 업로드분이 크게 과소 집계돼요.)
+async function fetchViewCounts(videoIds) {
+  const result = {};
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+    const data = await authFetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${batch.join(',')}`);
+    (data.items || []).forEach(it => {
+      result[it.id] = Number(it.statistics.viewCount);
+    });
+  }
+  return result;
+}
+
+// 시청 지속시간·시청률은 Analytics API에서만 제공돼요 (2~3일 지연 있음).
+// 클릭률(노출 클릭률)은 Analytics API에 아예 없고 Reporting API(대량 CSV)로만 제공돼요.
 async function fetchAnalyticsForVideos(videoIds) {
   if (!videoIds.length) return {};
   const result = {};
@@ -513,16 +529,15 @@ async function fetchAnalyticsForVideos(videoIds) {
       ids: `channel==${YOUTUBE_CHANNEL_ID}`,
       startDate: '2005-01-01',
       endDate: new Date().toISOString().slice(0, 10),
-      // 주의: 클릭률(노출 클릭률)은 Analytics API에 없어요. Reporting API(대량 CSV)로만 제공돼요.
-      metrics: 'views,averageViewDuration,averageViewPercentage',
+      metrics: 'averageViewDuration,averageViewPercentage',
       dimensions: 'video',
       filters: `video==${batch.join(',')}`,
       maxResults: '200'
     });
     const data = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
     (data.rows || []).forEach(row => {
-      const [videoId, views, avgViewDuration, avgViewPct] = row;
-      result[videoId] = { views, avgViewDurationSec: avgViewDuration, avgViewPct, ctr: null };
+      const [videoId, avgViewDuration, avgViewPct] = row;
+      result[videoId] = { avgViewDurationSec: avgViewDuration, avgViewPct };
     });
   }
   return result;
@@ -625,8 +640,9 @@ async function runAdminSync() {
       return { ...ev, picked, hasFull: parts.has('full'), numParts, ok };
     });
 
-    $('sync-status').textContent = 'YouTube 애널리틱스 데이터를 가져오는 중...';
-    const neededIds = sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId));
+    $('sync-status').textContent = 'YouTube 조회수·시청 지표를 가져오는 중...';
+    const neededIds = [...new Set(sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId)))];
+    const viewCounts = await fetchViewCounts(neededIds);
     const analytics = await fetchAnalyticsForVideos(neededIds);
 
     $('sync-status').textContent = '클릭률 리포트를 확인하는 중...';
@@ -653,7 +669,7 @@ async function runAdminSync() {
         const a = analytics[p.videoId] || {};
         return {
           part: p.part, pub: p.pub,
-          views: a.views ?? null,
+          views: viewCounts[p.videoId] ?? null,
           ctr: ctrMap[p.videoId] ?? null,
           avgViewDurationSec: a.avgViewDurationSec ?? null,
           avgViewPct: a.avgViewPct ?? null
