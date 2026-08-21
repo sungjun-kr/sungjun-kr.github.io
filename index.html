@@ -59,6 +59,10 @@ input[type="password"], input[type="text"] {
 .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
 .muted-text { color: var(--muted); font-size: 13px; margin-right: auto; }
 .month-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.scope-tabs { margin-bottom: 12px; }
+.scope-tabs .month-tab { font-size: 14px; padding: 9px 20px; }
+.sub-tabs { margin-bottom: 12px; }
+.sub-tabs .month-tab { font-size: 12px; padding: 6px 13px; }
 .month-tab {
   padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border);
   background: var(--surface-1); color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer;
@@ -122,6 +126,8 @@ footer.fine-print { text-align: center; margin-top: 30px; }
         <button id="exit-btn" class="btn-ghost">나가기</button>
       </div>
       <p id="sync-status" class="fine-print" hidden></p>
+      <div id="scope-tabs" class="month-tabs scope-tabs"></div>
+      <div id="archive-tabs" class="month-tabs sub-tabs" hidden></div>
       <div id="month-tabs" class="month-tabs"></div>
       <div id="guest-list"></div>
     </section>
@@ -144,6 +150,13 @@ const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+�
 const SET_WINDOW_DAYS = 14;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
 const REACH_REPORT_TYPE = 'channel_reach_basic_a1';  // 클릭률(썸네일 노출 CTR) 리포트
 const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민)\s*$/;
+// 저장소 채널들. channelId는 관리자 로그인 후 자동으로 채워져요.
+const ARCHIVE_CHANNELS = [
+  { key: '투자',   name: '웅달책방_투자',   channelId: '' },
+  { key: '교양',   name: '웅달책방_교양',   channelId: '' },
+  { key: '부동산', name: '웅달책방_부동산', channelId: '' }
+];
+const ARCHIVE_GROUPS = ['라이브', '통합본'];
 const GITHUB_OWNER = 'sungjun-kr';
 const GITHUB_REPO = 'sungjun-kr.github.io';
 const DATA_PATH = 'data.json';
@@ -166,6 +179,8 @@ let accessToken = null;
 let isAdmin = false;
 let publishedData = null;
 let activeMonth = null;
+let activeScope = 'main';      // 'main'(본채널) | 'archive'(저장소)
+let activeArchive = null;      // 저장소 카테고리 키 (투자/교양/부동산)
 
 function $(id) { return document.getElementById(id); }
 
@@ -296,11 +311,31 @@ async function loadPublishedData() {
 }
 
 function render() {
-  const months = publishedData.months || [];
   $('last-updated').textContent = publishedData.updatedAt
     ? `마지막 업데이트: ${new Date(publishedData.updatedAt).toLocaleString('ko-KR')}`
     : '아직 게시된 데이터가 없어요.';
 
+  // 최상위 섹터: 본채널 / 저장소
+  const archive = (publishedData.archive && publishedData.archive.channels) || [];
+  const scopeEl = $('scope-tabs');
+  scopeEl.innerHTML = '';
+  if (archive.length) {
+    [['main', '본채널'], ['archive', '저장소']].forEach(([key, label]) => {
+      const btn = document.createElement('button');
+      btn.className = 'month-tab' + (activeScope === key ? ' active' : '');
+      btn.textContent = label;
+      btn.addEventListener('click', () => { activeScope = key; activeMonth = null; render(); });
+      scopeEl.appendChild(btn);
+    });
+  }
+
+  if (activeScope === 'archive' && archive.length) {
+    renderArchive(archive);
+    return;
+  }
+
+  $('archive-tabs').hidden = true;
+  const months = publishedData.months || [];
   const tabsEl = $('month-tabs');
   tabsEl.innerHTML = '';
   if (!months.length) {
@@ -440,6 +475,97 @@ function render() {
     card.appendChild(table);
     listEl.appendChild(card);
   }
+}
+
+// ---------------- 저장소 (웅달책방_투자 / _교양 / _부동산) ----------------
+
+function renderArchive(channels) {
+  // 2단: 카테고리 탭
+  if (!activeArchive || !channels.find(c => c.key === activeArchive)) {
+    activeArchive = channels[0].key;
+  }
+  const subEl = $('archive-tabs');
+  subEl.hidden = false;
+  subEl.innerHTML = '';
+  channels.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (c.key === activeArchive ? ' active' : '');
+    btn.textContent = c.key;
+    btn.addEventListener('click', () => { activeArchive = c.key; activeMonth = null; render(); });
+    subEl.appendChild(btn);
+  });
+
+  const ch = channels.find(c => c.key === activeArchive);
+  const months = (ch && ch.months) || [];
+
+  // 3단: 월 탭
+  const tabsEl = $('month-tabs');
+  tabsEl.innerHTML = '';
+  const listEl = $('guest-list');
+  listEl.innerHTML = '';
+  if (!months.length) {
+    listEl.innerHTML = '<div class="empty-state">이 채널에는 아직 데이터가 없어요.</div>';
+    return;
+  }
+  if (!activeMonth || !months.find(m => m.month === activeMonth)) {
+    activeMonth = months[months.length - 1].month;
+  }
+  months.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (m.month === activeMonth ? ' active' : '');
+    btn.textContent = m.label;
+    btn.addEventListener('click', () => { activeMonth = m.month; render(); });
+    tabsEl.appendChild(btn);
+  });
+
+  const cur = months.find(m => m.month === activeMonth);
+
+  // 채널 전체 요약
+  const allRow = document.createElement('div');
+  allRow.className = 'kpi-row';
+  allRow.appendChild(statTile('채널', ch.name));
+  allRow.appendChild(statTile('총 영상 수', `${cur.videoCount || 0}편`));
+  allRow.appendChild(statTile('평균 조회수', fmtNum(cur.avgViews)));
+  allRow.appendChild(statTile('평균 클릭률', fmtPct(cur.avgCtr)));
+  allRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(cur.avgViewDurationSec)));
+  listEl.appendChild(allRow);
+
+  // 4단: 라이브 / 통합본
+  const head = document.createElement('h2');
+  head.className = 'section-head';
+  head.textContent = '유형별';
+  listEl.appendChild(head);
+
+  ARCHIVE_GROUPS.forEach(key => {
+    const g = (cur.groups || {})[key];
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+
+    const title = document.createElement('div');
+    title.className = 'guest-toggle no-detail';
+    const left = document.createElement('div');
+    left.className = 'guest-toggle-left';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'guest-name';
+    nameEl.textContent = key;
+    const metaEl = document.createElement('span');
+    metaEl.className = 'guest-date';
+    metaEl.textContent = g ? `영상 ${g.videoCount}편` : '해당 영상 없음';
+    left.appendChild(nameEl);
+    left.appendChild(metaEl);
+    title.appendChild(left);
+    card.appendChild(title);
+
+    const row = document.createElement('div');
+    row.className = 'kpi-row';
+    row.appendChild(statTile('총 영상 수', g ? `${g.videoCount}편` : '–'));
+    row.appendChild(statTile('평균 조회수', g ? fmtNum(g.avgViews) : '–'));
+    row.appendChild(statTile('평균 클릭률', g ? fmtPct(g.avgCtr) : '–'));
+    row.appendChild(statTile('평균 시청 지속시간', g ? fmtDuration(g.avgViewDurationSec) : '–'));
+    card.appendChild(row);
+
+    listEl.appendChild(card);
+  });
 }
 
 function statTile(label, value, sub) {
@@ -674,6 +800,123 @@ async function fetchCtrByVideo() {
   }
 }
 
+// ---------------- 저장소 채널 수집 ----------------
+
+// 채널 이름으로 채널 ID를 찾아요 (내 계정의 채널이므로 검색으로 찾습니다).
+async function resolveArchiveChannelId(name) {
+  const qs = new URLSearchParams({ part: 'snippet', type: 'channel', q: name, maxResults: '10' });
+  const d = await authFetch(`https://www.googleapis.com/youtube/v3/search?${qs}`);
+  const exact = (d.items || []).find(i => i.snippet.title.trim() === name);
+  const loose = (d.items || []).find(i => i.snippet.title.includes(name.split('_').pop()));
+  const hit = exact || loose;
+  return hit ? (hit.snippet.channelId || hit.id.channelId) : null;
+}
+
+// 제목으로 유형을 구분해요: "통합본"이 들어가면 통합본, 1~N부만 있으면 라이브.
+function archiveGroupOf(title) {
+  if (title.includes('통합본')) return '통합본';
+  if (/\d+\s*부/.test(title)) return '라이브';
+  return null;   // 그 외(쇼츠·예고 등)는 집계에서 제외
+}
+
+async function collectArchiveChannel(entry, ctrMapAll) {
+  const channelId = entry.channelId || await resolveArchiveChannelId(entry.name);
+  if (!channelId) return { key: entry.key, name: entry.name, channelId: null, months: [], error: '채널을 찾지 못했어요' };
+
+  const chData = await authFetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}`);
+  const ch = chData.items && chData.items[0];
+  if (!ch) return { key: entry.key, name: entry.name, channelId, months: [], error: '채널 정보를 못 읽었어요' };
+  const uploads = ch.contentDetails.relatedPlaylists.uploads;
+
+  // 업로드 전체 수집 (최대 1000개)
+  let vids = [], pt = '', pages = 0;
+  do {
+    const qs = new URLSearchParams({ part: 'snippet', maxResults: '50', playlistId: uploads });
+    if (pt) qs.set('pageToken', pt);
+    const d = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?${qs}`);
+    (d.items || []).forEach(i => vids.push({
+      videoId: i.snippet.resourceId.videoId,
+      title: i.snippet.title,
+      publishedAt: new Date(i.snippet.publishedAt)
+    }));
+    pt = d.nextPageToken || '';
+    pages++;
+  } while (pt && pages < 20);
+
+  const ids = vids.map(v => v.videoId);
+  const views = await fetchViewCounts(ids);
+  const an = await fetchArchiveAnalytics(channelId, ids);
+
+  // 월별 · 유형별 집계
+  const byMonth = new Map();
+  vids.forEach(v => {
+    const group = archiveGroupOf(v.title);
+    if (!group) return;
+    const key = monthKey(v.publishedAt);
+    if (!byMonth.has(key)) byMonth.set(key, { month: key, label: monthLabel(v.publishedAt), items: [] });
+    byMonth.get(key).items.push({
+      group,
+      views: views[v.videoId] ?? null,
+      ctr: ctrMapAll[v.videoId] ?? null,
+      dur: (an[v.videoId] || {}).dur ?? null
+    });
+  });
+
+  const avg = (arr, k) => {
+    const q = arr.map(x => x[k]).filter(x => typeof x === 'number');
+    return q.length ? q.reduce((a, b) => a + b, 0) / q.length : null;
+  };
+  const months = [...byMonth.values()].map(m => {
+    const groups = {};
+    ARCHIVE_GROUPS.forEach(g => {
+      const arr = m.items.filter(x => x.group === g);
+      if (!arr.length) return;
+      const c = avg(arr, 'ctr'), d = avg(arr, 'dur'), vv = avg(arr, 'views');
+      groups[g] = {
+        videoCount: arr.length,
+        avgViews: vv == null ? null : Math.round(vv),
+        avgCtr: c == null ? null : +c.toFixed(2),
+        avgViewDurationSec: d == null ? null : Math.round(d)
+      };
+    });
+    const c = avg(m.items, 'ctr'), d = avg(m.items, 'dur'), vv = avg(m.items, 'views');
+    return {
+      month: m.month, label: m.label, videoCount: m.items.length,
+      avgViews: vv == null ? null : Math.round(vv),
+      avgCtr: c == null ? null : +c.toFixed(2),
+      avgViewDurationSec: d == null ? null : Math.round(d),
+      groups
+    };
+  }).sort((a, b) => a.month.localeCompare(b.month));
+
+  return { key: entry.key, name: entry.name, channelId, months };
+}
+
+// 저장소 채널의 시청 지속시간 (채널별로 ids 파라미터가 달라요)
+async function fetchArchiveAnalytics(channelId, videoIds) {
+  const result = {};
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+    const qs = new URLSearchParams({
+      ids: `channel==${channelId}`,
+      startDate: '2005-01-01',
+      endDate: new Date().toISOString().slice(0, 10),
+      metrics: 'averageViewDuration',
+      dimensions: 'video',
+      filters: `video==${batch.join(',')}`,
+      maxResults: '200'
+    });
+    try {
+      const d = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
+      (d.rows || []).forEach(r => { result[r[0]] = { dur: r[1] }; });
+    } catch (err) {
+      console.warn('저장소 시청 지표를 못 가져왔어요:', err.message);
+      break;
+    }
+  }
+  return result;
+}
+
 async function runAdminSync() {
   $('sync-status').hidden = false;
   $('sync-status').textContent = '캘린더에서 게스트 목록을 가져오는 중...';
@@ -787,11 +1030,30 @@ async function runAdminSync() {
       m.guests.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
       m.pending.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
     });
-    publishedData = { updatedAt: new Date().toISOString(), channel: '웅달 책방', months };
+    // 저장소 채널 수집
+    $('sync-status').textContent = '저장소 채널(투자/교양/부동산)을 가져오는 중...';
+    const archiveChannels = [];
+    for (const entry of ARCHIVE_CHANNELS) {
+      try {
+        $('sync-status').textContent = `저장소 「${entry.key}」 수집 중...`;
+        archiveChannels.push(await collectArchiveChannel(entry, ctrMap));
+      } catch (err) {
+        console.warn(`저장소 ${entry.key} 실패:`, err.message);
+        archiveChannels.push({ key: entry.key, name: entry.name, months: [], error: err.message });
+      }
+    }
+
+    publishedData = {
+      updatedAt: new Date().toISOString(),
+      channel: '웅달 책방',
+      months,
+      archive: { channels: archiveChannels }
+    };
     activeMonth = months.length ? months[months.length - 1].month : null;
     render();
     const ctrCount = Object.keys(ctrMap).length;
-    $('sync-status').textContent = `완료! (클릭률 ${ctrCount ? ctrCount + '개 영상 반영' : '아직 리포트 생성 전 — 등록 후 1~2일 소요'}) 이제 "게시하기"를 눌러야 다른 사람들에게 반영돼요.`;
+    const archOk = archiveChannels.filter(c => c.months && c.months.length).length;
+    $('sync-status').textContent = `완료! 저장소 ${archOk}/${ARCHIVE_CHANNELS.length}개 채널 · 클릭률 ${ctrCount ? ctrCount + '개 영상 반영' : '아직 리포트 생성 전(등록 후 1~2일 소요)'} — 이제 "게시하기"를 눌러야 다른 사람들에게 반영돼요.`;
   } catch (err) {
     console.error(err);
     $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
