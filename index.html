@@ -90,6 +90,7 @@ input[type="password"], input[type="text"] {
 .video-table td.num { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
 .empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
 .section-head { font-size: 15px; font-weight: 600; margin: 28px 0 12px; color: var(--text-secondary); }
+.badge-priv { font-size: 10px; color: var(--warning, #a06600); border: 1px solid currentColor; border-radius: 4px; padding: 1px 4px; margin-left: 4px; vertical-align: middle; }
 footer.fine-print { text-align: center; margin-top: 30px; }
 </style>
 </head>
@@ -390,7 +391,8 @@ function render() {
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtPct(v.ctr)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
+        const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtPct(v.ctr)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
@@ -534,7 +536,50 @@ async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
     const oldestOnPage = pageItems.length ? pageItems[pageItems.length - 1].publishedAt : null;
     if (oldestOnPage && oldestOnPage < earliestNeeded) break;
   } while (pageToken && pages < 40);
-  return items;
+
+  // 업로드 재생목록은 공개 영상만 담고 있어요 (편집자 권한이라 비공개는 빠짐).
+  // 비공개 영상은 Analytics에는 남아 있으니, 거기서 ID를 긁어와 제목을 붙여 보강해요.
+  const extra = await fetchNonPublicUploads(items, earliestNeeded);
+  return items.concat(extra);
+}
+
+// Analytics에는 비공개 영상도 집계되므로, 업로드 목록에 없는 영상 ID를 찾아 되살려요.
+async function fetchNonPublicUploads(publicItems, earliestNeeded) {
+  try {
+    const known = new Set(publicItems.map(v => v.videoId));
+    const fmt = d => d.toISOString().slice(0, 10);
+    const qs = new URLSearchParams({
+      ids: `channel==${YOUTUBE_CHANNEL_ID}`,
+      startDate: fmt(earliestNeeded),
+      endDate: new Date().toISOString().slice(0, 10),
+      metrics: 'views', dimensions: 'video', sort: '-views', maxResults: '200'
+    });
+    const data = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
+    const unknownIds = (data.rows || []).map(r => r[0]).filter(id => !known.has(id));
+    if (!unknownIds.length) return [];
+
+    const out = [];
+    for (let i = 0; i < unknownIds.length; i += 50) {
+      const batch = unknownIds.slice(i, i + 50);
+      const v = await authFetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,status&id=${batch.join(',')}`);
+      (v.items || []).forEach(it => {
+        // 이 채널의 영상이고, 필요한 기간 안에 올라간 것만
+        if (it.snippet.channelId !== YOUTUBE_CHANNEL_ID) return;
+        const pub = new Date(it.snippet.publishedAt);
+        if (pub < earliestNeeded) return;
+        out.push({
+          videoId: it.id,
+          privacy: it.status && it.status.privacyStatus,
+          title: it.snippet.title,
+          publishedAt: pub
+        });
+      });
+    }
+    return out;
+  } catch (err) {
+    console.warn('비공개 영상 보강 실패:', err.message);
+    return [];
+  }
 }
 
 // 조회수는 Data API의 실시간 누적값을 씁니다.
@@ -664,7 +709,7 @@ async function runAdminSync() {
         const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
         if (key && !parts.has(key)) {
           parts.add(key);
-          picked.push({ videoId: v.videoId, title: v.title, part: key === 'full' ? '풀버전' : key + '부', pub: v.publishedAt.toISOString().slice(0, 10) });
+          picked.push({ videoId: v.videoId, title: v.title, privacy: v.privacy, part: key === 'full' ? '풀버전' : key + '부', pub: v.publishedAt.toISOString().slice(0, 10) });
         }
       });
       const numParts = [...parts].filter(k => k !== 'full').length;
@@ -702,6 +747,7 @@ async function runAdminSync() {
         const a = analytics[p.videoId] || {};
         return {
           part: p.part, pub: p.pub,
+          privacy: p.privacy || null,
           views: viewCounts[p.videoId] ?? null,
           ctr: ctrMap[p.videoId] ?? null,
           avgViewDurationSec: a.avgViewDurationSec ?? null,

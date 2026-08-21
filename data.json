@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-21T05:05:00.000Z",
+  "updatedAt": "2026-08-21T05:35:00.000Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "months": [
@@ -1051,28 +1051,39 @@
         {
           "name": "이형수 대표",
           "eventDate": "2026-08-13",
-          "videoCount": 4,
-          "totalViews": 185803,
-          "avgViews": 46451,
+          "videoCount": 5,
+          "totalViews": 201641,
+          "avgViews": 40328,
           "avgCtr": null,
-          "avgViewDurationSec": 308,
-          "avgViewPct": 34.37,
+          "avgViewDurationSec": 291,
+          "avgViewPct": 34.36,
           "videos": [
+            {
+              "part": "1부",
+              "pub": "2026-08-14",
+              "views": 15527,
+              "ctr": null,
+              "avgViewDurationSec": 223,
+              "avgViewPct": 34.31,
+              "privacy": "private"
+            },
             {
               "part": "2부",
               "pub": "2026-08-15",
               "views": 11860,
               "ctr": null,
               "avgViewDurationSec": 260,
-              "avgViewPct": 39.91
+              "avgViewPct": 39.91,
+              "privacy": "public"
             },
             {
               "part": "3부",
               "pub": "2026-08-16",
-              "views": 33496,
+              "views": 33510,
               "ctr": null,
               "avgViewDurationSec": 242,
-              "avgViewPct": 41.4
+              "avgViewPct": 41.4,
+              "privacy": "public"
             },
             {
               "part": "4부",
@@ -1080,18 +1091,20 @@
               "views": 113154,
               "ctr": null,
               "avgViewDurationSec": 211,
-              "avgViewPct": 35.88
+              "avgViewPct": 35.88,
+              "privacy": "public"
             },
             {
               "part": "풀버전",
               "pub": "2026-08-19",
-              "views": 27293,
+              "views": 27590,
               "ctr": null,
               "avgViewDurationSec": 518,
-              "avgViewPct": 20.3
+              "avgViewPct": 20.3,
+              "privacy": "public"
             }
           ],
-          "note": "1부가 채널에 없어 2부부터 집계"
+          "note": "1부는 비공개 영상 (지표는 정상 집계)"
         }
       ],
       "pending": [
