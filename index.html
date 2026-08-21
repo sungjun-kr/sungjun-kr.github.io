@@ -84,6 +84,7 @@ input[type="password"], input[type="text"] {
 .stat-tile { background: var(--page-plane); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
 .stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
 .stat-value { font-size: 20px; font-weight: 600; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
 .video-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .video-table th, .video-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gridline); }
 .video-table th { color: var(--muted); font-weight: 600; font-size: 12px; }
@@ -330,9 +331,11 @@ function render() {
     const sumRow = document.createElement('div');
     sumRow.className = 'kpi-row';
     const totV = g5.reduce((s, g) => s + (g.totalViews || 0), 0);
+    const totVid = g5.reduce((s, g) => s + (g.videoCount || (g.videos || []).length), 0);
     sumRow.appendChild(statTile('집계 완료 게스트', `${g5.length}명`));
     sumRow.appendChild(statTile('합계 조회수', fmtNum(totV)));
     sumRow.appendChild(statTile('게스트당 평균 조회수', fmtNum(Math.round(totV / g5.length))));
+    sumRow.appendChild(statTile('영상당 평균 조회수', totVid ? fmtNum(Math.round(totV / totVid)) : '–', `영상 ${totVid}편`));
     sumRow.appendChild(statTile('업로드 예정', `${(current.pending || []).length}명`));
     listEl.appendChild(sumRow);
   }
@@ -439,10 +442,11 @@ function render() {
   }
 }
 
-function statTile(label, value) {
+function statTile(label, value, sub) {
   const tile = document.createElement('div');
   tile.className = 'stat-tile';
-  tile.innerHTML = `<div class="stat-label">${label}</div><div class="stat-value">${value}</div>`;
+  tile.innerHTML = `<div class="stat-label">${label}</div><div class="stat-value">${value}</div>`
+    + (sub ? `<div class="stat-sub">${sub}</div>` : '');
   return tile;
 }
 
