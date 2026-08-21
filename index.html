@@ -1090,24 +1090,34 @@ async function calendarCached() {
   return _calCache;
 }
 
-// 특정 기간에 올라온 영상만 조회해요. 전체 업로드 목록을 훑지 않아 훨씬 빠릅니다.
+// 특정 기간에 올라온 영상을 모아요.
+// 주의: search.list는 결과가 약 500개로 제한돼 영상을 누락시키므로 쓰지 않습니다.
+// 업로드 재생목록을 최신순으로 훑고, 필요한 기간보다 과거로 넘어가면 멈춰요.
 async function fetchVideosInRange(channelId, afterISO, beforeISO) {
-  let items = [], pt = '', pages = 0;
+  const after = new Date(afterISO), before = new Date(beforeISO);
+  const chData = await authFetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}`);
+  const ch = chData.items && chData.items[0];
+  if (!ch) throw new Error('채널 정보를 읽지 못했어요.');
+  const uploads = ch.contentDetails.relatedPlaylists.uploads;
+
+  const items = [];
+  let pt = '', pages = 0, reachedOlder = false;
   do {
-    const qs = new URLSearchParams({
-      part: 'snippet', type: 'video', order: 'date', maxResults: '50',
-      channelId, publishedAfter: afterISO, publishedBefore: beforeISO
-    });
+    const qs = new URLSearchParams({ part: 'snippet,status', maxResults: '50', playlistId: uploads });
     if (pt) qs.set('pageToken', pt);
-    const d = await authFetch(`https://www.googleapis.com/youtube/v3/search?${qs}`);
-    (d.items || []).forEach(i => items.push({
-      videoId: i.id.videoId,
+    const d = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?${qs}`);
+    const page = (d.items || []).map(i => ({
+      videoId: i.snippet.resourceId.videoId,
+      privacy: i.status && i.status.privacyStatus,
       title: i.snippet.title,
       publishedAt: new Date(i.snippet.publishedAt)
     }));
+    page.forEach(v => { if (v.publishedAt >= after && v.publishedAt <= before) items.push(v); });
+    const oldest = page.length ? page[page.length - 1].publishedAt : null;
+    if (oldest && oldest < after) reachedOlder = true;
     pt = d.nextPageToken || '';
     pages++;
-  } while (pt && pages < 12);
+  } while (pt && !reachedOlder && pages < 60);
   return items;
 }
 
@@ -1228,6 +1238,8 @@ async function refreshMainMonth(monthKeyStr) {
   const idx = publishedData.months.findIndex(m => m.month === monthKeyStr);
   const entry = { month: monthKeyStr, label, guests, pending, updatedAt: new Date().toISOString() };
   if (idx >= 0) publishedData.months[idx] = entry; else publishedData.months.push(entry);
+  // 게스트도 예정도 없는 달은 탭에 남기지 않아요.
+  publishedData.months = publishedData.months.filter(m => (m.guests || []).length || (m.pending || []).length);
   publishedData.months.sort((a, b) => a.month.localeCompare(b.month));
   publishedData.updatedAt = new Date().toISOString();
 }
