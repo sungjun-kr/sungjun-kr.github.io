@@ -76,6 +76,7 @@ input[type="password"], input[type="text"] {
 .video-table th { color: var(--muted); font-weight: 600; font-size: 12px; }
 .video-table td.num { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
 .empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
+.section-head { font-size: 15px; font-weight: 600; margin: 28px 0 12px; color: var(--text-secondary); }
 footer.fine-print { text-align: center; margin-top: 30px; }
 </style>
 </head>
@@ -273,6 +274,19 @@ function render() {
     listEl.innerHTML = '<div class="empty-state">이 달에는 게스트가 없어요.</div>';
     return;
   }
+  // 요약 (집계 완료된 게스트 기준)
+  const g5 = current.guests;
+  if (g5.length) {
+    const sumRow = document.createElement('div');
+    sumRow.className = 'kpi-row';
+    const totV = g5.reduce((s, g) => s + (g.totalViews || 0), 0);
+    sumRow.appendChild(statTile('집계 완료 게스트', `${g5.length}명`));
+    sumRow.appendChild(statTile('합계 조회수', fmtNum(totV)));
+    sumRow.appendChild(statTile('게스트당 평균 조회수', fmtNum(Math.round(totV / g5.length))));
+    sumRow.appendChild(statTile('업로드 예정', `${(current.pending || []).length}명`));
+    listEl.appendChild(sumRow);
+  }
+
   current.guests.forEach(g => {
     const card = document.createElement('div');
     card.className = 'guest-card';
@@ -283,38 +297,59 @@ function render() {
 
     const dateEl = document.createElement('div');
     dateEl.className = 'guest-date';
-    dateEl.textContent = g.eventDate ? new Date(g.eventDate).toLocaleDateString('ko-KR') : '';
+    const d = g.eventDate ? new Date(g.eventDate).toLocaleDateString('ko-KR') : '';
+    dateEl.textContent = `${d} · 영상 ${g.videoCount || (g.videos || []).length}개` + (g.note ? ` · ${g.note}` : '');
     card.appendChild(dateEl);
 
     const kpiRow = document.createElement('div');
     kpiRow.className = 'kpi-row';
     kpiRow.appendChild(statTile('총 조회수', fmtNum(g.totalViews)));
     kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
-    kpiRow.appendChild(statTile('평균 클릭률', fmtPct(g.avgCtr)));
     kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
+    kpiRow.appendChild(statTile('평균 시청률', fmtPct(g.avgViewPct)));
     card.appendChild(kpiRow);
 
     if (g.videos && g.videos.length) {
       const table = document.createElement('table');
       table.className = 'video-table';
-      table.innerHTML = `<thead><tr><th>영상</th><th>조회수</th><th>클릭률</th><th>평균 시청시간</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${escapeHtml(v.title)}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtPct(v.ctr)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td>`;
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
       card.appendChild(table);
-    } else {
-      const warn = document.createElement('div');
-      warn.className = 'fine-print';
-      warn.textContent = '매칭된 영상을 찾지 못했어요.';
-      card.appendChild(warn);
     }
 
     listEl.appendChild(card);
   });
+
+  // 업로드 예정 섹션
+  const pending = current.pending || [];
+  if (pending.length) {
+    const head = document.createElement('h2');
+    head.className = 'section-head';
+    head.textContent = `업로드 예정 (${pending.length}명)`;
+    listEl.appendChild(head);
+
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+    const table = document.createElement('table');
+    table.className = 'video-table';
+    table.innerHTML = `<thead><tr><th>게스트</th><th>일정</th><th>상태</th></tr></thead>`;
+    const tbody = document.createElement('tbody');
+    pending.forEach(p => {
+      const tr = document.createElement('tr');
+      const d = p.eventDate ? new Date(p.eventDate).toLocaleDateString('ko-KR') : '';
+      tr.innerHTML = `<td>${escapeHtml(p.name)}</td><td>${escapeHtml(d)}</td><td>${escapeHtml(p.note || '')}</td>`;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    card.appendChild(table);
+    listEl.appendChild(card);
+  }
 }
 
 function statTile(label, value) {
