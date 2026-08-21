@@ -199,20 +199,39 @@ $('password-form').addEventListener('submit', (e) => {
 // 팝업 대신 같은 창에서 구글 로그인 페이지로 이동한 뒤 돌아와요 (팝업 차단 영향 없음).
 const REDIRECT_URI = location.origin + location.pathname;
 
+// 토큰은 이 탭의 sessionStorage에만 보관해요 (탭을 닫으면 사라짐).
+// 유효 기간(약 1시간) 동안은 페이지를 새로 열어도 다시 로그인하지 않아도 돼요.
+function saveToken(token, expiresInSec) {
+  const expiresAt = Date.now() + (Number(expiresInSec) || 3600) * 1000 - 60000; // 만료 1분 전까지만 유효 처리
+  try { sessionStorage.setItem('gToken', JSON.stringify({ token, expiresAt })); } catch (e) {}
+}
+function loadToken() {
+  try {
+    const raw = sessionStorage.getItem('gToken');
+    if (!raw) return null;
+    const { token, expiresAt } = JSON.parse(raw);
+    if (!token || !expiresAt || Date.now() >= expiresAt) { sessionStorage.removeItem('gToken'); return null; }
+    return token;
+  } catch (e) { return null; }
+}
+
 $('admin-link').addEventListener('click', () => {
+  // 이미 유효한 토큰이 있으면 로그인 화면을 건너뛰어요.
+  const existing = loadToken();
+  if (existing) { accessToken = existing; enterDashboard(true); return; }
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     redirect_uri: REDIRECT_URI,
     response_type: 'token',
     scope: SCOPES,
-    include_granted_scopes: 'true',
-    prompt: 'consent'
+    include_granted_scopes: 'true'
   });
   location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
 });
 
 $('exit-btn').addEventListener('click', () => {
   sessionStorage.removeItem('guestAuthed');
+  sessionStorage.removeItem('gToken');
   accessToken = null;
   isAdmin = false;
   $('dashboard-view').hidden = true;
@@ -223,7 +242,12 @@ $('exit-btn').addEventListener('click', () => {
 // 구글 로그인에서 돌아왔는지 확인 (URL #access_token=...)
 (function checkReturnedToken() {
   const hash = location.hash.startsWith('#') ? location.hash.slice(1) : '';
-  if (!hash) return false;
+  if (!hash) {
+    // 로그인 리디렉션이 아니어도, 이 탭에 살아있는 토큰이 있으면 관리자 모드로 복원해요.
+    const saved = loadToken();
+    if (saved) { accessToken = saved; enterDashboard(true); return true; }
+    return false;
+  }
   const params = new URLSearchParams(hash);
   const token = params.get('access_token');
   const err = params.get('error');
@@ -235,6 +259,7 @@ $('exit-btn').addEventListener('click', () => {
   }
   if (token) {
     accessToken = token;
+    saveToken(token, params.get('expires_in'));
     enterDashboard(true);
     return true;
   }
@@ -429,6 +454,12 @@ function escapeHtml(str) {
 
 async function authFetch(url) {
   const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+  if (res.status === 401) {
+    // 토큰이 만료됐어요. 저장된 토큰을 지우고 다시 로그인하도록 안내해요.
+    sessionStorage.removeItem('gToken');
+    accessToken = null;
+    throw new Error('로그인이 만료됐어요. "나가기" 후 다시 Google 로그인해주세요.');
+  }
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`${url} -> ${res.status} ${body}`);
@@ -487,11 +518,13 @@ async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
   let pageToken = '';
   let pages = 0;
   do {
-    const qs = new URLSearchParams({ part: 'snippet', maxResults: '50', playlistId: uploadsPlaylistId });
+    // status를 함께 받아 비공개/미등재 영상도 알 수 있게 해요 (업로드 재생목록에는 포함돼요).
+    const qs = new URLSearchParams({ part: 'snippet,status', maxResults: '50', playlistId: uploadsPlaylistId });
     if (pageToken) qs.set('pageToken', pageToken);
     const data = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?${qs}`);
     const pageItems = (data.items || []).map(i => ({
       videoId: i.snippet.resourceId.videoId,
+      privacy: i.status && i.status.privacyStatus,
       title: i.snippet.title,
       publishedAt: new Date(i.snippet.publishedAt)
     }));
