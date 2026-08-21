@@ -114,7 +114,6 @@ footer.fine-print { text-align: center; margin-top: 30px; }
   <footer class="fine-print">데이터는 관리자가 갱신할 때마다 최신화됩니다.</footer>
 </div>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 // ====================================================================
 // 설정
@@ -172,13 +171,19 @@ $('password-form').addEventListener('submit', (e) => {
   }
 });
 
+// 팝업 대신 같은 창에서 구글 로그인 페이지로 이동한 뒤 돌아와요 (팝업 차단 영향 없음).
+const REDIRECT_URI = location.origin + location.pathname;
+
 $('admin-link').addEventListener('click', () => {
-  if (!tokenClient) {
-    $('signin-error').hidden = false;
-    $('signin-error').textContent = 'Google 로그인 준비 중이에요. 잠시 후 다시 시도해주세요.';
-    return;
-  }
-  tokenClient.requestAccessToken();
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    response_type: 'token',
+    scope: SCOPES,
+    include_granted_scopes: 'true',
+    prompt: 'consent'
+  });
+  location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
 });
 
 $('exit-btn').addEventListener('click', () => {
@@ -190,34 +195,28 @@ $('exit-btn').addEventListener('click', () => {
   $('admin-badge').hidden = true;
 });
 
-function handleTokenResponse(resp) {
-  if (!resp || resp.error) {
+// 구글 로그인에서 돌아왔는지 확인 (URL #access_token=...)
+(function checkReturnedToken() {
+  const hash = location.hash.startsWith('#') ? location.hash.slice(1) : '';
+  if (!hash) return false;
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  const err = params.get('error');
+  history.replaceState(null, '', location.pathname);
+  if (err) {
     $('signin-error').hidden = false;
-    $('signin-error').textContent = '로그인에 실패했어요. 다시 시도해주세요.';
-    return;
+    $('signin-error').textContent = '로그인이 취소되었거나 실패했어요: ' + err;
+    return false;
   }
-  accessToken = resp.access_token;
-  enterDashboard(true);
-}
-
-function boot() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: handleTokenResponse,
-    error_callback: (err) => {
-      console.error(err);
-      $('signin-error').hidden = false;
-      $('signin-error').textContent = '로그인 창을 열지 못했어요. 팝업 차단을 확인해주세요.';
-    }
-  });
-}
-(function waitForGis() {
-  if (window.google && google.accounts && google.accounts.oauth2) boot();
-  else setTimeout(waitForGis, 100);
+  if (token) {
+    accessToken = token;
+    enterDashboard(true);
+    return true;
+  }
+  return false;
 })();
 
-if (sessionStorage.getItem('guestAuthed') === '1') {
+if (!accessToken && sessionStorage.getItem('guestAuthed') === '1') {
   enterDashboard(false);
 }
 
