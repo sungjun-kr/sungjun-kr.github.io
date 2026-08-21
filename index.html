@@ -133,14 +133,25 @@ footer.fine-print { text-align: center; margin-top: 30px; }
 // 설정
 // ====================================================================
 const CLIENT_ID = '525359194157-5b7i2n6cphveliqjnklavmddopg9p0ek.apps.googleusercontent.com';
-const YOUTUBE_CHANNEL_ID = 'UCbOIEn95Rvnk97KRtSFqvbQ';
+const YOUTUBE_CHANNEL_ID = 'UCbOIEn95Rvnk97KRtSFqvbQ';   // 웅달 책방
 const GUEST_PASSWORD = 'cjamm1206';
+const CALENDAR_ID = 'biz@hijump.kr';                     // 🗓️ 웅달책방 캘린더
 const CALENDAR_PREFIX = '[성준]';
-const PART_LABELS = ['1부', '2부', '3부', '4부', '풀버전'];
+const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
+const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
+const SET_WINDOW_DAYS = 14;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
+const REACH_REPORT_TYPE = 'channel_reach_basic_a1';  // 클릭률(썸네일 노출 CTR) 리포트
+const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민)\s*$/;
 const GITHUB_OWNER = 'sungjun-kr';
-const GITHUB_REPO = 'youtube';
+const GITHUB_REPO = 'sungjun-kr.github.io';
 const DATA_PATH = 'data.json';
 // ====================================================================
+
+function partOrder(part) {
+  if (part === '풀버전') return 9;
+  const n = parseInt(part, 10);
+  return isFinite(n) ? n : 8;
+}
 
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar.readonly',
@@ -337,6 +348,7 @@ function render() {
     kpiRow.className = 'kpi-row';
     kpiRow.appendChild(statTile('총 조회수', fmtNum(g.totalViews)));
     kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
+    kpiRow.appendChild(statTile('평균 클릭률', fmtPct(g.avgCtr)));
     kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
     kpiRow.appendChild(statTile('평균 시청률', fmtPct(g.avgViewPct)));
     card.appendChild(kpiRow);
@@ -349,11 +361,11 @@ function render() {
 
       const table = document.createElement('table');
       table.className = 'video-table';
-      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>클릭률</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtPct(v.ctr)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
@@ -424,16 +436,16 @@ async function authFetch(url) {
   return res.json();
 }
 
-function monthRangeKST(year, monthIndex0) {
-  const start = new Date(Date.UTC(year, monthIndex0, 1, -9, 0, 0));
-  const end = new Date(Date.UTC(year, monthIndex0 + 1, 1, -9, 0, 0));
-  return { start, end };
-}
 function monthKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 function monthLabel(d) {
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
+}
+
+// 게스트 이름에서 직함을 떼어 핵심 인명만 남김 (영상 제목 매칭용)
+function coreName(name) {
+  return name.replace(TITLE_SUFFIX_RE, '').trim();
 }
 
 async function fetchCalendarGuestEvents() {
@@ -447,18 +459,20 @@ async function fetchCalendarGuestEvents() {
       timeMin, timeMax, singleEvents: 'true', orderBy: 'startTime', maxResults: '2500'
     });
     if (pageToken) qs.set('pageToken', pageToken);
-    const data = await authFetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${qs}`);
+    const data = await authFetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?${qs}`);
     items = items.concat(data.items || []);
     pageToken = data.nextPageToken || '';
   } while (pageToken);
 
   return items
-    .filter(ev => ev.summary && ev.summary.trim().startsWith(CALENDAR_PREFIX))
+    .filter(ev => ev.summary && ev.summary.includes(CALENDAR_PREFIX))
     .map(ev => {
-      const name = ev.summary.trim().slice(CALENDAR_PREFIX.length).trim();
+      // "[성준] 이명찬 박사 (교양)" -> "이명찬 박사"
+      const name = ev.summary.replace(CALENDAR_PREFIX, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
       const dateStr = ev.start.dateTime || ev.start.date;
-      return { name, date: new Date(dateStr) };
-    });
+      return { name, core: coreName(name), date: new Date(dateStr) };
+    })
+    .sort((a, b) => a.date - b.date);
 }
 
 async function fetchUploadsPlaylistId() {
@@ -493,24 +507,74 @@ async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
 async function fetchAnalyticsForVideos(videoIds) {
   if (!videoIds.length) return {};
   const result = {};
-  for (let i = 0; i < videoIds.length; i += 40) {
-    const batch = videoIds.slice(i, i + 40);
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
     const qs = new URLSearchParams({
       ids: `channel==${YOUTUBE_CHANNEL_ID}`,
       startDate: '2005-01-01',
       endDate: new Date().toISOString().slice(0, 10),
-      metrics: 'views,averageViewDuration,impressions,impressionsClickThroughRate',
+      // 주의: 클릭률(노출 클릭률)은 Analytics API에 없어요. Reporting API(대량 CSV)로만 제공돼요.
+      metrics: 'views,averageViewDuration,averageViewPercentage',
       dimensions: 'video',
       filters: `video==${batch.join(',')}`,
       maxResults: '200'
     });
     const data = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
     (data.rows || []).forEach(row => {
-      const [videoId, views, avgViewDuration, impressions, ctr] = row;
-      result[videoId] = { views, avgViewDurationSec: avgViewDuration, ctr };
+      const [videoId, views, avgViewDuration, avgViewPct] = row;
+      result[videoId] = { views, avgViewDurationSec: avgViewDuration, avgViewPct, ctr: null };
     });
   }
   return result;
+}
+
+// 클릭률: Reporting API(channel_reach_basic_a1)의 최신 CSV에서 영상별 CTR을 읽어와요.
+// 리포트 작업이 아직 생성 중이면 조용히 빈 값을 돌려주고, 대시보드는 '–'로 표시돼요.
+async function fetchCtrByVideo() {
+  try {
+    const jobsRes = await authFetch('https://youtubereporting.googleapis.com/v1/jobs');
+    const job = (jobsRes.jobs || []).find(j => j.reportTypeId === REACH_REPORT_TYPE);
+    if (!job) return {};
+    const repRes = await authFetch(`https://youtubereporting.googleapis.com/v1/jobs/${job.id}/reports`);
+    const reports = repRes.reports || [];
+    if (!reports.length) return {};
+    // 최신 리포트부터 최대 40개를 합산 (일별 파일이므로 노출·클릭을 누적해 가중 평균 CTR을 계산)
+    const recent = reports.sort((a, b) => (b.startTime || '').localeCompare(a.startTime || '')).slice(0, 40);
+    const acc = {};
+    for (const rep of recent) {
+      const res = await fetch(rep.downloadUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!res.ok) continue;
+      const text = await res.text();
+      const lines = text.trim().split('\n');
+      if (lines.length < 2) continue;
+      const head = lines[0].split(',');
+      const iVid = head.indexOf('video_id');
+      const iImp = head.indexOf('video_thumbnail_impressions');
+      const iCtr = head.indexOf('video_thumbnail_impressions_ctr');
+      if (iVid < 0 || iImp < 0 || iCtr < 0) continue;
+      for (let k = 1; k < lines.length; k++) {
+        const c = lines[k].split(',');
+        const vid = c[iVid];
+        const imp = Number(c[iImp]);
+        const ctr = Number(c[iCtr]);
+        if (!vid || !isFinite(imp) || !isFinite(ctr)) continue;
+        if (!acc[vid]) acc[vid] = { imp: 0, clicks: 0 };
+        acc[vid].imp += imp;
+        acc[vid].clicks += imp * ctr; // ctr은 비율(0~1 또는 0~100) — 아래에서 정규화
+      }
+    }
+    const out = {};
+    Object.entries(acc).forEach(([vid, a]) => {
+      if (!a.imp) return;
+      let pct = (a.clicks / a.imp);
+      if (pct <= 1) pct = pct * 100; // 0~1 비율이면 퍼센트로 변환
+      out[vid] = +pct.toFixed(2);
+    });
+    return out;
+  } catch (err) {
+    console.warn('클릭률 리포트를 아직 가져올 수 없어요:', err.message);
+    return {};
+  }
 }
 
 async function runAdminSync() {
@@ -524,60 +588,111 @@ async function runAdminSync() {
       return;
     }
 
-    const monthsMap = new Map();
-    events.forEach(ev => {
-      const key = monthKey(ev.date);
-      if (!monthsMap.has(key)) monthsMap.set(key, { month: key, label: monthLabel(ev.date), guests: [] });
-      monthsMap.get(key).guests.push({ name: ev.name, eventDate: ev.date.toISOString() });
-    });
-
     $('sync-status').textContent = '유튜브 업로드 목록을 가져오는 중...';
     const uploadsId = await fetchUploadsPlaylistId();
-    const earliestNeeded = new Date(Math.min(...events.map(e => monthRangeKST(e.date.getFullYear(), e.date.getMonth()).start.getTime())));
+    const earliestNeeded = new Date(Math.min(...events.map(e => e.date.getTime())) - 7 * 86400000);
     const allVideos = await fetchAllUploads(uploadsId, earliestNeeded);
 
-    $('sync-status').textContent = '게스트별 영상을 매칭하는 중...';
-    const allNeededVideoIds = [];
-    for (const monthEntry of monthsMap.values()) {
-      const [y, m] = monthEntry.month.split('-').map(Number);
-      const { start, end } = monthRangeKST(y, m - 1);
-      monthEntry.guests.forEach(g => {
-        const matched = allVideos.filter(v =>
-          v.publishedAt >= start && v.publishedAt < end &&
-          v.title.includes(g.name) &&
-          PART_LABELS.some(p => v.title.includes(p))
-        );
-        g.videos = matched.map(v => ({ videoId: v.videoId, title: v.title }));
-        g.videos.forEach(v => allNeededVideoIds.push(v.videoId));
+    $('sync-status').textContent = '게스트별 영상 세트를 매칭하는 중...';
+    // 녹화일(캘린더 일정) 기준으로 그 게스트의 세트를 묶어요.
+    // 규칙: 제목에 "특집" 있으면 제외 / 편 라벨(1~5부, 풀버전)만 인정 /
+    //       풀버전 + 3편 이상이어야 집계 (1·2부+풀버전은 라이브 편집본이므로 제외) /
+    //       이미 다른 회차에 배정된 영상은 재사용하지 않음
+    const used = new Set();
+    const sets = events.map(ev => {
+      const start = ev.date;
+      const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
+      const cand = allVideos
+        .filter(v => !used.has(v.videoId)
+          && v.title.includes(ev.core)
+          && !v.title.includes(EXCLUDE_KEYWORD)
+          && v.publishedAt >= start && v.publishedAt <= end)
+        .sort((a, b) => a.publishedAt - b.publishedAt);
+
+      const picked = [];
+      const parts = new Set();
+      cand.forEach(v => {
+        const m = v.title.match(/([1-5])부/);
+        const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
+        if (key && !parts.has(key)) {
+          parts.add(key);
+          picked.push({ videoId: v.videoId, title: v.title, part: key === 'full' ? '풀버전' : key + '부', pub: v.publishedAt.toISOString().slice(0, 10) });
+        }
       });
-    }
+      const numParts = [...parts].filter(k => k !== 'full').length;
+      const ok = parts.has('full') && numParts >= MIN_PARTS;
+      if (ok) picked.forEach(p => used.add(p.videoId));
+      return { ...ev, picked, hasFull: parts.has('full'), numParts, ok };
+    });
 
     $('sync-status').textContent = 'YouTube 애널리틱스 데이터를 가져오는 중...';
-    const analytics = await fetchAnalyticsForVideos(allNeededVideoIds);
+    const neededIds = sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId));
+    const analytics = await fetchAnalyticsForVideos(neededIds);
 
-    for (const monthEntry of monthsMap.values()) {
-      monthEntry.guests.forEach(g => {
-        g.videos.forEach(v => {
-          const a = analytics[v.videoId] || {};
-          v.views = a.views ?? 0;
-          v.ctr = a.ctr ?? null;
-          v.avgViewDurationSec = a.avgViewDurationSec ?? null;
+    $('sync-status').textContent = '클릭률 리포트를 확인하는 중...';
+    const ctrMap = await fetchCtrByVideo();
+
+    const monthsMap = new Map();
+    sets.forEach(s => {
+      const key = monthKey(s.date);
+      if (!monthsMap.has(key)) monthsMap.set(key, { month: key, label: monthLabel(s.date), guests: [], pending: [] });
+      const entry = monthsMap.get(key);
+
+      if (!s.ok) {
+        entry.pending.push({
+          name: s.name,
+          eventDate: s.date.toISOString().slice(0, 10),
+          uploaded: s.picked.length,
+          note: (s.hasFull && s.numParts === 2) ? '라이브 편집본만 업로드됨'
+              : (s.picked.length ? `일부만 업로드됨 (${s.picked.length}편)` : '미업로드')
         });
-        const n = g.videos.length || 1;
-        g.totalViews = g.videos.reduce((s, v) => s + (v.views || 0), 0);
-        g.avgViews = Math.round(g.totalViews / n);
-        const ctrVals = g.videos.map(v => v.ctr).filter(x => typeof x === 'number');
-        g.avgCtr = ctrVals.length ? ctrVals.reduce((s, x) => s + x, 0) / ctrVals.length : null;
-        const durVals = g.videos.map(v => v.avgViewDurationSec).filter(x => typeof x === 'number');
-        g.avgViewDurationSec = durVals.length ? durVals.reduce((s, x) => s + x, 0) / durVals.length : null;
+        return;
+      }
+
+      const videos = s.picked.map(p => {
+        const a = analytics[p.videoId] || {};
+        return {
+          part: p.part, pub: p.pub,
+          views: a.views ?? null,
+          ctr: ctrMap[p.videoId] ?? null,
+          avgViewDurationSec: a.avgViewDurationSec ?? null,
+          avgViewPct: a.avgViewPct ?? null
+        };
+      }).sort((a, b) => partOrder(a.part) - partOrder(b.part));
+
+      const n = videos.length || 1;
+      const avg = (key2) => {
+        const vals = videos.map(v => v[key2]).filter(x => typeof x === 'number');
+        return vals.length ? vals.reduce((x, y) => x + y, 0) / vals.length : null;
+      };
+      const totalViews = videos.reduce((x, v) => x + (v.views || 0), 0);
+      const avgCtr = avg('ctr');
+      const avgDur = avg('avgViewDurationSec');
+      const avgPct = avg('avgViewPct');
+
+      entry.guests.push({
+        name: s.name,
+        eventDate: s.date.toISOString().slice(0, 10),
+        videoCount: n,
+        totalViews,
+        avgViews: Math.round(totalViews / n),
+        avgCtr: avgCtr == null ? null : +avgCtr.toFixed(2),
+        avgViewDurationSec: avgDur == null ? null : Math.round(avgDur),
+        avgViewPct: avgPct == null ? null : +avgPct.toFixed(2),
+        videos
       });
-    }
+    });
 
     const months = Array.from(monthsMap.values()).sort((a, b) => a.month.localeCompare(b.month));
-    publishedData = { updatedAt: new Date().toISOString(), months };
+    months.forEach(m => {
+      m.guests.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
+      m.pending.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
+    });
+    publishedData = { updatedAt: new Date().toISOString(), channel: '웅달 책방', months };
     activeMonth = months.length ? months[months.length - 1].month : null;
     render();
-    $('sync-status').textContent = '완료! 이제 "게시하기"를 눌러야 다른 사람들에게 반영돼요.';
+    const ctrCount = Object.keys(ctrMap).length;
+    $('sync-status').textContent = `완료! (클릭률 ${ctrCount ? ctrCount + '개 영상 반영' : '아직 리포트 생성 전 — 등록 후 1~2일 소요'}) 이제 "게시하기"를 눌러야 다른 사람들에게 반영돼요.`;
   } catch (err) {
     console.error(err);
     $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
