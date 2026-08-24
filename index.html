@@ -1124,6 +1124,15 @@ function monthLabel(d) {
 }
 
 // 게스트 이름에서 직함을 떼어 핵심 인명만 남김 (영상 제목 매칭용)
+// 제목에 게스트 이름이 들어있는지 확인해요.
+// 캘린더와 제목의 띄어쓰기가 다른 경우가 있어("존 리" ↔ "존리") 공백을 지우고 비교합니다.
+function titleHasGuest(title, core) {
+  if (!title || !core) return false;
+  if (title.includes(core)) return true;
+  const squash = str => String(str).replace(/\s+/g, '');
+  return squash(title).includes(squash(core));
+}
+
 function coreName(name) {
   // "대표님", "소장님"처럼 뒤에 붙는 '님'을 먼저 떼어내요.
   const base = name.replace(AFFILIATION_RE, ' ').replace(/님\s*$/, '').trim();
@@ -1377,7 +1386,7 @@ async function refreshMainMonth(monthKeyStr) {
     const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
     end.setHours(23, 59, 59, 999);
     const cand = vids
-      .filter(v => !used.has(v.videoId) && v.title.includes(ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
+      .filter(v => !used.has(v.videoId) && titleHasGuest(v.title, ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
         && v.publishedAt >= start && v.publishedAt <= end)
       .sort((a, b) => a.publishedAt - b.publishedAt);
     const picked = [], parts = new Set();
@@ -1467,7 +1476,7 @@ async function refreshTeamMonth(tag, monthKeyStr) {
     const start = ev.date;
     const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
     end.setHours(23, 59, 59, 999);
-    const cand = vids.filter(v => !used.has(v.videoId) && v.title.includes(ev.core)
+    const cand = vids.filter(v => !used.has(v.videoId) && titleHasGuest(v.title, ev.core)
       && !v.title.includes(EXCLUDE_KEYWORD)
       && (/\d+\s*부/.test(v.title) || v.title.includes('풀버전'))
       && v.publishedAt >= start && v.publishedAt <= end)
