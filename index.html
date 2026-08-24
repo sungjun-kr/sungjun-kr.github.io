@@ -193,6 +193,8 @@ const CALENDAR_PREFIX = '[성준]';
 // 팀원 섹터 — 캘린더 태그로 담당자를 구분해요. 세부 영상 목록 없이 평균만 보여줍니다.
 const TEAM_MEMBERS = ['다혜', '준하'];   // 준혁님은 콘텐츠 형식이 달라 이 기준으로 집계되지 않아 제외
 const TEAM_MONTHS = ['2026-07', '2026-08'];
+// 팀원 지표에서 뺄 정규 코너 (게스트 성과가 아니라 프로그램이라 평균을 왜곡해요)
+const TEAM_EXCLUDE_EVENT = /북클럽/;
 const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
 const SET_WINDOW_DAYS = 21;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
@@ -1126,6 +1128,11 @@ function monthLabel(d) {
 // 게스트 이름에서 직함을 떼어 핵심 인명만 남김 (영상 제목 매칭용)
 // 제목에 게스트 이름이 들어있는지 확인해요.
 // 캘린더와 제목의 띄어쓰기가 다른 경우가 있어("존 리" ↔ "존리") 공백을 지우고 비교합니다.
+// 한글이 자모로 분리 저장된 경우(NFD)를 합쳐요 — "부"가 ᄇ+ᅮ로 들어오면 정규식이 안 먹혀요.
+function nfc(str) {
+  return String(str || '').normalize('NFC');
+}
+
 function titleHasGuest(title, core) {
   if (!title || !core) return false;
   if (title.includes(core)) return true;
@@ -1159,7 +1166,7 @@ async function fetchCalendarGuestEvents(prefix = CALENDAR_PREFIX) {
     .filter(ev => ev.summary && ev.summary.includes(prefix))
     .map(ev => {
       // "[성준] 이명찬 박사 (교양)" -> "이명찬 박사"
-      const name = ev.summary.replace(prefix, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
+      const name = nfc(ev.summary).replace(prefix, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
       const dateStr = ev.start.dateTime || ev.start.date;
       return { name, core: coreName(name), date: new Date(dateStr) };
     })
@@ -1185,7 +1192,7 @@ async function fetchAllUploads(uploadsPlaylistId, earliestNeeded) {
     const pageItems = (data.items || []).map(i => ({
       videoId: i.snippet.resourceId.videoId,
       privacy: i.status && i.status.privacyStatus,
-      title: i.snippet.title,
+      title: nfc(i.snippet.title),
       publishedAt: new Date(i.snippet.publishedAt)
     }));
     items = items.concat(pageItems);
@@ -1228,7 +1235,7 @@ async function fetchNonPublicUploads(publicItems, earliestNeeded) {
         out.push({
           videoId: it.id,
           privacy: it.status && it.status.privacyStatus,
-          title: it.snippet.title,
+          title: nfc(it.snippet.title),
           publishedAt: pub
         });
       });
@@ -1313,7 +1320,7 @@ async function fetchVideosInRange(channelId, afterISO, beforeISO) {
     const page = (d.items || []).map(i => ({
       videoId: i.snippet.resourceId.videoId,
       privacy: i.status && i.status.privacyStatus,
-      title: i.snippet.title,
+      title: nfc(i.snippet.title),
       publishedAt: new Date(i.snippet.publishedAt)
     }));
     page.forEach(v => { if (v.publishedAt >= after && v.publishedAt <= before) items.push(v); });
@@ -1462,7 +1469,8 @@ async function refreshTeamMonth(tag, monthKeyStr) {
   const searchBefore = new Date(monthEnd.getTime() + (SET_WINDOW_DAYS + 2) * 86400000);
 
   const events = (await calendarCached('[' + tag + ']'))
-    .filter(e => e.date >= monthStart && e.date < monthEnd);
+    .filter(e => e.date >= monthStart && e.date < monthEnd)
+    .filter(e => !TEAM_EXCLUDE_EVENT.test(e.name));
 
   const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, monthStart.toISOString(), searchBefore.toISOString());
 
@@ -1603,7 +1611,7 @@ async function collectArchiveChannel(entry) {
     const d = await authFetch(`https://www.googleapis.com/youtube/v3/playlistItems?${qs}`);
     (d.items || []).forEach(i => vids.push({
       videoId: i.snippet.resourceId.videoId,
-      title: i.snippet.title,
+      title: nfc(i.snippet.title),
       publishedAt: new Date(i.snippet.publishedAt)
     }));
     pt = d.nextPageToken || '';
