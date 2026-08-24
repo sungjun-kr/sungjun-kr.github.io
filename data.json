@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-08-24T12:40:00.000Z",
+  "updatedAt": "2026-08-24T13:20:00.000Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
-  "teamBasis": "캘린더 담당 태그([다혜]/[준하]) 기준. 촬영일부터 21일 내 업로드된 영상 중 편 라벨(1~5부)·풀버전이 붙은 본편만 집계하며, 본채널과 같이 풀버전까지 올라온 세트만 셉니다. 쇼츠·재업로드·특집(합동 출연)은 제외해요.",
+  "teamBasis": "캘린더 담당 태그([다혜]/[준하]) 기준. 촬영일부터 21일 내 업로드된 영상 중 편 라벨(1~5부)·풀버전이 붙은 본편만 집계하며, 본채널과 같이 풀버전까지 올라온 세트만 셉니다. 쇼츠·재업로드·특집(합동 출연)과 북클럽·밤의 독서 코너는 제외해요.",
   "months": [
     {
       "month": "2026-04",
@@ -3257,8 +3257,8 @@
           {
             "month": "2026-08",
             "label": "2026년 8월",
-            "videoCount": 75,
-            "avgViews": 7119,
+            "videoCount": 78,
+            "avgViews": 7057,
             "avgViewDurationSec": 223,
             "groups": {
               "라이브": {
@@ -3272,7 +3272,7 @@
                 "avgViewDurationSec": 311
               }
             },
-            "updatedAt": "2026-08-24T10:30:00.000Z"
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           }
         ]
       },
@@ -3285,7 +3285,7 @@
             "month": "2026-08",
             "label": "2026년 8월",
             "videoCount": 23,
-            "avgViews": 2831,
+            "avgViews": 2869,
             "avgViewDurationSec": 356,
             "groups": {
               "라이브": {
@@ -3299,7 +3299,7 @@
                 "avgViewDurationSec": 357
               }
             },
-            "updatedAt": "2026-08-24T10:30:00.000Z"
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           }
         ]
       },
@@ -3312,7 +3312,7 @@
             "month": "2026-08",
             "label": "2026년 8월",
             "videoCount": 8,
-            "avgViews": 1906,
+            "avgViews": 1959,
             "avgViewDurationSec": 317,
             "groups": {
               "라이브": {
@@ -3326,7 +3326,7 @@
                 "avgViewDurationSec": 293
               }
             },
-            "updatedAt": "2026-08-24T10:30:00.000Z"
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           }
         ]
       }
@@ -3340,24 +3340,24 @@
           {
             "month": "2026-07",
             "label": "2026년 7월",
-            "guestCount": 12,
+            "guestCount": 16,
             "scheduled": 16,
-            "videoCount": 59,
-            "totalViews": 1610156,
-            "avgViewsPerGuest": 134180,
-            "avgViewsPerVideo": 27291,
-            "updatedAt": "2026-08-24T11:40:00.000Z"
+            "videoCount": 80,
+            "totalViews": 2204205,
+            "avgViewsPerGuest": 137763,
+            "avgViewsPerVideo": 27553,
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           },
           {
             "month": "2026-08",
             "label": "2026년 8월",
-            "guestCount": 7,
+            "guestCount": 9,
             "scheduled": 14,
-            "videoCount": 32,
-            "totalViews": 954791,
-            "avgViewsPerGuest": 136399,
-            "avgViewsPerVideo": 29837,
-            "updatedAt": "2026-08-24T11:40:00.000Z"
+            "videoCount": 42,
+            "totalViews": 1448484,
+            "avgViewsPerGuest": 160943,
+            "avgViewsPerVideo": 34488,
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           }
         ]
       },
@@ -3367,24 +3367,24 @@
           {
             "month": "2026-07",
             "label": "2026년 7월",
-            "guestCount": 8,
+            "guestCount": 12,
             "scheduled": 12,
-            "videoCount": 40,
-            "totalViews": 1148807,
-            "avgViewsPerGuest": 143601,
-            "avgViewsPerVideo": 28720,
-            "updatedAt": "2026-08-24T11:40:00.000Z"
+            "videoCount": 60,
+            "totalViews": 1553865,
+            "avgViewsPerGuest": 129489,
+            "avgViewsPerVideo": 25898,
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           },
           {
             "month": "2026-08",
             "label": "2026년 8월",
-            "guestCount": 3,
-            "scheduled": 17,
-            "videoCount": 14,
-            "totalViews": 402355,
-            "avgViewsPerGuest": 134118,
-            "avgViewsPerVideo": 28740,
-            "updatedAt": "2026-08-24T11:40:00.000Z"
+            "guestCount": 4,
+            "scheduled": 10,
+            "videoCount": 19,
+            "totalViews": 490781,
+            "avgViewsPerGuest": 122695,
+            "avgViewsPerVideo": 25831,
+            "updatedAt": "2026-08-24T13:20:00.000Z"
           }
         ]
       }
