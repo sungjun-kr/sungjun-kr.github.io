@@ -1836,18 +1836,22 @@ async function liveClaimedIds(vids) {
   const claimed = new Set();
   let evs = [];
   try { evs = await liveEvents(); } catch (e) { return claimed; }
+  // 날짜만 비교해요 (시각 차이로 하루 어긋나는 걸 막기 위해).
+  const dayStr = d => new Date(d.getTime() + 9 * 3600000).toISOString().slice(0, 10);
+  const plus = (d, n) => {
+    const x = new Date(d.getTime() + 9 * 3600000);
+    x.setUTCDate(x.getUTCDate() + n);
+    return x.toISOString().slice(0, 10);
+  };
   evs.forEach(ev => {
-    const from = new Date(ev.date.getTime() + 1 * 86400000);
-    const to = new Date(ev.date.getTime() + 5 * 86400000);
-    to.setHours(23, 59, 59, 999);
+    const from = plus(ev.date, 1);   // 다음날 1부
+    const to = plus(ev.date, 5);     // 밀리는 경우까지 여유
     vids.forEach(v => {
       if (claimed.has(v.videoId)) return;
       if (!titleHasGuest(v.title, ev.core)) return;
-      if (v.publishedAt < from || v.publishedAt > to) return;
-      // 라이브는 1부·2부·풀버전만 나와요.
-      const m = v.title.match(/([1-5])부/);
-      const isLivePart = (m && (m[1] === '1' || m[1] === '2')) || v.title.includes('풀버전');
-      if (isLivePart) claimed.add(v.videoId);
+      const day = dayStr(v.publishedAt);
+      if (day < from || day > to) return;
+      claimed.add(v.videoId);        // 라이브분은 편 라벨 유무와 무관하게 전부 제외
     });
   });
   return claimed;
