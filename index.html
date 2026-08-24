@@ -193,7 +193,7 @@ const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 �
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
 const SET_WINDOW_DAYS = 21;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
 // 창의 마지막 날은 하루 전체를 포함해요 — 마지막 편이 몇 시에 올라오든 놓치지 않도록.
-const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민|고문|무극선생|선생|애널리스트|연구원|의원|변호사|회계사|관장|본부장|실장|위원장|사장|국장|처장)\s*$/;
+const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민|고문|무극선생|선생|애널리스트|연구원|의원|변호사|회계사|관장|본부장|실장|위원장|사장|국장|처장|평론가|아나운서|강사|회장|원장|고문님|박사님|기자님)\s*$/;
 // 이름 사이에 끼어드는 소속명 (예: "김경록 미래에셋 고문" → "김경록")
 const AFFILIATION_RE = /\s*(미래에셋|삼성증권|한국투자|키움|NH투자|신한|하나|KB|메리츠)\s*/g;
 // 저장소 채널들. channelId는 관리자 로그인 후 자동으로 채워져요.
@@ -751,7 +751,7 @@ function renderTeam(members) {
   const note = document.createElement('p');
   note.className = 'fine-print';
   note.style.marginTop = '4px';
-  note.textContent = '풀버전까지 올라온 세트만 집계해요. 촬영은 잡혔지만 아직 업로드가 안 끝난 게스트는 빠집니다.';
+  note.textContent = '캘린더 담당 태그 기준이에요. 게스트 이름이 들어간 영상을 모두 세되 특집(합동 출연)은 제외합니다. 아직 업로드되지 않은 게스트도 빠져요.';
   wrap.appendChild(note);
 }
 
@@ -1285,26 +1285,21 @@ async function refreshTeamMonth(tag, monthKeyStr) {
 
   const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, monthStart.toISOString(), searchBefore.toISOString());
 
+  // 팀원은 본채널과 콘텐츠 형식이 달라요 (부/풀버전 라벨이 없는 경우가 많음).
+  // 그래서 세트 규칙 대신 '게스트 이름이 들어간 영상 전부'를 세는 완화 기준을 씁니다.
+  // 특집(합동 출연)은 담당자 간 중복 계산을 피하려고 제외해요.
   const used = new Set();
   const sets = [];
   events.forEach(ev => {
     const start = ev.date;
     const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
     end.setHours(23, 59, 59, 999);
-    const cand = vids
-      .filter(v => !used.has(v.videoId) && v.title.includes(ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
-        && v.publishedAt >= start && v.publishedAt <= end)
-      .sort((a, b) => a.publishedAt - b.publishedAt);
-    const parts = new Set(), picked = [];
-    cand.forEach(v => {
-      const m = v.title.match(/([1-5])부/);
-      const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
-      if (key && !parts.has(key)) { parts.add(key); picked.push(v.videoId); }
-    });
-    const numParts = [...parts].filter(k => k !== 'full').length;
-    if (parts.has('full') && numParts >= MIN_PARTS) {
-      picked.forEach(id => used.add(id));
-      sets.push({ name: ev.name, ids: picked });
+    const cand = vids.filter(v => !used.has(v.videoId) && v.title.includes(ev.core)
+      && !v.title.includes(EXCLUDE_KEYWORD)
+      && v.publishedAt >= start && v.publishedAt <= end);
+    if (cand.length) {
+      cand.forEach(v => used.add(v.videoId));
+      sets.push({ name: ev.name, ids: cand.map(v => v.videoId) });
     }
   });
 
