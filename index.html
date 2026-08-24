@@ -186,6 +186,9 @@ const YOUTUBE_CHANNEL_ID = 'UCbOIEn95Rvnk97KRtSFqvbQ';   // 웅달 책방
 const GUEST_PASSWORD = 'cjamm1206';
 const CALENDAR_ID = 'biz@hijump.kr';                     // 🗓️ 웅달책방 캘린더
 const CALENDAR_PREFIX = '[성준]';
+// 팀원 섹터 — 캘린더 태그로 담당자를 구분해요. 세부 영상 목록 없이 평균만 보여줍니다.
+const TEAM_MEMBERS = ['준혁', '다혜', '준하'];
+const TEAM_MONTHS = ['2026-07', '2026-08'];
 const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
 const SET_WINDOW_DAYS = 21;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
@@ -222,7 +225,7 @@ let accessToken = null;
 let isAdmin = false;
 let publishedData = null;
 let activeMonth = null;
-let activeScope = 'main';      // 'main'(본채널) | 'archive'(저장소)
+let activeScope = 'main';      // 'main'(본채널) | 'archive'(저장소) | 'team'(팀원)
 let activeArchive = null;      // 저장소 카테고리 키 (투자/교양/부동산)
 
 function $(id) { return document.getElementById(id); }
@@ -310,11 +313,14 @@ function currentSectorLabel() {
   const monthLbl = (() => {
     const ms = activeScope === 'archive'
       ? (((publishedData.archive && publishedData.archive.channels) || []).find(c => c.key === activeArchive) || {}).months || []
+      : activeScope === 'team'
+      ? (((publishedData.team && publishedData.team.members) || [])[0] || {}).months || []
       : (publishedData.months || []);
     const m = ms.find(x => x.month === activeMonth);
     return m ? m.label.replace(/^\d{4}년\s*/, '') : '';
   })();
   if (activeScope === 'archive') return `${activeArchive} ${monthLbl}`.trim();
+  if (activeScope === 'team') return `팀원 ${monthLbl}`.trim();
   return monthLbl;
 }
 
@@ -323,7 +329,8 @@ function updateRefreshLabel() {
   $('refresh-btn').textContent = s ? `${s} 새로고침` : '새로고침';
   const allBtn = $('refresh-all-btn');
   allBtn.hidden = !(isAdmin && accessToken);
-  allBtn.textContent = activeScope === 'archive' ? '저장소 전체 새로고침' : '본채널 전체 새로고침';
+  allBtn.textContent = activeScope === 'archive' ? '저장소 전체 새로고침'
+    : activeScope === 'team' ? '팀원 전체 새로고침' : '본채널 전체 새로고침';
 }
 
 // 갱신 대상 월 목록 — 이미 있는 달 + 캘린더에 일정이 있는 달을 합쳐요 (새 달도 자동 포함).
@@ -357,7 +364,17 @@ $('refresh-all-btn').addEventListener('click', async () => {
   clearRefreshCache();
   let done = 0, failed = [];
   try {
-    if (activeScope === 'archive') {
+    if (activeScope === 'team') {
+      const total = TEAM_MEMBERS.length * TEAM_MONTHS.length;
+      for (const t of TEAM_MEMBERS) {
+        for (const mk of TEAM_MONTHS) {
+          btn.textContent = `수집 중… (${done + 1}/${total})`;
+          $('sync-status').textContent = `팀원 「${t}」 ${mk} 수집 중…`;
+          try { await refreshTeamMonth(t, mk); } catch (err) { failed.push(`${t} ${mk}`); }
+          done++;
+        }
+      }
+    } else if (activeScope === 'archive') {
       const months = monthsToRefreshArchive();
       const total = ARCHIVE_CHANNELS.length * months.length;
       for (const c of ARCHIVE_CHANNELS) {
@@ -451,6 +468,8 @@ function render() {
   // 보고 있는 섹터의 마지막 업데이트 시각과 버튼 라벨을 맞춰요.
   const ms = activeScope === 'archive'
     ? (((publishedData.archive && publishedData.archive.channels) || []).find(c => c.key === activeArchive) || {}).months || []
+    : activeScope === 'team'
+    ? (((publishedData.team && publishedData.team.members) || [])[0] || {}).months || []
     : (publishedData.months || []);
   const cur = ms.find(m => m.month === activeMonth);
   const stamp = (cur && cur.updatedAt) || publishedData.updatedAt;
@@ -465,16 +484,25 @@ function renderInner() {
 
   // 최상위 섹터: 본채널 / 저장소
   const archive = (publishedData.archive && publishedData.archive.channels) || [];
+  const team = (publishedData.team && publishedData.team.members) || [];
   const scopeEl = $('scope-tabs');
   scopeEl.innerHTML = '';
-  if (archive.length) {
-    [['main', '본채널'], ['archive', '저장소']].forEach(([key, label]) => {
+  if (archive.length || team.length || isAdmin) {
+    const defs = [['main', '본채널']];
+    if (archive.length) defs.push(['archive', '저장소']);
+    if (team.length || isAdmin) defs.push(['team', '팀원']);
+    defs.forEach(([key, label]) => {
       const btn = document.createElement('button');
       btn.className = 'month-tab' + (activeScope === key ? ' active' : '');
       btn.textContent = label;
       btn.addEventListener('click', () => { activeScope = key; activeMonth = null; render(); });
       scopeEl.appendChild(btn);
     });
+  }
+
+  if (activeScope === 'team') {
+    renderTeam(team);
+    return;
   }
 
   if (activeScope === 'archive' && archive.length) {
@@ -679,6 +707,54 @@ function renderInner() {
 
 // ---------------- 저장소 (웅달책방_투자 / _교양 / _부동산) ----------------
 
+// 팀원 섹터 — 담당자별 평균 조회수만 한눈에 보여줘요.
+function renderTeam(members) {
+  $('archive-tabs').hidden = true;
+  const allMonths = [...new Set(members.flatMap(m => m.months.map(x => x.month)))].sort();
+  if (!allMonths.length) {
+    $('guest-list').innerHTML = '<div class="empty-state">아직 팀원 데이터가 없어요.'
+      + (isAdmin ? ' "팀원 전체 새로고침"을 눌러주세요.' : '') + '</div>';
+    $('month-tabs').innerHTML = '';
+    return;
+  }
+  if (!activeMonth || !allMonths.includes(activeMonth)) activeMonth = allMonths[allMonths.length - 1];
+
+  const tabsEl = $('month-tabs');
+  tabsEl.innerHTML = '';
+  allMonths.forEach(mk => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (mk === activeMonth ? ' active' : '');
+    btn.textContent = `${mk.slice(0, 4)}년 ${+mk.slice(5)}월`;
+    btn.addEventListener('click', () => { activeMonth = mk; render(); });
+    tabsEl.appendChild(btn);
+  });
+
+  const wrap = $('guest-list');
+  wrap.innerHTML = '';
+  members.forEach(mem => {
+    const d = mem.months.find(x => x.month === activeMonth);
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+    const head = document.createElement('div');
+    head.style.cssText = 'display:flex;align-items:baseline;gap:10px;margin-bottom:12px;';
+    head.innerHTML = `<span class="guest-name">${escapeHtml(mem.key)}</span>` +
+      `<span class="guest-date">${d ? `게스트 ${d.guestCount}명 · 영상 ${d.videoCount}편` : '데이터 없음'}</span>`;
+    card.appendChild(head);
+    const row = document.createElement('div');
+    row.className = 'kpi-row';
+    row.appendChild(statTile('게스트당 평균 조회수', d ? fmtNum(d.avgViewsPerGuest) : '–'));
+    row.appendChild(statTile('영상당 평균 조회수', d ? fmtNum(d.avgViewsPerVideo) : '–'));
+    card.appendChild(row);
+    wrap.appendChild(card);
+  });
+
+  const note = document.createElement('p');
+  note.className = 'fine-print';
+  note.style.marginTop = '4px';
+  note.textContent = '풀버전까지 올라온 세트만 집계해요. 촬영은 잡혔지만 아직 업로드가 안 끝난 게스트는 빠집니다.';
+  wrap.appendChild(note);
+}
+
 function renderArchive(channels) {
   // 2단: 카테고리 탭
   if (!activeArchive || !channels.find(c => c.key === activeArchive)) {
@@ -877,10 +953,12 @@ function monthLabel(d) {
 
 // 게스트 이름에서 직함을 떼어 핵심 인명만 남김 (영상 제목 매칭용)
 function coreName(name) {
-  return name.replace(AFFILIATION_RE, ' ').replace(TITLE_SUFFIX_RE, '').trim();
+  // "대표님", "소장님"처럼 뒤에 붙는 '님'을 먼저 떼어내요.
+  const base = name.replace(AFFILIATION_RE, ' ').replace(/님\s*$/, '').trim();
+  return base.replace(TITLE_SUFFIX_RE, '').trim();
 }
 
-async function fetchCalendarGuestEvents() {
+async function fetchCalendarGuestEvents(prefix = CALENDAR_PREFIX) {
   const now = new Date();
   const timeMin = new Date(now.getFullYear(), 0, 1).toISOString();
   const timeMax = new Date(now.getFullYear() + 1, 0, 1).toISOString();
@@ -897,10 +975,10 @@ async function fetchCalendarGuestEvents() {
   } while (pageToken);
 
   return items
-    .filter(ev => ev.summary && ev.summary.includes(CALENDAR_PREFIX))
+    .filter(ev => ev.summary && ev.summary.includes(prefix))
     .map(ev => {
       // "[성준] 이명찬 박사 (교양)" -> "이명찬 박사"
-      const name = ev.summary.replace(CALENDAR_PREFIX, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
+      const name = ev.summary.replace(prefix, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
       const dateStr = ev.start.dateTime || ev.start.date;
       return { name, core: coreName(name), date: new Date(dateStr) };
     })
@@ -1028,11 +1106,11 @@ async function fetchAnalyticsForVideos(videoIds) {
 // ---------------- 섹터(월) 단위 새로고침 ----------------
 
 // 한 번의 갱신 작업 안에서는 캘린더를 재사용해요.
-let _calCache = null;
-function clearRefreshCache() { _calCache = null; }
-async function calendarCached() {
-  if (!_calCache) _calCache = await fetchCalendarGuestEvents();
-  return _calCache;
+let _calCache = {};
+function clearRefreshCache() { _calCache = {}; }
+async function calendarCached(prefix = CALENDAR_PREFIX) {
+  if (!_calCache[prefix]) _calCache[prefix] = await fetchCalendarGuestEvents(prefix);
+  return _calCache[prefix];
 }
 
 // 특정 기간에 올라온 영상을 모아요.
@@ -1076,7 +1154,13 @@ async function refreshCurrentSector() {
   const t0 = Date.now();
   clearRefreshCache();
   try {
-    if (activeScope === 'archive') {
+    if (activeScope === 'team') {
+      btn.textContent = '수집 중…';
+      for (const t of TEAM_MEMBERS) {
+        $('sync-status').textContent = `팀원 「${t}」 ${activeMonth} 수집 중…`;
+        await refreshTeamMonth(t, activeMonth);
+      }
+    } else if (activeScope === 'archive') {
       btn.textContent = '수집 중…';
       $('sync-status').textContent = `저장소 「${activeArchive}」 ${activeMonth} 수집 중…`;
       await refreshArchiveMonth(activeArchive, activeMonth);
@@ -1183,9 +1267,69 @@ async function refreshMainMonth(monthKeyStr) {
   const idx = publishedData.months.findIndex(m => m.month === monthKeyStr);
   const entry = { month: monthKeyStr, label, guests, pending, updatedAt: new Date().toISOString() };
   if (idx >= 0) publishedData.months[idx] = entry; else publishedData.months.push(entry);
-  // 게스트도 예정도 없는 달은 탭에 남기지 않아요.
+  // 게스트도 예정도 없는 달만 탭에서 빼요 (촬영 예정만 있는 달은 남겨서 미리 볼 수 있게).
   publishedData.months = publishedData.months.filter(m => (m.guests || []).length || (m.pending || []).length);
   publishedData.months.sort((a, b) => a.month.localeCompare(b.month));
+  publishedData.updatedAt = new Date().toISOString();
+}
+
+// 팀원(담당자) 한 명의 한 달치 평균을 계산해요. 세부 영상 목록은 저장하지 않습니다.
+async function refreshTeamMonth(tag, monthKeyStr) {
+  const [y, mo] = monthKeyStr.split('-').map(Number);
+  const monthStart = new Date(Date.UTC(y, mo - 1, 1, -9));
+  const monthEnd = new Date(Date.UTC(y, mo, 1, -9));
+  const searchBefore = new Date(monthEnd.getTime() + (SET_WINDOW_DAYS + 2) * 86400000);
+
+  const events = (await calendarCached('[' + tag + ']'))
+    .filter(e => e.date >= monthStart && e.date < monthEnd);
+
+  const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, monthStart.toISOString(), searchBefore.toISOString());
+
+  const used = new Set();
+  const sets = [];
+  events.forEach(ev => {
+    const start = ev.date;
+    const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
+    end.setHours(23, 59, 59, 999);
+    const cand = vids
+      .filter(v => !used.has(v.videoId) && v.title.includes(ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
+        && v.publishedAt >= start && v.publishedAt <= end)
+      .sort((a, b) => a.publishedAt - b.publishedAt);
+    const parts = new Set(), picked = [];
+    cand.forEach(v => {
+      const m = v.title.match(/([1-5])부/);
+      const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
+      if (key && !parts.has(key)) { parts.add(key); picked.push(v.videoId); }
+    });
+    const numParts = [...parts].filter(k => k !== 'full').length;
+    if (parts.has('full') && numParts >= MIN_PARTS) {
+      picked.forEach(id => used.add(id));
+      sets.push({ name: ev.name, ids: picked });
+    }
+  });
+
+  const allIds = sets.flatMap(s => s.ids);
+  const views = await fetchViewCounts(allIds);
+  const totalViews = allIds.reduce((a, id) => a + (views[id] || 0), 0);
+  const guestCount = sets.length;
+  const videoCount = allIds.length;
+
+  const entry = {
+    month: monthKeyStr, label: `${y}년 ${mo}월`,
+    guestCount, videoCount, totalViews,
+    avgViewsPerGuest: guestCount ? Math.round(totalViews / guestCount) : null,
+    avgViewsPerVideo: videoCount ? Math.round(totalViews / videoCount) : null,
+    scheduled: events.length,
+    updatedAt: new Date().toISOString()
+  };
+
+  publishedData.team = publishedData.team || { members: [] };
+  let mem = publishedData.team.members.find(m => m.key === tag);
+  if (!mem) { mem = { key: tag, months: [] }; publishedData.team.members.push(mem); }
+  const i = mem.months.findIndex(m => m.month === monthKeyStr);
+  if (i >= 0) mem.months[i] = entry; else mem.months.push(entry);
+  mem.months.sort((a, b) => a.month.localeCompare(b.month));
+  publishedData.team.members.sort((a, b) => TEAM_MEMBERS.indexOf(a.key) - TEAM_MEMBERS.indexOf(b.key));
   publishedData.updatedAt = new Date().toISOString();
 }
 
