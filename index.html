@@ -71,6 +71,14 @@ input[type="password"], input[type="text"] {
 .month-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .scope-tabs { margin-bottom: 12px; }
 .scope-tabs .month-tab { font-size: 14px; padding: 9px 20px; }
+.scope-tabs { align-items: center; }
+.month-tab.tab-right { margin-left: auto; font-size: 12px; padding: 6px 14px; }
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.topic-col h3 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
+.topic-item { border-top: 1px solid var(--gridline); padding: 8px 0; }
+.topic-item:first-of-type { border-top: none; }
+.topic-title { font-size: 12px; line-height: 1.45; color: var(--text-primary); }
+.topic-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .sub-tabs { margin-bottom: 12px; }
 .sub-tabs .month-tab { font-size: 12px; padding: 6px 13px; }
 .month-tab {
@@ -353,13 +361,14 @@ function currentSectorLabel() {
   if (activeScope === 'team') return `팀원 ${monthLbl}`.trim();
   if (activeScope === 'guests') return '게스트 목록';
   if (activeScope === 'analysis') return '분석';
+  if (activeScope === 'topics') return '주제별 TOP';
   return monthLbl;
 }
 
 function updateRefreshLabel() {
   const s = currentSectorLabel();
   // 게스트 목록은 기존 데이터로 계산되는 화면이라 새로고침 버튼이 필요 없어요.
-  const derived = activeScope === 'guests' || activeScope === 'analysis';
+  const derived = activeScope === 'guests' || activeScope === 'analysis' || activeScope === 'topics';
   $('refresh-btn').hidden = derived;
   $('refresh-btn').textContent = s ? `${s} 새로고침` : '새로고침';
   const allBtn = $('refresh-all-btn');
@@ -535,6 +544,12 @@ function renderInner() {
       btn.addEventListener('click', () => { activeScope = key; activeMonth = null; render(); });
       scopeEl.appendChild(btn);
     });
+    // 주제별 TOP — 남는 오른쪽 공간에 작게 붙여요.
+    const topBtn = document.createElement('button');
+    topBtn.className = 'month-tab tab-right' + (activeScope === 'topics' ? ' active' : '');
+    topBtn.textContent = '주제별 TOP';
+    topBtn.addEventListener('click', () => { activeScope = 'topics'; activeMonth = null; render(); });
+    scopeEl.appendChild(topBtn);
   }
 
   if (activeScope === 'guests') {
@@ -544,6 +559,11 @@ function renderInner() {
 
   if (activeScope === 'analysis') {
     renderAnalysis();
+    return;
+  }
+
+  if (activeScope === 'topics') {
+    renderTopics();
     return;
   }
 
@@ -803,7 +823,68 @@ function renderInner() {
 
 // ---------------- 저장소 (웅달책방_투자 / _교양 / _부동산) ----------------
 
-// 분석 섹터 — 게스트별로 편마다 작업 로직을 기록해요 (지표 없이 기록 전용).
+// 주제별 TOP — 캘린더 분류(투자/교양/부동산)별로 조회수 상위 3편을 보여줘요 (풀버전 제외).
+const TOPIC_CATS = ['투자', '교양', '부동산'];
+
+function renderTopics() {
+  $('archive-tabs').hidden = true;
+  $('month-tabs').innerHTML = '';
+  const listEl = $('guest-list');
+  listEl.innerHTML = '';
+
+  const buckets = {};
+  TOPIC_CATS.forEach(c => { buckets[c] = []; });
+  (publishedData.months || []).forEach(m => {
+    (m.guests || []).forEach(g => {
+      const cat = g.category;
+      if (!cat || !buckets[cat]) return;
+      (g.videos || []).forEach(v => {
+        if (v.part === '풀버전') return;                              // 풀버전 제외
+        if (v.title && v.title.includes(EXCLUDE_KEYWORD)) return;     // 특집 제외
+        if (typeof v.views !== 'number') return;
+        buckets[cat].push({ title: v.title, views: v.views, part: v.part, pub: v.pub, guest: g.name });
+      });
+    });
+  });
+
+  const grid = document.createElement('div');
+  grid.className = 'topic-grid';
+  let any = false;
+  TOPIC_CATS.forEach(cat => {
+    const col = document.createElement('div');
+    col.className = 'guest-card topic-col';
+    const items = buckets[cat].sort((a, b) => b.views - a.views).slice(0, 3);
+    const h = document.createElement('h3');
+    h.textContent = cat;
+    col.appendChild(h);
+    if (!items.length) {
+      const e = document.createElement('div');
+      e.className = 'topic-meta';
+      e.textContent = '아직 영상이 없어요.';
+      col.appendChild(e);
+    } else {
+      any = true;
+      items.forEach((it, idx) => {
+        const box = document.createElement('div');
+        box.className = 'topic-item';
+        box.innerHTML = `<div class="topic-title">${idx + 1}. ${escapeHtml(it.title || '(제목 없음)')}</div>`
+          + `<div class="topic-meta"><b style="color:var(--series-1)">${fmtNum(it.views)}회</b> · ${escapeHtml(it.guest)} · ${escapeHtml(it.part || '')}</div>`;
+        col.appendChild(box);
+      });
+    }
+    grid.appendChild(col);
+  });
+  listEl.appendChild(grid);
+
+  const note = document.createElement('p');
+  note.className = 'fine-print';
+  note.textContent = any
+    ? '캘린더 일정 뒤의 분류(투자/교양/부동산)를 기준으로, 분야별 조회수 상위 3편을 보여줘요. 풀버전과 특집은 제외했습니다.'
+    : '아직 표시할 데이터가 없어요. 관리자로 로그인해 "본채널 전체 새로고침"을 눌러 주제 분류와 영상 제목을 가져와 주세요.';
+  listEl.appendChild(note);
+}
+
+// 분석 섹터 —// 분석 섹터 — 게스트별로 편마다 작업 로직을 기록해요 (지표 없이 기록 전용).
 function renderAnalysis() {
   $('archive-tabs').hidden = true;
   const months = (publishedData.months || []).filter(m => m.month >= ANALYSIS_FROM);
@@ -1498,9 +1579,13 @@ async function fetchCalendarGuestEvents(prefix = CALENDAR_PREFIX) {
     .filter(ev => ev.summary && ev.summary.includes(prefix))
     .map(ev => {
       // "[성준] 이명찬 박사 (교양)" -> "이명찬 박사"
-      const name = nfc(ev.summary).replace(prefix, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
+      const raw = nfc(ev.summary);
+      // 끝의 "(교양)" 같은 괄호가 주제 분류예요.
+      const catMatch = raw.match(/\(([^)]*)\)\s*$/);
+      const category = catMatch ? catMatch[1].trim() : null;
+      const name = raw.replace(prefix, '').trim().replace(/\s*\([^)]*\)\s*$/, '').trim();
       const dateStr = ev.start.dateTime || ev.start.date;
-      return { name, core: coreName(name), date: new Date(dateStr) };
+      return { name, core: coreName(name), category, date: new Date(dateStr) };
     })
     .sort((a, b) => a.date - b.date);
 }
@@ -1761,7 +1846,7 @@ async function refreshMainMonth(monthKeyStr) {
     const videos = s.picked.map(p => {
       const a = analytics[p.videoId] || {};
       return {
-        part: p.part, pub: p.pub, privacy: p.privacy || null,
+        part: p.part, pub: p.pub, title: p.title || null, privacy: p.privacy || null,
         views: viewCounts[p.videoId] ?? null,
         avgViewDurationSec: a.avgViewDurationSec ?? null,
         avgViewPct: a.avgViewPct ?? null
@@ -1772,7 +1857,7 @@ async function refreshMainMonth(monthKeyStr) {
     const totalViews = videos.reduce((x, v) => x + (v.views || 0), 0);
     const ad = avg('avgViewDurationSec'), ap = avg('avgViewPct');
     guests.push({
-      name: s.name, eventDate: s.date.toISOString().slice(0, 10), videoCount: n,
+      name: s.name, eventDate: s.date.toISOString().slice(0, 10), category: s.category || null, videoCount: n,
       totalViews, avgViews: Math.round(totalViews / n),
       avgViewDurationSec: ad == null ? null : Math.round(ad),
       avgViewPct: ap == null ? null : +ap.toFixed(2),
