@@ -188,7 +188,8 @@ const CALENDAR_ID = 'biz@hijump.kr';                     // 🗓️ 웅달책방
 const CALENDAR_PREFIX = '[성준]';
 const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
-const SET_WINDOW_DAYS = 14;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
+const SET_WINDOW_DAYS = 21;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
+// 창의 마지막 날은 하루 전체를 포함해요 — 마지막 편이 몇 시에 올라오든 놓치지 않도록.
 const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민|고문|무극선생|선생|애널리스트|연구원|의원|변호사|회계사|관장|본부장|실장|위원장|사장|국장|처장)\s*$/;
 // 이름 사이에 끼어드는 소속명 (예: "김경록 미래에셋 고문" → "김경록")
 const AFFILIATION_RE = /\s*(미래에셋|삼성증권|한국투자|키움|NH투자|신한|하나|KB|메리츠)\s*/g;
@@ -1103,7 +1104,7 @@ async function refreshMainMonth(monthKeyStr) {
   const monthEnd = new Date(Date.UTC(y, mo, 1, -9));
   // 촬영일 + 14일까지 업로드분을 포함하려면 조회 범위를 넉넉히 잡아요.
   const searchAfter = monthStart;
-  const searchBefore = new Date(monthEnd.getTime() + 16 * 86400000);
+  const searchBefore = new Date(monthEnd.getTime() + (SET_WINDOW_DAYS + 2) * 86400000);
 
   const allEvents = await calendarCached();
   const events = allEvents.filter(e => e.date >= monthStart && e.date < monthEnd);
@@ -1118,6 +1119,7 @@ async function refreshMainMonth(monthKeyStr) {
   const sets = events.map(ev => {
     const start = ev.date;
     const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
+    end.setHours(23, 59, 59, 999);
     const cand = vids
       .filter(v => !used.has(v.videoId) && v.title.includes(ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
         && v.publishedAt >= start && v.publishedAt <= end)
