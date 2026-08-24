@@ -194,7 +194,7 @@ const CALENDAR_PREFIX = '[성준]';
 const TEAM_MEMBERS = ['다혜', '준하'];   // 준혁님은 콘텐츠 형식이 달라 이 기준으로 집계되지 않아 제외
 const TEAM_MONTHS = ['2026-07', '2026-08'];
 // 팀원 지표에서 뺄 정규 코너 (게스트 성과가 아니라 프로그램이라 평균을 왜곡해요)
-const TEAM_EXCLUDE_EVENT = /북클럽/;
+const TEAM_EXCLUDE_EVENT = /북클럽|밤의\s*독서/;
 const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
 const SET_WINDOW_DAYS = 21;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
