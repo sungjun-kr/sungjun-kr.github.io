@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-24T12:10:00.000Z",
+  "updatedAt": "2026-08-24T12:40:00.000Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -9,6 +9,49 @@
       "month": "2026-04",
       "label": "2026년 4월",
       "guests": [
+        {
+          "name": "존 리 대표님",
+          "eventDate": "2026-04-02",
+          "videoCount": 4,
+          "totalViews": 193036,
+          "avgViews": 48259,
+          "avgViewDurationSec": 257,
+          "avgViewPct": 34.91,
+          "videos": [
+            {
+              "part": "1부",
+              "pub": "2026-04-05",
+              "views": 8737,
+              "avgViewDurationSec": 209,
+              "avgViewPct": 43.48,
+              "privacy": "public"
+            },
+            {
+              "part": "2부",
+              "pub": "2026-04-06",
+              "views": 22926,
+              "avgViewDurationSec": 216,
+              "avgViewPct": 31.76,
+              "privacy": "public"
+            },
+            {
+              "part": "3부",
+              "pub": "2026-04-07",
+              "views": 55700,
+              "avgViewDurationSec": 203,
+              "avgViewPct": 39.46,
+              "privacy": "public"
+            },
+            {
+              "part": "풀버전",
+              "pub": "2026-04-10",
+              "views": 105673,
+              "avgViewDurationSec": 401,
+              "avgViewPct": 24.92,
+              "privacy": "public"
+            }
+          ]
+        },
         {
           "name": "이명찬 박사님",
           "eventDate": "2026-04-06",
@@ -624,19 +667,13 @@
       ],
       "pending": [
         {
-          "name": "존 리 대표님",
-          "eventDate": "2026-04-02",
-          "uploaded": 0,
-          "note": "미업로드"
-        },
-        {
           "name": "김기범 교수님",
           "eventDate": "2026-04-03",
           "uploaded": 1,
           "note": "일부만 업로드됨 (1편)"
         }
       ],
-      "updatedAt": "2026-08-24T12:10:00.000Z"
+      "updatedAt": "2026-08-24T12:40:00.000Z"
     },
     {
       "month": "2026-05",
@@ -3181,13 +3218,19 @@
           "note": "미업로드"
         },
         {
+          "name": "이형수 대표",
+          "eventDate": "2026-09-17",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
           "name": "차영주 소장",
           "eventDate": "2026-09-23",
           "uploaded": 0,
           "note": "미업로드"
         }
       ],
-      "updatedAt": "2026-08-24T10:30:00.000Z"
+      "updatedAt": "2026-08-24T12:40:00.000Z"
     },
     {
       "month": "2026-10",
