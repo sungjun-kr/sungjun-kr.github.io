@@ -187,7 +187,7 @@ const GUEST_PASSWORD = 'cjamm1206';
 const CALENDAR_ID = 'biz@hijump.kr';                     // 🗓️ 웅달책방 캘린더
 const CALENDAR_PREFIX = '[성준]';
 // 팀원 섹터 — 캘린더 태그로 담당자를 구분해요. 세부 영상 목록 없이 평균만 보여줍니다.
-const TEAM_MEMBERS = ['준혁', '다혜', '준하'];
+const TEAM_MEMBERS = ['다혜', '준하'];   // 준혁님은 콘텐츠 형식이 달라 이 기준으로 집계되지 않아 제외
 const TEAM_MONTHS = ['2026-07', '2026-08'];
 const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
@@ -763,7 +763,7 @@ function renderTeam(members) {
   const note = document.createElement('p');
   note.className = 'fine-print';
   note.style.marginTop = '4px';
-  note.textContent = '캘린더 담당 태그 기준이에요. 편 라벨(1~5부)과 풀버전이 붙은 본편만 집계하며, 쇼츠·재업로드·특집은 제외합니다. 아직 업로드되지 않은 게스트도 빠져요.';
+  note.textContent = '캘린더 담당 태그 기준이에요. 본채널과 같이 풀버전까지 올라온 세트만 집계하며, 쇼츠·재업로드·특집은 제외합니다. 업로드가 진행 중인 게스트는 빠져요.';
   wrap.appendChild(note);
 }
 
@@ -1297,10 +1297,10 @@ async function refreshTeamMonth(tag, monthKeyStr) {
 
   const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, monthStart.toISOString(), searchBefore.toISOString());
 
-  // 팀원 집계 기준:
-  //  - 편 라벨(1~5부)이나 풀버전이 붙은 본편만 셈 → 쇼츠·재업로드가 평균을 부풀리지 않도록
+  // 팀원 집계 기준 (본채널과 동일):
+  //  - 편 라벨(1~5부)·풀버전이 붙은 본편만 셈 → 쇼츠·재업로드 제외
   //  - 특집(합동 출연)은 담당자 간 중복 계산을 피하려고 제외
-  //  - 본채널과 달리 '풀버전+3부 모두 갖춘 세트'까지 요구하지는 않아요
+  //  - 풀버전 + 3편 이상이 모두 올라온 세트만 집계 (업로드 진행 중인 게스트는 빠짐)
   const used = new Set();
   const sets = [];
   events.forEach(ev => {
@@ -1310,10 +1310,18 @@ async function refreshTeamMonth(tag, monthKeyStr) {
     const cand = vids.filter(v => !used.has(v.videoId) && v.title.includes(ev.core)
       && !v.title.includes(EXCLUDE_KEYWORD)
       && (/\d+\s*부/.test(v.title) || v.title.includes('풀버전'))
-      && v.publishedAt >= start && v.publishedAt <= end);
-    if (cand.length) {
-      cand.forEach(v => used.add(v.videoId));
-      sets.push({ name: ev.name, ids: cand.map(v => v.videoId) });
+      && v.publishedAt >= start && v.publishedAt <= end)
+      .sort((a, b) => a.publishedAt - b.publishedAt);
+    const parts = new Set(), picked = [];
+    cand.forEach(v => {
+      const m = v.title.match(/([1-5])부/);
+      const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
+      if (key && !parts.has(key)) { parts.add(key); picked.push(v.videoId); }
+    });
+    const numParts = [...parts].filter(k => k !== 'full').length;
+    if (parts.has('full') && numParts >= MIN_PARTS) {
+      picked.forEach(id => used.add(id));
+      sets.push({ name: ev.name, ids: picked });
     }
   });
 
