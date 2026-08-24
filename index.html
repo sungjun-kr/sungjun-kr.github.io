@@ -878,11 +878,37 @@ function renderTopics() {
   });
   listEl.appendChild(grid);
 
+  // 내 담당 영상만 모은 칸 (주제 무관)
+  const mineCard = document.createElement('div');
+  mineCard.className = 'guest-card topic-col';
+  mineCard.style.marginTop = '12px';
+  const mh = document.createElement('h3');
+  mh.textContent = '내 영상 TOP 10';
+  mineCard.appendChild(mh);
+  const mineItems = data.mine || [];
+  if (!mineItems.length) {
+    const e = document.createElement('div');
+    e.className = 'topic-meta';
+    e.textContent = '최근 14일 안에 조건에 맞는 내 영상이 없어요.';
+    mineCard.appendChild(e);
+  } else {
+    mineItems.forEach((it, idx) => {
+      const box = document.createElement('div');
+      box.className = 'topic-item';
+      box.innerHTML = `<div class="topic-title">${idx + 1}. ${escapeHtml(it.title || '(제목 없음)')}</div>`
+        + `<div class="topic-meta"><b style="color:var(--series-1)">${fmtNum(it.views)}회</b>`
+        + ` · ${escapeHtml(it.guest || '')}${it.category ? ' · ' + escapeHtml(it.category) : ''} · ${escapeHtml(it.pub || '')}</div>`;
+      mineCard.appendChild(box);
+    });
+  }
+  listEl.appendChild(mineCard);
+
   const note = document.createElement('p');
   note.className = 'fine-print';
   note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
     + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
-    + '풀버전·특집과 조회수 3만 이하는 제외했어요.';
+    + '풀버전·특집과 조회수 3만 이하는 제외했어요. '
+    + `맨 아래 "내 영상 TOP 10"은 캘린더 ${CALENDAR_PREFIX} 일정만 주제 구분 없이 모은 목록입니다.`;
   listEl.appendChild(note);
 }
 
@@ -1730,15 +1756,17 @@ async function fetchAllCalendarEvents() {
     const raw = nfc(ev.summary || '');
     const cm = raw.match(/\(([^)]*)\)\s*$/);
     const category = cm ? cm[1].trim() : null;
+    const tagM = raw.match(/^\s*\[([^\]]*)\]/);
+    const tag = tagM ? tagM[1].trim() : null;
     const name = raw.replace(/^\s*\[[^\]]*\]\s*/, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
     const dateStr = (ev.start && (ev.start.dateTime || ev.start.date)) || null;
-    return { name, core: coreName(name), category, date: dateStr ? new Date(dateStr) : null };
+    return { name, core: coreName(name), category, tag, date: dateStr ? new Date(dateStr) : null };
   }).filter(e => e.date && e.core);
 }
 
 // 주제별 TOP 수집 — 최근 업로드분을 담당자 구분 없이 모아 분야별로 줄 세워요.
 async function refreshTopics() {
-  const events = (await fetchAllCalendarEvents()).filter(e => TOPIC_CATS.includes(e.category));
+  const events = await fetchAllCalendarEvents();
   const since = new Date(Date.now() - TOPIC_DAYS * 86400000);
   const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, since.toISOString(), new Date().toISOString());
 
@@ -1751,22 +1779,28 @@ async function refreshTopics() {
     const ev = evRecent.find(e => titleHasGuest(v.title, e.core) && v.publishedAt >= e.date);
     if (!ev) return;
     picked.push({ videoId: v.videoId, title: v.title, guest: ev.name, category: ev.category,
-                  pub: v.publishedAt.toISOString().slice(0, 10) });
+                  tag: ev.tag, pub: v.publishedAt.toISOString().slice(0, 10) });
   });
 
   const views = await fetchViewCounts(picked.map(p => p.videoId));
   const cats = {};
   TOPIC_CATS.forEach(c => { cats[c] = []; });
+  const mine = [];
+  const myTag = CALENDAR_PREFIX.replace(/[\[\]]/g, '');
   picked.forEach(p => {
     const n = views[p.videoId];
     if (typeof n !== 'number' || n <= TOPIC_MIN_VIEWS) return;
-    cats[p.category].push({ title: p.title, views: n, guest: p.guest, pub: p.pub });
+    const row = { title: p.title, views: n, guest: p.guest, pub: p.pub };
+    if (TOPIC_CATS.includes(p.category)) cats[p.category].push(row);
+    // 내 담당분은 주제와 무관하게 따로 모아요.
+    if (p.tag === myTag) mine.push({ ...row, category: p.category || null });
   });
   TOPIC_CATS.forEach(c => {
     cats[c] = cats[c].sort((a, b) => b.views - a.views).slice(0, 10);
   });
+  const myTop = mine.sort((a, b) => b.views - a.views).slice(0, 10);
 
-  publishedData.topics = { days: TOPIC_DAYS, minViews: TOPIC_MIN_VIEWS, cats, updatedAt: new Date().toISOString() };
+  publishedData.topics = { days: TOPIC_DAYS, minViews: TOPIC_MIN_VIEWS, cats, mine: myTop, updatedAt: new Date().toISOString() };
   publishedData.updatedAt = new Date().toISOString();
 }
 
