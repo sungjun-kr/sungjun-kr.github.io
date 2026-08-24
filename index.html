@@ -123,6 +123,10 @@ input[type="password"], input[type="text"] {
 .chg-up   { color: var(--perf-green); }
 .chg-down { color: var(--perf-red); }
 .chg-same { color: var(--muted); }
+/* 총 조회수 타일의 '직전 대비' 줄 — stat-sub 기본 회색보다 색을 우선해요. */
+.stat-sub.chg-up   { color: var(--perf-green); font-weight: 600; }
+.stat-sub.chg-down { color: var(--perf-red); font-weight: 600; }
+.stat-sub.chg-same { color: var(--muted); }
 
 .legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -8px 0 18px; }
 .legend .lg { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
@@ -651,6 +655,26 @@ function renderInner() {
     const totalTile = statTile('총 조회수', fmtNum(g.totalViews), perf.sub);
     const totalValEl = totalTile.querySelector('.stat-value');
     if (perf.cls) totalValEl.classList.add(perf.cls);
+    // 평균 대비 아래에 '직전 출연 대비 증감'을 덧붙여요.
+    const prevApp = findPrevAppearance(g, months, curIdx);
+    if (prevApp && typeof prevApp.guest.totalViews === 'number') {
+      const diff = g.totalViews - prevApp.guest.totalViews;
+      const base = prevApp.guest.totalViews;
+      const pct = base ? (diff / base) * 100 : null;
+      const line = document.createElement('div');
+      line.className = 'stat-sub ' + (diff > 0 ? 'chg-up' : (diff < 0 ? 'chg-down' : 'chg-same'));
+      const sign = diff > 0 ? '+' : (diff < 0 ? '−' : '±');
+      line.textContent = `직전 대비 ${sign}${fmtNum(Math.abs(diff))}`
+        + (pct === null ? '' : ` (${diff > 0 ? '+' : (diff < 0 ? '−' : '')}${Math.abs(pct).toFixed(1)}%)`);
+      line.title = `${prevApp.label} ${prevApp.guest.eventDate} 출연 ${fmtNum(base)} → 이번 ${fmtNum(g.totalViews)}`;
+      totalTile.appendChild(line);
+    } else {
+      const line = document.createElement('div');
+      line.className = 'stat-sub';
+      line.style.color = 'var(--muted)';
+      line.textContent = '직전 출연 없음';
+      totalTile.appendChild(line);
+    }
     kpiRow.appendChild(totalTile);
     kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
     kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
@@ -896,6 +920,23 @@ function gradeChange(guest, prevMonth) {
   if (!from || !to) return null;
   const diff = (GRADE_ORDER[to] ?? 0) - (GRADE_ORDER[from] ?? 0);
   return { from, to, diff, prevName: prev.name, prevViews: prev.totalViews, prevLabel: prevMonth.label };
+}
+
+// 같은 게스트의 바로 앞 출연 회차를 찾아요 (같은 달의 이전 회차 → 이전 달들 순으로 역순 탐색).
+function findPrevAppearance(guest, months, curIdx) {
+  const key = guestKey(guest.name);
+  if (!key) return null;
+  for (let i = curIdx; i >= 0; i--) {
+    const m = months[i];
+    if (!m || !m.guests) continue;
+    const cands = m.guests.filter(g => sameGuest(key, guestKey(g.name))
+      && String(g.eventDate) < String(guest.eventDate));
+    if (cands.length) {
+      const prev = cands.slice().sort((a, b) => String(a.eventDate).localeCompare(String(b.eventDate))).pop();
+      return { guest: prev, label: m.label };
+    }
+  }
+  return null;
 }
 
 // 총 조회수 절대 기준 등급 (월 평균과 무관)
