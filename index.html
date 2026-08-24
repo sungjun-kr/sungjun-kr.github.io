@@ -848,20 +848,21 @@ function saveBlocked(set) {
 }
 
 // 섭외 판단 알고리즘
-//  조회수가 가장 중요한 지표라 비중을 크게 두고(75%), 그 조회수 우위를 '표본 수'로 할인해요.
+//  조회수가 가장 중요한 지표라 비중을 크게 두고(85%), 그 조회수 우위를 '표본 수'로 할인해요.
 //  = 많이 나왔는데도 평균을 웃돈다면 진짜 실력, 한 번뿐이면 운일 수 있으니 덜 인정.
-//  시청지속률 15% + 직전 회차 대비 추세 10%로 보조 지표를 얹습니다.
+//  시청지속률 10% + 직전 회차 대비 추세 5%로 보조 지표를 얹습니다.
 //  기준값 1.00 = 채널 평균 수준.
 function bookingCall(r, base) {
   const viewIdx = base.views ? r.avgPerAppearance / base.views : 1;
   const retIdx = (base.pct && typeof r.avgViewPct === 'number') ? r.avgViewPct / base.pct : 1;
   const tr = typeof r.trend === 'number' ? Math.max(-0.5, Math.min(0.5, r.trend)) : 0;
 
-  // 표본 신뢰도: 1회 0.2 → 5회 이상 1.0. 조회수 우위(또는 열위)를 이 비율만큼만 인정해요.
-  const reliability = Math.min(r.count, 5) / 5;
+  // 표본 신뢰도: 1회 50%에서 시작해 출연 1회마다 10%p씩 올라가고 100%에서 멈춰요.
+  //  1회 50% / 2회 60% / 3회 70% / 4회 80% / 5회 90% / 6회 이상 100%
+  const reliability = Math.min(1, 0.5 + (r.count - 1) * 0.1);
   const viewTerm = 1 + (viewIdx - 1) * reliability;
 
-  const score = viewTerm * 0.75 + retIdx * 0.15 + (1 + tr) * 0.10;
+  const score = viewTerm * 0.85 + retIdx * 0.10 + (1 + tr) * 0.05;
 
   const pctTxt = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(0)}%`;
   const parts = [`조회 ${pctTxt((viewIdx - 1) * 100)}`];
@@ -984,9 +985,11 @@ function renderGuestRanking() {
     + '평균 대비 %는 전체 게스트의 1회 출연당 평균과 비교한 값이에요. 다음 촬영은 캘린더에 잡힌 예정 일정을 보여주며, 없으면 “일정 없음”으로 표시합니다.';
   const note2 = document.createElement('p');
   note2.className = 'fine-print';
-  note2.innerHTML = '<strong>AI 분석</strong> — 조회수를 가장 크게(75%) 보고, 그 우위를 <b>표본 수로 할인</b>합니다. '
-    + '1회 출연은 20%만, 5회 이상이면 100% 인정해요. 많이 나왔는데도 평균을 웃돌면 실력, 한 번뿐이면 운일 수 있다는 뜻입니다. '
-    + '여기에 시청지속률 15% + 직전 회차 대비 추세 10%를 더합니다. 1.00이 채널 평균 수준이고, '
+  note2.innerHTML = '<strong>AI 분석</strong> — 조회수를 가장 크게(85%) 보고, 그 우위를 <b>표본 수로 할인</b>합니다. '
+    + '1회 출연은 50%만 인정하고 출연이 한 번 늘 때마다 10%p씩 올라가 6회 이상이면 100% 반영해요 '
+    + '(1회 50% · 2회 60% · 3회 70% · 4회 80% · 5회 90% · 6회↑ 100%). '
+    + '많이 나왔는데도 평균을 웃돌면 실력, 한 번뿐이면 운일 수 있다는 뜻입니다. '
+    + '여기에 시청지속률 10% + 직전 회차 대비 추세 5%를 더합니다. 1.00이 채널 평균 수준이고, '
     + '<b>적극 섭외</b> 1.30↑ · <b>섭외 추천</b> 1.05↑ · <b>유지</b> 0.85↑ · <b>재검토</b> 0.65↑ · <b>섭외 보류</b> 그 아래예요. '
     + '1회 출연은 점수가 아무리 높아도 적극 섭외로 올리지 않습니다. '
     + '클릭률은 브라우저에서 가져올 수 없어 빠져 있고, 숫자만 본 참고값이니 콘텐츠 맥락과 함께 보셔야 합니다.';
