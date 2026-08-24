@@ -148,6 +148,20 @@ input[type="password"], input[type="text"] {
 tr.row-blocked { background: rgba(208,59,59,0.10); }
 tr.row-blocked td { color: var(--muted); }
 tr.row-blocked td:nth-child(2) { color: var(--critical); font-weight: 600; text-decoration: line-through; }
+.logic-panel { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--gridline); }
+.logic-part { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; background: var(--page-plane); }
+.logic-part h4 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.logic-q { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.logic-q > span { font-size: 12px; color: var(--text-secondary); min-width: 128px; }
+.chip {
+  font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+  border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+  border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+}
+.chip:hover { border-color: var(--series-1); color: var(--series-1); }
+.chip.on { background: var(--series-1); border-color: var(--series-1); color: #fff; }
+.logic-sum { font-size: 11px; color: var(--muted); }
+.logic-done { color: var(--good); font-weight: 600; }
 .empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
 .section-head { font-size: 15px; font-weight: 600; margin: 28px 0 12px; color: var(--text-secondary); }
 .badge-priv { font-size: 10px; color: var(--warning, #a06600); border: 1px solid currentColor; border-radius: 4px; padding: 1px 4px; margin-left: 4px; vertical-align: middle; }
@@ -338,13 +352,14 @@ function currentSectorLabel() {
   if (activeScope === 'archive') return `${activeArchive} ${monthLbl}`.trim();
   if (activeScope === 'team') return `팀원 ${monthLbl}`.trim();
   if (activeScope === 'guests') return '게스트 목록';
+  if (activeScope === 'analysis') return '분석';
   return monthLbl;
 }
 
 function updateRefreshLabel() {
   const s = currentSectorLabel();
   // 게스트 목록은 기존 데이터로 계산되는 화면이라 새로고침 버튼이 필요 없어요.
-  const derived = activeScope === 'guests';
+  const derived = activeScope === 'guests' || activeScope === 'analysis';
   $('refresh-btn').hidden = derived;
   $('refresh-btn').textContent = s ? `${s} 새로고침` : '새로고침';
   const allBtn = $('refresh-all-btn');
@@ -510,6 +525,7 @@ function renderInner() {
   if (archive.length || team.length || isAdmin) {
     const defs = [['main', '본채널']];
     if ((publishedData.months || []).length) defs.push(['guests', '게스트']);
+    if ((publishedData.months || []).some(m => m.month >= ANALYSIS_FROM)) defs.push(['analysis', '분석']);
     if (archive.length) defs.push(['archive', '저장소']);
     if (team.length || isAdmin) defs.push(['team', '팀원']);
     defs.forEach(([key, label]) => {
@@ -523,6 +539,11 @@ function renderInner() {
 
   if (activeScope === 'guests') {
     renderGuestRanking();
+    return;
+  }
+
+  if (activeScope === 'analysis') {
+    renderAnalysis();
     return;
   }
 
@@ -722,12 +743,18 @@ function renderInner() {
 
       const table = document.createElement('table');
       table.className = 'video-table';
-      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
+      // 분석 섹터에 기록한 작업 로직을 편별로 함께 보여줘요.
+      const logicRec = loadLogic()[logicKeyOf(g)] || {};
+      const hasLogic = Object.keys(logicRec).length > 0;
+      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th>`
+        + (hasLogic ? `<th>작업 로직</th>` : '') + `</tr></thead>`;
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
         const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
-        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
+        const sum = logicSummary(logicRec[v.part]);
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`
+          + (hasLogic ? `<td class="logic-sum">${sum ? escapeHtml(sum) : '–'}</td>` : '');
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
@@ -776,7 +803,128 @@ function renderInner() {
 
 // ---------------- 저장소 (웅달책방_투자 / _교양 / _부동산) ----------------
 
-// 게스트 섹터 — 지금까지 출연한 모든 게스트를 인물 단위로 묶어 1회 출연당 평균을 냅니다.
+// 분석 섹터 — 게스트별로 편마다 작업 로직을 기록해요 (지표 없이 기록 전용).
+function renderAnalysis() {
+  $('archive-tabs').hidden = true;
+  const months = (publishedData.months || []).filter(m => m.month >= ANALYSIS_FROM);
+  const tabsEl = $('month-tabs');
+  tabsEl.innerHTML = '';
+  const listEl = $('guest-list');
+  listEl.innerHTML = '';
+  if (!months.length) {
+    listEl.innerHTML = '<div class="empty-state">분석할 달이 아직 없어요.</div>';
+    return;
+  }
+  if (!activeMonth || !months.find(m => m.month === activeMonth)) activeMonth = months[0].month;
+  months.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (m.month === activeMonth ? ' active' : '');
+    btn.textContent = m.label;
+    btn.addEventListener('click', () => { activeMonth = m.month; render(); });
+    tabsEl.appendChild(btn);
+  });
+
+  const cur = months.find(m => m.month === activeMonth);
+  // 업로드 끝난 게스트 + 예정 게스트를 촬영일 순으로 모두 나열해요.
+  const entries = [
+    ...(cur.guests || []).map(g => ({ name: g.name, eventDate: g.eventDate, done: true })),
+    ...(cur.pending || []).map(p => ({ name: p.name, eventDate: p.eventDate, done: false, note: p.note }))
+  ].sort((a, b) => String(a.eventDate).localeCompare(String(b.eventDate)));
+
+  if (!entries.length) {
+    listEl.innerHTML = '<div class="empty-state">이 달에는 게스트가 없어요.</div>';
+    return;
+  }
+
+  const store = loadLogic();
+  entries.forEach(ent => {
+    const key = logicKeyOf(ent);
+    const rec = store[key] || {};
+    const filled = LOGIC_PARTS.filter(p => rec[p] && Object.keys(rec[p]).length).length;
+
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+
+    const head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'guest-toggle';
+    const left = document.createElement('div');
+    left.className = 'guest-toggle-left';
+    const nm = document.createElement('span');
+    nm.className = 'guest-name';
+    nm.textContent = ent.name;
+    const meta = document.createElement('span');
+    meta.className = 'guest-date';
+    const d = ent.eventDate ? new Date(ent.eventDate) : null;
+    meta.innerHTML = (d ? `${d.getMonth() + 1}월 ${d.getDate()}일` : '')
+      + (ent.done ? '' : ` · <span style="color:var(--warning)">${escapeHtml(ent.note || '업로드 예정')}</span>`)
+      + ` · <span class="${filled ? 'logic-done' : 'logic-sum'}">작업 로직 ${filled}/${LOGIC_PARTS.length}</span>`;
+    left.appendChild(nm); left.appendChild(meta);
+    const chev = document.createElement('span');
+    chev.className = 'chevron';
+    chev.textContent = '▾';
+    head.appendChild(left); head.appendChild(chev);
+    card.appendChild(head);
+
+    const panel = document.createElement('div');
+    panel.className = 'logic-panel';
+    panel.hidden = true;
+    LOGIC_PARTS.forEach(part => {
+      const box = document.createElement('div');
+      box.className = 'logic-part';
+      const h = document.createElement('h4');
+      h.textContent = part;
+      box.appendChild(h);
+      LOGIC_QUESTIONS.forEach(q => {
+        const row = document.createElement('div');
+        row.className = 'logic-q';
+        const lab = document.createElement('span');
+        lab.textContent = q.label;
+        row.appendChild(lab);
+        q.opts.forEach(opt => {
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'chip' + ((rec[part] && rec[part][q.key] === opt) ? ' on' : '');
+          chip.textContent = opt;
+          chip.addEventListener('click', () => {
+            const all = loadLogic();
+            all[key] = all[key] || {};
+            all[key][part] = all[key][part] || {};
+            // 같은 걸 다시 누르면 선택 해제돼요.
+            if (all[key][part][q.key] === opt) delete all[key][part][q.key];
+            else all[key][part][q.key] = opt;
+            if (!Object.keys(all[key][part]).length) delete all[key][part];
+            if (!Object.keys(all[key]).length) delete all[key];
+            saveLogic(all);
+            [...row.querySelectorAll('.chip')].forEach(c => c.classList.remove('on'));
+            const now = loadLogic();
+            if (now[key] && now[key][part] && now[key][part][q.key] === opt) chip.classList.add('on');
+            const n = LOGIC_PARTS.filter(pp => now[key] && now[key][pp] && Object.keys(now[key][pp]).length).length;
+            meta.querySelector('span:last-child').textContent = `작업 로직 ${n}/${LOGIC_PARTS.length}`;
+            meta.querySelector('span:last-child').className = n ? 'logic-done' : 'logic-sum';
+          });
+          row.appendChild(chip);
+        });
+        box.appendChild(row);
+      });
+      panel.appendChild(box);
+    });
+    card.appendChild(panel);
+    head.addEventListener('click', () => {
+      panel.hidden = !panel.hidden;
+      card.classList.toggle('open', !panel.hidden);
+      head.setAttribute('aria-expanded', String(!panel.hidden));
+    });
+    listEl.appendChild(card);
+  });
+
+  const note = document.createElement('p');
+  note.className = 'fine-print';
+  note.textContent = '작업 로직은 이 브라우저에만 저장돼요. 기록한 내용은 본채널 각 게스트의 편별 표에도 함께 표시됩니다.';
+  listEl.appendChild(note);
+}
+
+// 게스트 섹터 —// 게스트 섹터 — 지금까지 출연한 모든 게스트를 인물 단위로 묶어 1회 출연당 평균을 냅니다.
 function buildGuestRanking() {
   const clusters = [];
   (publishedData.months || []).forEach(m => {
@@ -835,6 +983,38 @@ function buildGuestRanking() {
   clusters.sort((a, b) => (GRADE_ORDER[b.tier] ?? -1) - (GRADE_ORDER[a.tier] ?? -1)
     || b.avgPerAppearance - a.avgPerAppearance);
   return clusters;
+}
+
+// ---------------- 작업 로직 기록 (분석 섹터) ----------------
+const ANALYSIS_FROM = '2026-08';                       // 이 달부터 분석 섹터에 나와요
+const LOGIC_PARTS = ['1부', '2부', '3부', '4부', '풀버전'];
+const LOGIC_QUESTIONS = [
+  { key: 'thumb',  label: '썸네일 레퍼런스',      opts: ['1개', '2개', '3개 이상'] },
+  { key: 'ref',    label: '레퍼런스 질문지 활용', opts: ['적극적', '일부', '소극적'] },
+  { key: 'timing', label: '정보의 시황',          opts: ['적극적', '일부', '소극적'] },
+  { key: 'meta',   label: '작성 당시의 메타',     opts: ['조회수 높음', '조회수 평균', '조회수 낮음'] }
+];
+const LOGIC_KEY = 'workLogic';
+
+function loadLogic() {
+  try { return JSON.parse(localStorage.getItem(LOGIC_KEY) || '{}'); } catch (e) { return {}; }
+}
+function saveLogic(obj) {
+  try { localStorage.setItem(LOGIC_KEY, JSON.stringify(obj)); } catch (e) {}
+}
+// 게스트 한 명을 가리키는 키 (같은 사람이 여러 번 나와도 회차별로 구분돼요)
+function logicKeyOf(guest) {
+  return `${guestKey(guest.name)}|${guest.eventDate}`;
+}
+// 한 편에 기록된 답을 "썸2 · 질문 적극적" 처럼 짧게 요약해요.
+function logicSummary(rec) {
+  if (!rec) return null;
+  const bits = [];
+  if (rec.thumb) bits.push('썸 ' + rec.thumb.replace(' 이상', '+'));
+  if (rec.ref) bits.push('질문 ' + rec.ref);
+  if (rec.timing) bits.push('시황 ' + rec.timing);
+  if (rec.meta) bits.push('메타 ' + rec.meta.replace('조회수 ', ''));
+  return bits.length ? bits.join(' · ') : null;
 }
 
 // 재출연 불가 표시 — 이 브라우저에만 저장돼요 (게시 데이터와 별개).
