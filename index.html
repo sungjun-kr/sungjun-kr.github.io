@@ -189,7 +189,6 @@ const CALENDAR_PREFIX = '[성준]';
 const EXCLUDE_KEYWORD = '특집';   // 특집 영상은 게스트 성과에서 제외
 const MIN_PARTS = 3;              // 정규 녹화는 3부작 이상 (1·2부+풀버전은 라이브 편집본)
 const SET_WINDOW_DAYS = 14;       // 촬영일 이후 이 기간 내 업로드분을 한 세트로 봄 (편집 지연 감안)
-const REACH_REPORT_TYPE = 'channel_reach_basic_a1';  // 클릭률(썸네일 노출 CTR) 리포트
 const TITLE_SUFFIX_RE = /(박사|교수님|교수|영업이사|대표|특파원|소장|부장|차장|이사|작가|위원|팀장|세무사|기자|센터장|법사|탈북민|고문|무극선생|선생|애널리스트|연구원|의원|변호사|회계사|관장|본부장|실장|위원장|사장|국장|처장)\s*$/;
 // 이름 사이에 끼어드는 소속명 (예: "김경록 미래에셋 고문" → "김경록")
 const AFFILIATION_RE = /\s*(미래에셋|삼성증권|한국투자|키움|NH투자|신한|하나|KB|메리츠)\s*/g;
@@ -613,7 +612,6 @@ function renderInner() {
     if (perf.cls) totalValEl.classList.add(perf.cls);
     kpiRow.appendChild(totalTile);
     kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
-    kpiRow.appendChild(statTile('평균 클릭률', fmtPct(g.avgCtr)));
     kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
     kpiRow.appendChild(statTile('평균 시청률', fmtPct(g.avgViewPct)));
     card.appendChild(kpiRow);
@@ -626,12 +624,12 @@ function renderInner() {
 
       const table = document.createElement('table');
       table.className = 'video-table';
-      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>클릭률</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th></tr></thead>`;
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
         const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
-        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtPct(v.ctr)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
@@ -727,7 +725,6 @@ function renderArchive(channels) {
   allRow.appendChild(statTile('채널', ch.name));
   allRow.appendChild(statTile('총 영상 수', `${cur.videoCount || 0}편`));
   allRow.appendChild(statTile('평균 조회수', fmtNum(cur.avgViews)));
-  allRow.appendChild(statTile('평균 클릭률', fmtPct(cur.avgCtr)));
   allRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(cur.avgViewDurationSec)));
   listEl.appendChild(allRow);
 
@@ -761,7 +758,6 @@ function renderArchive(channels) {
     row.className = 'kpi-row';
     row.appendChild(statTile('총 영상 수', g ? `${g.videoCount}편` : '–'));
     row.appendChild(statTile('평균 조회수', g ? fmtNum(g.avgViews) : '–'));
-    row.appendChild(statTile('평균 클릭률', g ? fmtPct(g.avgCtr) : '–'));
     row.appendChild(statTile('평균 시청 지속시간', g ? fmtDuration(g.avgViewDurationSec) : '–'));
     card.appendChild(row);
 
@@ -1000,7 +996,7 @@ async function fetchViewCounts(videoIds) {
 }
 
 // 시청 지속시간·시청률은 Analytics API에서만 제공돼요 (2~3일 지연 있음).
-// 클릭률(노출 클릭률)은 Analytics API에 아예 없고 Reporting API(대량 CSV)로만 제공돼요.
+// 클릭률은 브라우저에서 받을 수 없어 다루지 않아요 (Analytics API에 없고, Reporting API CSV는 CORS로 차단됨).
 async function fetchAnalyticsForVideos(videoIds) {
   if (!videoIds.length) return {};
   const result = {};
@@ -1027,64 +1023,12 @@ async function fetchAnalyticsForVideos(videoIds) {
   return result;
 }
 
-// 클릭률: Reporting API(channel_reach_basic_a1)의 최신 CSV에서 영상별 CTR을 읽어와요.
-// 리포트 작업이 아직 생성 중이면 조용히 빈 값을 돌려주고, 대시보드는 '–'로 표시돼요.
-async function fetchCtrByVideo() {
-  try {
-    const jobsRes = await authFetch('https://youtubereporting.googleapis.com/v1/jobs');
-    const job = (jobsRes.jobs || []).find(j => j.reportTypeId === REACH_REPORT_TYPE);
-    if (!job) return {};
-    const repRes = await authFetch(`https://youtubereporting.googleapis.com/v1/jobs/${job.id}/reports`);
-    const reports = repRes.reports || [];
-    if (!reports.length) return {};
-    // 최신 리포트부터 최대 40개를 합산 (일별 파일이므로 노출·클릭을 누적해 가중 평균 CTR을 계산)
-    const recent = reports.sort((a, b) => (b.startTime || '').localeCompare(a.startTime || '')).slice(0, 40);
-    const acc = {};
-    for (const rep of recent) {
-      const res = await fetch(rep.downloadUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
-      if (!res.ok) continue;
-      const text = await res.text();
-      const lines = text.trim().split('\n');
-      if (lines.length < 2) continue;
-      const head = lines[0].split(',');
-      const iVid = head.indexOf('video_id');
-      const iImp = head.indexOf('video_thumbnail_impressions');
-      const iCtr = head.indexOf('video_thumbnail_impressions_ctr');
-      if (iVid < 0 || iImp < 0 || iCtr < 0) continue;
-      for (let k = 1; k < lines.length; k++) {
-        const c = lines[k].split(',');
-        const vid = c[iVid];
-        const imp = Number(c[iImp]);
-        const ctr = Number(c[iCtr]);
-        if (!vid || !isFinite(imp) || !isFinite(ctr)) continue;
-        if (!acc[vid]) acc[vid] = { imp: 0, clicks: 0 };
-        acc[vid].imp += imp;
-        acc[vid].clicks += imp * ctr; // ctr은 비율(0~1 또는 0~100) — 아래에서 정규화
-      }
-    }
-    const out = {};
-    Object.entries(acc).forEach(([vid, a]) => {
-      if (!a.imp) return;
-      let pct = (a.clicks / a.imp);
-      if (pct <= 1) pct = pct * 100; // 0~1 비율이면 퍼센트로 변환
-      out[vid] = +pct.toFixed(2);
-    });
-    return out;
-  } catch (err) {
-    console.warn('클릭률 리포트를 아직 가져올 수 없어요:', err.message);
-    return {};
-  }
-}
 
 // ---------------- 섹터(월) 단위 새로고침 ----------------
 
-// 한 번의 갱신 작업 안에서는 클릭률 리포트와 캘린더를 재사용해요 (CSV 재다운로드 방지).
-let _ctrCache = null, _calCache = null;
-function clearRefreshCache() { _ctrCache = null; _calCache = null; }
-async function ctrMapCached() {
-  if (!_ctrCache) _ctrCache = await fetchCtrByVideo();
-  return _ctrCache;
-}
+// 한 번의 갱신 작업 안에서는 캘린더를 재사용해요.
+let _calCache = null;
+function clearRefreshCache() { _calCache = null; }
 async function calendarCached() {
   if (!_calCache) _calCache = await fetchCalendarGuestEvents();
   return _calCache;
@@ -1194,8 +1138,8 @@ async function refreshMainMonth(monthKeyStr) {
   });
 
   const ids = [...new Set(sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId)))];
-  const [viewCounts, analytics, ctrMap] = await Promise.all([
-    fetchViewCounts(ids), fetchAnalyticsForVideos(ids), ctrMapCached()
+  const [viewCounts, analytics] = await Promise.all([
+    fetchViewCounts(ids), fetchAnalyticsForVideos(ids)
   ]);
 
   const guests = [], pending = [];
@@ -1213,7 +1157,6 @@ async function refreshMainMonth(monthKeyStr) {
       return {
         part: p.part, pub: p.pub, privacy: p.privacy || null,
         views: viewCounts[p.videoId] ?? null,
-        ctr: ctrMap[p.videoId] ?? null,
         avgViewDurationSec: a.avgViewDurationSec ?? null,
         avgViewPct: a.avgViewPct ?? null
       };
@@ -1221,11 +1164,10 @@ async function refreshMainMonth(monthKeyStr) {
     const n = videos.length || 1;
     const avg = k => { const q = videos.map(v => v[k]).filter(x => typeof x === 'number'); return q.length ? q.reduce((a, b) => a + b, 0) / q.length : null; };
     const totalViews = videos.reduce((x, v) => x + (v.views || 0), 0);
-    const ac = avg('ctr'), ad = avg('avgViewDurationSec'), ap = avg('avgViewPct');
+    const ad = avg('avgViewDurationSec'), ap = avg('avgViewPct');
     guests.push({
       name: s.name, eventDate: s.date.toISOString().slice(0, 10), videoCount: n,
       totalViews, avgViews: Math.round(totalViews / n),
-      avgCtr: ac == null ? null : +ac.toFixed(2),
       avgViewDurationSec: ad == null ? null : Math.round(ad),
       avgViewPct: ap == null ? null : +ap.toFixed(2),
       videos
@@ -1256,29 +1198,27 @@ async function refreshArchiveMonth(channelKey, monthKeyStr) {
   const vids = await fetchVideosInRange(entry.channelId, start.toISOString(), end.toISOString());
   const items = vids.map(v => ({ ...v, g: archiveGroupOf(v.title) })).filter(v => v.g);
   const ids = items.map(v => v.videoId);
-  const [views, an, ctrMap] = await Promise.all([
-    fetchViewCounts(ids), fetchArchiveAnalytics(entry.channelId, ids), ctrMapCached()
+  const [views, an] = await Promise.all([
+    fetchViewCounts(ids), fetchArchiveAnalytics(entry.channelId, ids)
   ]);
 
-  const rows = items.map(v => ({ g: v.g, views: views[v.videoId] ?? null, ctr: ctrMap[v.videoId] ?? null, dur: (an[v.videoId] || {}).dur ?? null }));
+  const rows = items.map(v => ({ g: v.g, views: views[v.videoId] ?? null, dur: (an[v.videoId] || {}).dur ?? null }));
   const avg = (arr, k) => { const q = arr.map(x => x[k]).filter(x => typeof x === 'number'); return q.length ? q.reduce((a, b) => a + b, 0) / q.length : null; };
   const groups = {};
   ARCHIVE_GROUPS.forEach(g => {
     const arr = rows.filter(x => x.g === g);
     if (!arr.length) return;
-    const vv = avg(arr, 'views'), cc = avg(arr, 'ctr'), dd = avg(arr, 'dur');
+    const vv = avg(arr, 'views'), dd = avg(arr, 'dur');
     groups[g] = {
       videoCount: arr.length,
       avgViews: vv == null ? null : Math.round(vv),
-      avgCtr: cc == null ? null : +cc.toFixed(2),
       avgViewDurationSec: dd == null ? null : Math.round(dd)
     };
   });
-  const vv = avg(rows, 'views'), cc = avg(rows, 'ctr'), dd = avg(rows, 'dur');
+  const vv = avg(rows, 'views'), dd = avg(rows, 'dur');
   const monthEntry = {
     month: monthKeyStr, label: `${y}년 ${mo}월`, videoCount: rows.length,
     avgViews: vv == null ? null : Math.round(vv),
-    avgCtr: cc == null ? null : +cc.toFixed(2),
     avgViewDurationSec: dd == null ? null : Math.round(dd),
     groups, updatedAt: new Date().toISOString()
   };
@@ -1314,7 +1254,7 @@ function archiveGroupOf(title) {
   return null;   // 그 외(쇼츠·예고 등)는 집계에서 제외
 }
 
-async function collectArchiveChannel(entry, ctrMapAll) {
+async function collectArchiveChannel(entry) {
   const channelId = entry.channelId || await resolveArchiveChannelId(entry.name);
   if (!channelId) return { key: entry.key, name: entry.name, channelId: null, months: [], error: '채널을 찾지 못했어요' };
 
@@ -1352,7 +1292,6 @@ async function collectArchiveChannel(entry, ctrMapAll) {
     byMonth.get(key).items.push({
       group,
       views: views[v.videoId] ?? null,
-      ctr: ctrMapAll[v.videoId] ?? null,
       dur: (an[v.videoId] || {}).dur ?? null
     });
   });
@@ -1366,19 +1305,17 @@ async function collectArchiveChannel(entry, ctrMapAll) {
     ARCHIVE_GROUPS.forEach(g => {
       const arr = m.items.filter(x => x.group === g);
       if (!arr.length) return;
-      const c = avg(arr, 'ctr'), d = avg(arr, 'dur'), vv = avg(arr, 'views');
+      const d = avg(arr, 'dur'), vv = avg(arr, 'views');
       groups[g] = {
         videoCount: arr.length,
         avgViews: vv == null ? null : Math.round(vv),
-        avgCtr: c == null ? null : +c.toFixed(2),
         avgViewDurationSec: d == null ? null : Math.round(d)
       };
     });
-    const c = avg(m.items, 'ctr'), d = avg(m.items, 'dur'), vv = avg(m.items, 'views');
+    const d = avg(m.items, 'dur'), vv = avg(m.items, 'views');
     return {
       month: m.month, label: m.label, videoCount: m.items.length,
       avgViews: vv == null ? null : Math.round(vv),
-      avgCtr: c == null ? null : +c.toFixed(2),
       avgViewDurationSec: d == null ? null : Math.round(d),
       groups
     };
@@ -1412,147 +1349,6 @@ async function fetchArchiveAnalytics(channelId, videoIds) {
   return result;
 }
 
-async function runAdminSync() {
-  $('sync-status').hidden = false;
-  $('sync-status').textContent = '캘린더에서 게스트 목록을 가져오는 중...';
-  $('refresh-btn').disabled = true;
-  $('refresh-btn').textContent = '수집 중…';
-  try {
-    const events = await fetchCalendarGuestEvents();
-    if (!events.length) {
-      $('sync-status').textContent = `"${CALENDAR_PREFIX}"로 시작하는 일정을 찾지 못했어요.`;
-      return;
-    }
-
-    $('sync-status').textContent = '유튜브 업로드 목록을 가져오는 중...';
-    const uploadsId = await fetchUploadsPlaylistId();
-    const earliestNeeded = new Date(Math.min(...events.map(e => e.date.getTime())) - 7 * 86400000);
-    const allVideos = await fetchAllUploads(uploadsId, earliestNeeded);
-
-    $('sync-status').textContent = '게스트별 영상 세트를 매칭하는 중...';
-    // 녹화일(캘린더 일정) 기준으로 그 게스트의 세트를 묶어요.
-    // 규칙: 제목에 "특집" 있으면 제외 / 편 라벨(1~5부, 풀버전)만 인정 /
-    //       풀버전 + 3편 이상이어야 집계 (1·2부+풀버전은 라이브 편집본이므로 제외) /
-    //       이미 다른 회차에 배정된 영상은 재사용하지 않음
-    const used = new Set();
-    const sets = events.map(ev => {
-      const start = ev.date;
-      const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
-      const cand = allVideos
-        .filter(v => !used.has(v.videoId)
-          && v.title.includes(ev.core)
-          && !v.title.includes(EXCLUDE_KEYWORD)
-          && v.publishedAt >= start && v.publishedAt <= end)
-        .sort((a, b) => a.publishedAt - b.publishedAt);
-
-      const picked = [];
-      const parts = new Set();
-      cand.forEach(v => {
-        const m = v.title.match(/([1-5])부/);
-        const key = m ? m[1] : (v.title.includes('풀버전') ? 'full' : null);
-        if (key && !parts.has(key)) {
-          parts.add(key);
-          picked.push({ videoId: v.videoId, title: v.title, privacy: v.privacy, part: key === 'full' ? '풀버전' : key + '부', pub: v.publishedAt.toISOString().slice(0, 10) });
-        }
-      });
-      const numParts = [...parts].filter(k => k !== 'full').length;
-      const ok = parts.has('full') && numParts >= MIN_PARTS;
-      if (ok) picked.forEach(p => used.add(p.videoId));
-      return { ...ev, picked, hasFull: parts.has('full'), numParts, ok };
-    });
-
-    $('sync-status').textContent = 'YouTube 조회수·시청 지표를 가져오는 중...';
-    const neededIds = [...new Set(sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId)))];
-    const viewCounts = await fetchViewCounts(neededIds);
-    const analytics = await fetchAnalyticsForVideos(neededIds);
-
-    $('sync-status').textContent = '클릭률 리포트를 확인하는 중...';
-    const ctrMap = await fetchCtrByVideo();
-
-    const monthsMap = new Map();
-    sets.forEach(s => {
-      const key = monthKey(s.date);
-      if (!monthsMap.has(key)) monthsMap.set(key, { month: key, label: monthLabel(s.date), guests: [], pending: [] });
-      const entry = monthsMap.get(key);
-
-      if (!s.ok) {
-        entry.pending.push({
-          name: s.name,
-          eventDate: s.date.toISOString().slice(0, 10),
-          uploaded: s.picked.length,
-          note: (s.hasFull && s.numParts === 2) ? '라이브 편집본만 업로드됨'
-              : (s.picked.length ? `일부만 업로드됨 (${s.picked.length}편)` : '미업로드')
-        });
-        return;
-      }
-
-      const videos = s.picked.map(p => {
-        const a = analytics[p.videoId] || {};
-        return {
-          part: p.part, pub: p.pub,
-          privacy: p.privacy || null,
-          views: viewCounts[p.videoId] ?? null,
-          ctr: ctrMap[p.videoId] ?? null,
-          avgViewDurationSec: a.avgViewDurationSec ?? null,
-          avgViewPct: a.avgViewPct ?? null
-        };
-      }).sort((a, b) => partOrder(a.part) - partOrder(b.part));
-
-      const n = videos.length || 1;
-      const avg = (key2) => {
-        const vals = videos.map(v => v[key2]).filter(x => typeof x === 'number');
-        return vals.length ? vals.reduce((x, y) => x + y, 0) / vals.length : null;
-      };
-      const totalViews = videos.reduce((x, v) => x + (v.views || 0), 0);
-      const avgCtr = avg('ctr');
-      const avgDur = avg('avgViewDurationSec');
-      const avgPct = avg('avgViewPct');
-
-      entry.guests.push({
-        name: s.name,
-        eventDate: s.date.toISOString().slice(0, 10),
-        videoCount: n,
-        totalViews,
-        avgViews: Math.round(totalViews / n),
-        avgCtr: avgCtr == null ? null : +avgCtr.toFixed(2),
-        avgViewDurationSec: avgDur == null ? null : Math.round(avgDur),
-        avgViewPct: avgPct == null ? null : +avgPct.toFixed(2),
-        videos
-      });
-    });
-
-    const months = Array.from(monthsMap.values()).sort((a, b) => a.month.localeCompare(b.month));
-    months.forEach(m => {
-      m.guests.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
-      m.pending.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
-    });
-    // 저장소 채널 수집 (3개 채널 병렬)
-    $('sync-status').textContent = '저장소 채널(투자/교양/부동산)을 가져오는 중...';
-    const archiveChannels = await Promise.all(ARCHIVE_CHANNELS.map(entry =>
-      collectArchiveChannel(entry, ctrMap).catch(err => {
-        console.warn(`저장소 ${entry.key} 실패:`, err.message);
-        return { key: entry.key, name: entry.name, months: [], error: err.message };
-      })));
-
-    publishedData = {
-      updatedAt: new Date().toISOString(),
-      channel: '웅달 책방',
-      months,
-      archive: { channels: archiveChannels }
-    };
-    activeMonth = months.length ? months[months.length - 1].month : null;
-    render();
-    const ctrCount = Object.keys(ctrMap).length;
-    const archOk = archiveChannels.filter(c => c.months && c.months.length).length;
-    $('sync-status').textContent = `완료! 저장소 ${archOk}/${ARCHIVE_CHANNELS.length}개 채널 · 클릭률 ${ctrCount ? ctrCount + '개 영상 반영' : '아직 리포트 생성 전(등록 후 1~2일 소요)'} — 이제 "게시하기"를 눌러야 다른 사람들에게 반영돼요.`;
-  } catch (err) {
-    console.error(err);
-    $('sync-status').textContent = '오류가 발생했어요: ' + err.message;
-  } finally {
-    $('refresh-btn').disabled = false;
-    $('refresh-btn').textContent = '새로고침';
-  }
-}
 
 
 // ---------------- 관리자: GitHub에 게시 ----------------

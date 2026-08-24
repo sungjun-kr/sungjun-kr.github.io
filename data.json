@@ -14,7 +14,6 @@
           "videoCount": 5,
           "totalViews": 71313,
           "avgViews": 14263,
-          "avgCtr": null,
           "avgViewDurationSec": 418,
           "avgViewPct": 30.53,
           "videos": [
@@ -22,7 +21,6 @@
               "part": "1부",
               "pub": "2026-05-06",
               "views": 7908,
-              "ctr": null,
               "avgViewDurationSec": 285,
               "avgViewPct": 29.78,
               "privacy": "public"
@@ -31,7 +29,6 @@
               "part": "2부",
               "pub": "2026-05-07",
               "views": 6834,
-              "ctr": null,
               "avgViewDurationSec": 287,
               "avgViewPct": 31.65,
               "privacy": "public"
@@ -40,7 +37,6 @@
               "part": "3부",
               "pub": "2026-05-08",
               "views": 13134,
-              "ctr": null,
               "avgViewDurationSec": 367,
               "avgViewPct": 38.62,
               "privacy": "public"
@@ -49,7 +45,6 @@
               "part": "4부",
               "pub": "2026-05-09",
               "views": 22559,
-              "ctr": null,
               "avgViewDurationSec": 374,
               "avgViewPct": 32.37,
               "privacy": "public"
@@ -58,7 +53,6 @@
               "part": "풀버전",
               "pub": "2026-05-12",
               "views": 20878,
-              "ctr": null,
               "avgViewDurationSec": 779,
               "avgViewPct": 20.22,
               "privacy": "public"
@@ -71,7 +65,6 @@
           "videoCount": 5,
           "totalViews": 202539,
           "avgViews": 40508,
-          "avgCtr": null,
           "avgViewDurationSec": 425,
           "avgViewPct": 34.78,
           "videos": [
@@ -79,7 +72,6 @@
               "part": "1부",
               "pub": "2026-05-08",
               "views": 55898,
-              "ctr": null,
               "avgViewDurationSec": 350,
               "avgViewPct": 37.56,
               "privacy": "public"
@@ -88,7 +80,6 @@
               "part": "2부",
               "pub": "2026-05-09",
               "views": 19087,
-              "ctr": null,
               "avgViewDurationSec": 350,
               "avgViewPct": 35.3,
               "privacy": "public"
@@ -97,7 +88,6 @@
               "part": "3부",
               "pub": "2026-05-10",
               "views": 26119,
-              "ctr": null,
               "avgViewDurationSec": 311,
               "avgViewPct": 40.37,
               "privacy": "public"
@@ -106,7 +96,6 @@
               "part": "4부",
               "pub": "2026-05-11",
               "views": 17710,
-              "ctr": null,
               "avgViewDurationSec": 313,
               "avgViewPct": 37.18,
               "privacy": "public"
@@ -115,7 +104,6 @@
               "part": "풀버전",
               "pub": "2026-05-14",
               "views": 83725,
-              "ctr": null,
               "avgViewDurationSec": 803,
               "avgViewPct": 23.51,
               "privacy": "public"
@@ -128,7 +116,6 @@
           "videoCount": 5,
           "totalViews": 84331,
           "avgViews": 16866,
-          "avgCtr": null,
           "avgViewDurationSec": 357,
           "avgViewPct": 24.47,
           "videos": [
@@ -136,7 +123,6 @@
               "part": "1부",
               "pub": "2026-05-09",
               "views": 17417,
-              "ctr": null,
               "avgViewDurationSec": 358,
               "avgViewPct": 32.8,
               "privacy": "public"
@@ -145,7 +131,6 @@
               "part": "2부",
               "pub": "2026-05-10",
               "views": 28983,
-              "ctr": null,
               "avgViewDurationSec": 289,
               "avgViewPct": 28.64,
               "privacy": "public"
@@ -154,7 +139,6 @@
               "part": "3부",
               "pub": "2026-05-11",
               "views": 17311,
-              "ctr": null,
               "avgViewDurationSec": 311,
               "avgViewPct": 27.07,
               "privacy": "public"
@@ -163,7 +147,6 @@
               "part": "4부",
               "pub": "2026-05-12",
               "views": 8070,
-              "ctr": null,
               "avgViewDurationSec": 272,
               "avgViewPct": 21.25,
               "privacy": "public"
@@ -172,7 +155,6 @@
               "part": "풀버전",
               "pub": "2026-05-13",
               "views": 12550,
-              "ctr": null,
               "avgViewDurationSec": 555,
               "avgViewPct": 12.57,
               "privacy": "public"
@@ -185,7 +167,6 @@
           "videoCount": 5,
           "totalViews": 58431,
           "avgViews": 11686,
-          "avgCtr": null,
           "avgViewDurationSec": 384,
           "avgViewPct": 26.16,
           "videos": [
@@ -193,7 +174,6 @@
               "part": "1부",
               "pub": "2026-05-14",
               "views": 4585,
-              "ctr": null,
               "avgViewDurationSec": 330,
               "avgViewPct": 29.21,
               "privacy": "public"
@@ -202,7 +182,6 @@
               "part": "2부",
               "pub": "2026-05-15",
               "views": 1069,
-              "ctr": null,
               "avgViewDurationSec": 192,
               "avgViewPct": 22.3,
               "privacy": "public"
@@ -211,7 +190,6 @@
               "part": "3부",
               "pub": "2026-05-16",
               "views": 14418,
-              "ctr": null,
               "avgViewDurationSec": 291,
               "avgViewPct": 32.28,
               "privacy": "public"
@@ -220,7 +198,6 @@
               "part": "4부",
               "pub": "2026-05-17",
               "views": 3108,
-              "ctr": null,
               "avgViewDurationSec": 219,
               "avgViewPct": 22.87,
               "privacy": "public"
@@ -229,7 +206,6 @@
               "part": "풀버전",
               "pub": "2026-05-19",
               "views": 35251,
-              "ctr": null,
               "avgViewDurationSec": 890,
               "avgViewPct": 24.12,
               "privacy": "public"
@@ -242,7 +218,6 @@
           "videoCount": 5,
           "totalViews": 56762,
           "avgViews": 11352,
-          "avgCtr": null,
           "avgViewDurationSec": 265,
           "avgViewPct": 28.16,
           "videos": [
@@ -250,7 +225,6 @@
               "part": "1부",
               "pub": "2026-05-14",
               "views": 1923,
-              "ctr": null,
               "avgViewDurationSec": 280,
               "avgViewPct": 27.81,
               "privacy": "public"
@@ -259,7 +233,6 @@
               "part": "2부",
               "pub": "2026-05-15",
               "views": 16150,
-              "ctr": null,
               "avgViewDurationSec": 178,
               "avgViewPct": 26.53,
               "privacy": "public"
@@ -268,7 +241,6 @@
               "part": "3부",
               "pub": "2026-05-16",
               "views": 7718,
-              "ctr": null,
               "avgViewDurationSec": 216,
               "avgViewPct": 38.71,
               "privacy": "public"
@@ -277,7 +249,6 @@
               "part": "4부",
               "pub": "2026-05-17",
               "views": 4087,
-              "ctr": null,
               "avgViewDurationSec": 208,
               "avgViewPct": 31.64,
               "privacy": "public"
@@ -286,7 +257,6 @@
               "part": "풀버전",
               "pub": "2026-05-19",
               "views": 26884,
-              "ctr": null,
               "avgViewDurationSec": 441,
               "avgViewPct": 16.1,
               "privacy": "public"
@@ -299,7 +269,6 @@
           "videoCount": 5,
           "totalViews": 22957,
           "avgViews": 4591,
-          "avgCtr": null,
           "avgViewDurationSec": 398,
           "avgViewPct": 28.94,
           "videos": [
@@ -307,7 +276,6 @@
               "part": "1부",
               "pub": "2026-05-17",
               "views": 2001,
-              "ctr": null,
               "avgViewDurationSec": 304,
               "avgViewPct": 28.76,
               "privacy": "public"
@@ -316,7 +284,6 @@
               "part": "2부",
               "pub": "2026-05-18",
               "views": 930,
-              "ctr": null,
               "avgViewDurationSec": 163,
               "avgViewPct": 27.5,
               "privacy": "public"
@@ -325,7 +292,6 @@
               "part": "3부",
               "pub": "2026-05-19",
               "views": 3713,
-              "ctr": null,
               "avgViewDurationSec": 251,
               "avgViewPct": 32.59,
               "privacy": "public"
@@ -334,7 +300,6 @@
               "part": "4부",
               "pub": "2026-05-20",
               "views": 4855,
-              "ctr": null,
               "avgViewDurationSec": 306,
               "avgViewPct": 27.5,
               "privacy": "public"
@@ -343,7 +308,6 @@
               "part": "풀버전",
               "pub": "2026-05-23",
               "views": 11458,
-              "ctr": null,
               "avgViewDurationSec": 967,
               "avgViewPct": 28.36,
               "privacy": "public"
@@ -356,7 +320,6 @@
           "videoCount": 5,
           "totalViews": 104009,
           "avgViews": 20802,
-          "avgCtr": null,
           "avgViewDurationSec": 282,
           "avgViewPct": 26.82,
           "videos": [
@@ -364,7 +327,6 @@
               "part": "1부",
               "pub": "2026-05-20",
               "views": 39941,
-              "ctr": null,
               "avgViewDurationSec": 243,
               "avgViewPct": 27.18,
               "privacy": "public"
@@ -373,7 +335,6 @@
               "part": "2부",
               "pub": "2026-05-21",
               "views": 16179,
-              "ctr": null,
               "avgViewDurationSec": 226,
               "avgViewPct": 29.47,
               "privacy": "public"
@@ -382,7 +343,6 @@
               "part": "3부",
               "pub": "2026-05-22",
               "views": 5045,
-              "ctr": null,
               "avgViewDurationSec": 184,
               "avgViewPct": 30.63,
               "privacy": "public"
@@ -391,7 +351,6 @@
               "part": "4부",
               "pub": "2026-05-23",
               "views": 9769,
-              "ctr": null,
               "avgViewDurationSec": 260,
               "avgViewPct": 30.18,
               "privacy": "public"
@@ -400,7 +359,6 @@
               "part": "풀버전",
               "pub": "2026-05-26",
               "views": 33075,
-              "ctr": null,
               "avgViewDurationSec": 495,
               "avgViewPct": 16.66,
               "privacy": "public"
@@ -413,7 +371,6 @@
           "videoCount": 5,
           "totalViews": 169801,
           "avgViews": 33960,
-          "avgCtr": null,
           "avgViewDurationSec": 515,
           "avgViewPct": 30.82,
           "videos": [
@@ -421,7 +378,6 @@
               "part": "1부",
               "pub": "2026-05-23",
               "views": 26872,
-              "ctr": null,
               "avgViewDurationSec": 334,
               "avgViewPct": 32.47,
               "privacy": "public"
@@ -430,7 +386,6 @@
               "part": "2부",
               "pub": "2026-05-24",
               "views": 12931,
-              "ctr": null,
               "avgViewDurationSec": 416,
               "avgViewPct": 37.29,
               "privacy": "public"
@@ -439,7 +394,6 @@
               "part": "3부",
               "pub": "2026-05-25",
               "views": 5078,
-              "ctr": null,
               "avgViewDurationSec": 271,
               "avgViewPct": 32.81,
               "privacy": "public"
@@ -448,7 +402,6 @@
               "part": "4부",
               "pub": "2026-05-26",
               "views": 19749,
-              "ctr": null,
               "avgViewDurationSec": 477,
               "avgViewPct": 27.79,
               "privacy": "public"
@@ -457,7 +410,6 @@
               "part": "풀버전",
               "pub": "2026-05-29",
               "views": 105171,
-              "ctr": null,
               "avgViewDurationSec": 1079,
               "avgViewPct": 23.75,
               "privacy": "public"
@@ -470,7 +422,6 @@
           "videoCount": 5,
           "totalViews": 209201,
           "avgViews": 41840,
-          "avgCtr": null,
           "avgViewDurationSec": 300,
           "avgViewPct": 26.64,
           "videos": [
@@ -478,7 +429,6 @@
               "part": "1부",
               "pub": "2026-05-24",
               "views": 14666,
-              "ctr": null,
               "avgViewDurationSec": 254,
               "avgViewPct": 32.27,
               "privacy": "public"
@@ -487,7 +437,6 @@
               "part": "2부",
               "pub": "2026-05-25",
               "views": 8859,
-              "ctr": null,
               "avgViewDurationSec": 237,
               "avgViewPct": 31.84,
               "privacy": "public"
@@ -496,7 +445,6 @@
               "part": "3부",
               "pub": "2026-05-26",
               "views": 16602,
-              "ctr": null,
               "avgViewDurationSec": 311,
               "avgViewPct": 26.43,
               "privacy": "public"
@@ -505,7 +453,6 @@
               "part": "4부",
               "pub": "2026-05-27",
               "views": 9645,
-              "ctr": null,
               "avgViewDurationSec": 237,
               "avgViewPct": 29.06,
               "privacy": "public"
@@ -514,7 +461,6 @@
               "part": "풀버전",
               "pub": "2026-05-30",
               "views": 159429,
-              "ctr": null,
               "avgViewDurationSec": 460,
               "avgViewPct": 13.61,
               "privacy": "public"
@@ -527,7 +473,6 @@
           "videoCount": 5,
           "totalViews": 151682,
           "avgViews": 30336,
-          "avgCtr": null,
           "avgViewDurationSec": 443,
           "avgViewPct": 31.79,
           "videos": [
@@ -535,7 +480,6 @@
               "part": "1부",
               "pub": "2026-05-26",
               "views": 3727,
-              "ctr": null,
               "avgViewDurationSec": 289,
               "avgViewPct": 25.62,
               "privacy": "public"
@@ -544,7 +488,6 @@
               "part": "2부",
               "pub": "2026-05-27",
               "views": 26592,
-              "ctr": null,
               "avgViewDurationSec": 317,
               "avgViewPct": 34.91,
               "privacy": "public"
@@ -553,7 +496,6 @@
               "part": "3부",
               "pub": "2026-05-28",
               "views": 47250,
-              "ctr": null,
               "avgViewDurationSec": 352,
               "avgViewPct": 40.61,
               "privacy": "public"
@@ -562,7 +504,6 @@
               "part": "4부",
               "pub": "2026-05-29",
               "views": 55140,
-              "ctr": null,
               "avgViewDurationSec": 279,
               "avgViewPct": 30.94,
               "privacy": "public"
@@ -571,7 +512,6 @@
               "part": "풀버전",
               "pub": "2026-06-01",
               "views": 18973,
-              "ctr": null,
               "avgViewDurationSec": 980,
               "avgViewPct": 26.89,
               "privacy": "public"
@@ -584,7 +524,6 @@
           "videoCount": 5,
           "totalViews": 35372,
           "avgViews": 7074,
-          "avgCtr": null,
           "avgViewDurationSec": 236,
           "avgViewPct": 23.59,
           "videos": [
@@ -592,7 +531,6 @@
               "part": "1부",
               "pub": "2026-05-28",
               "views": 4051,
-              "ctr": null,
               "avgViewDurationSec": 253,
               "avgViewPct": 25.3,
               "privacy": "public"
@@ -601,7 +539,6 @@
               "part": "2부",
               "pub": "2026-05-29",
               "views": 6556,
-              "ctr": null,
               "avgViewDurationSec": 199,
               "avgViewPct": 27.09,
               "privacy": "public"
@@ -610,7 +547,6 @@
               "part": "3부",
               "pub": "2026-05-30",
               "views": 12429,
-              "ctr": null,
               "avgViewDurationSec": 231,
               "avgViewPct": 32.18,
               "privacy": "public"
@@ -619,7 +555,6 @@
               "part": "4부",
               "pub": "2026-05-31",
               "views": 6253,
-              "ctr": null,
               "avgViewDurationSec": 226,
               "avgViewPct": 25.05,
               "privacy": "public"
@@ -628,7 +563,6 @@
               "part": "풀버전",
               "pub": "2026-06-02",
               "views": 6083,
-              "ctr": null,
               "avgViewDurationSec": 269,
               "avgViewPct": 8.33,
               "privacy": "public"
@@ -641,7 +575,6 @@
           "videoCount": 4,
           "totalViews": 29047,
           "avgViews": 7262,
-          "avgCtr": null,
           "avgViewDurationSec": 333,
           "avgViewPct": 22.06,
           "videos": [
@@ -649,7 +582,6 @@
               "part": "1부",
               "pub": "2026-05-29",
               "views": 15506,
-              "ctr": null,
               "avgViewDurationSec": 353,
               "avgViewPct": 32.42,
               "privacy": "public"
@@ -658,7 +590,6 @@
               "part": "2부",
               "pub": "2026-05-30",
               "views": 1047,
-              "ctr": null,
               "avgViewDurationSec": 261,
               "avgViewPct": 24.81,
               "privacy": "public"
@@ -667,7 +598,6 @@
               "part": "3부",
               "pub": "2026-05-31",
               "views": 1763,
-              "ctr": null,
               "avgViewDurationSec": 228,
               "avgViewPct": 16.61,
               "privacy": "public"
@@ -676,7 +606,6 @@
               "part": "풀버전",
               "pub": "2026-06-02",
               "views": 10731,
-              "ctr": null,
               "avgViewDurationSec": 491,
               "avgViewPct": 14.41,
               "privacy": "public"
@@ -704,7 +633,6 @@
           "videoCount": 5,
           "totalViews": 261328,
           "avgViews": 52266,
-          "avgCtr": null,
           "avgViewDurationSec": 300,
           "avgViewPct": 27.46,
           "videos": [
@@ -712,7 +640,6 @@
               "part": "1부",
               "pub": "2026-06-06",
               "views": 26362,
-              "ctr": null,
               "avgViewDurationSec": 236,
               "avgViewPct": 28.07,
               "privacy": "public"
@@ -721,7 +648,6 @@
               "part": "2부",
               "pub": "2026-06-07",
               "views": 209169,
-              "ctr": null,
               "avgViewDurationSec": 254,
               "avgViewPct": 31.17,
               "privacy": "public"
@@ -730,7 +656,6 @@
               "part": "3부",
               "pub": "2026-06-08",
               "views": 8094,
-              "ctr": null,
               "avgViewDurationSec": 200,
               "avgViewPct": 30.15,
               "privacy": "public"
@@ -739,7 +664,6 @@
               "part": "4부",
               "pub": "2026-06-09",
               "views": 6603,
-              "ctr": null,
               "avgViewDurationSec": 255,
               "avgViewPct": 29.42,
               "privacy": "public"
@@ -748,7 +672,6 @@
               "part": "풀버전",
               "pub": "2026-06-11",
               "views": 11100,
-              "ctr": null,
               "avgViewDurationSec": 557,
               "avgViewPct": 18.49,
               "privacy": "public"
@@ -761,7 +684,6 @@
           "videoCount": 5,
           "totalViews": 266835,
           "avgViews": 53367,
-          "avgCtr": null,
           "avgViewDurationSec": 480,
           "avgViewPct": 32.34,
           "videos": [
@@ -769,7 +691,6 @@
               "part": "1부",
               "pub": "2026-06-06",
               "views": 37427,
-              "ctr": null,
               "avgViewDurationSec": 373,
               "avgViewPct": 34.13,
               "privacy": "public"
@@ -778,7 +699,6 @@
               "part": "2부",
               "pub": "2026-06-07",
               "views": 5592,
-              "ctr": null,
               "avgViewDurationSec": 309,
               "avgViewPct": 35.55,
               "privacy": "public"
@@ -787,7 +707,6 @@
               "part": "3부",
               "pub": "2026-06-08",
               "views": 65888,
-              "ctr": null,
               "avgViewDurationSec": 367,
               "avgViewPct": 32.62,
               "privacy": "public"
@@ -796,7 +715,6 @@
               "part": "4부",
               "pub": "2026-06-09",
               "views": 41502,
-              "ctr": null,
               "avgViewDurationSec": 335,
               "avgViewPct": 33.73,
               "privacy": "public"
@@ -805,7 +723,6 @@
               "part": "풀버전",
               "pub": "2026-06-12",
               "views": 116426,
-              "ctr": null,
               "avgViewDurationSec": 1017,
               "avgViewPct": 25.68,
               "privacy": "public"
@@ -818,7 +735,6 @@
           "videoCount": 5,
           "totalViews": 106929,
           "avgViews": 21386,
-          "avgCtr": null,
           "avgViewDurationSec": 393,
           "avgViewPct": 26.91,
           "videos": [
@@ -826,7 +742,6 @@
               "part": "1부",
               "pub": "2026-06-10",
               "views": 9363,
-              "ctr": null,
               "avgViewDurationSec": 236,
               "avgViewPct": 25.27,
               "privacy": "public"
@@ -835,7 +750,6 @@
               "part": "2부",
               "pub": "2026-06-11",
               "views": 4450,
-              "ctr": null,
               "avgViewDurationSec": 267,
               "avgViewPct": 27.03,
               "privacy": "public"
@@ -844,7 +758,6 @@
               "part": "3부",
               "pub": "2026-06-12",
               "views": 14611,
-              "ctr": null,
               "avgViewDurationSec": 314,
               "avgViewPct": 32.12,
               "privacy": "public"
@@ -853,7 +766,6 @@
               "part": "4부",
               "pub": "2026-06-13",
               "views": 25433,
-              "ctr": null,
               "avgViewDurationSec": 260,
               "avgViewPct": 26.64,
               "privacy": "public"
@@ -862,7 +774,6 @@
               "part": "풀버전",
               "pub": "2026-06-16",
               "views": 53072,
-              "ctr": null,
               "avgViewDurationSec": 887,
               "avgViewPct": 23.48,
               "privacy": "public"
@@ -875,7 +786,6 @@
           "videoCount": 5,
           "totalViews": 84177,
           "avgViews": 16835,
-          "avgCtr": null,
           "avgViewDurationSec": 365,
           "avgViewPct": 28.09,
           "videos": [
@@ -883,7 +793,6 @@
               "part": "1부",
               "pub": "2026-06-11",
               "views": 2116,
-              "ctr": null,
               "avgViewDurationSec": 168,
               "avgViewPct": 34.65,
               "privacy": "public"
@@ -892,7 +801,6 @@
               "part": "2부",
               "pub": "2026-06-12",
               "views": 8169,
-              "ctr": null,
               "avgViewDurationSec": 228,
               "avgViewPct": 23.86,
               "privacy": "public"
@@ -901,7 +809,6 @@
               "part": "3부",
               "pub": "2026-06-14",
               "views": 43324,
-              "ctr": null,
               "avgViewDurationSec": 360,
               "avgViewPct": 28.06,
               "privacy": "public"
@@ -910,7 +817,6 @@
               "part": "4부",
               "pub": "2026-06-15",
               "views": 25409,
-              "ctr": null,
               "avgViewDurationSec": 306,
               "avgViewPct": 32.27,
               "privacy": "public"
@@ -919,7 +825,6 @@
               "part": "풀버전",
               "pub": "2026-06-17",
               "views": 5159,
-              "ctr": null,
               "avgViewDurationSec": 765,
               "avgViewPct": 21.59,
               "privacy": "public"
@@ -932,7 +837,6 @@
           "videoCount": 5,
           "totalViews": 66417,
           "avgViews": 13283,
-          "avgCtr": null,
           "avgViewDurationSec": 343,
           "avgViewPct": 31.74,
           "videos": [
@@ -940,7 +844,6 @@
               "part": "1부",
               "pub": "2026-06-11",
               "views": 4282,
-              "ctr": null,
               "avgViewDurationSec": 240,
               "avgViewPct": 29.64,
               "privacy": "public"
@@ -949,7 +852,6 @@
               "part": "2부",
               "pub": "2026-06-12",
               "views": 6827,
-              "ctr": null,
               "avgViewDurationSec": 191,
               "avgViewPct": 31.43,
               "privacy": "public"
@@ -958,7 +860,6 @@
               "part": "3부",
               "pub": "2026-06-13",
               "views": 20993,
-              "ctr": null,
               "avgViewDurationSec": 266,
               "avgViewPct": 36.91,
               "privacy": "public"
@@ -967,7 +868,6 @@
               "part": "4부",
               "pub": "2026-06-14",
               "views": 17026,
-              "ctr": null,
               "avgViewDurationSec": 313,
               "avgViewPct": 36.11,
               "privacy": "public"
@@ -976,7 +876,6 @@
               "part": "풀버전",
               "pub": "2026-06-15",
               "views": 17289,
-              "ctr": null,
               "avgViewDurationSec": 705,
               "avgViewPct": 24.61,
               "privacy": "public"
@@ -989,7 +888,6 @@
           "videoCount": 6,
           "totalViews": 58807,
           "avgViews": 9801,
-          "avgCtr": null,
           "avgViewDurationSec": 401,
           "avgViewPct": 27.31,
           "videos": [
@@ -997,7 +895,6 @@
               "part": "1부",
               "pub": "2026-06-13",
               "views": 1774,
-              "ctr": null,
               "avgViewDurationSec": 123,
               "avgViewPct": 13.66,
               "privacy": "public"
@@ -1006,7 +903,6 @@
               "part": "2부",
               "pub": "2026-06-14",
               "views": 2127,
-              "ctr": null,
               "avgViewDurationSec": 152,
               "avgViewPct": 25.81,
               "privacy": "public"
@@ -1015,7 +911,6 @@
               "part": "3부",
               "pub": "2026-06-15",
               "views": 12734,
-              "ctr": null,
               "avgViewDurationSec": 329,
               "avgViewPct": 37.05,
               "privacy": "public"
@@ -1024,7 +919,6 @@
               "part": "4부",
               "pub": "2026-06-16",
               "views": 16514,
-              "ctr": null,
               "avgViewDurationSec": 425,
               "avgViewPct": 32.11,
               "privacy": "public"
@@ -1033,7 +927,6 @@
               "part": "5부",
               "pub": "2026-06-17",
               "views": 5753,
-              "ctr": null,
               "avgViewDurationSec": 300,
               "avgViewPct": 31.35,
               "privacy": "public"
@@ -1042,7 +935,6 @@
               "part": "풀버전",
               "pub": "2026-06-19",
               "views": 19905,
-              "ctr": null,
               "avgViewDurationSec": 1075,
               "avgViewPct": 23.88,
               "privacy": "public"
@@ -1055,7 +947,6 @@
           "videoCount": 5,
           "totalViews": 184400,
           "avgViews": 36880,
-          "avgCtr": null,
           "avgViewDurationSec": 334,
           "avgViewPct": 27.05,
           "videos": [
@@ -1063,7 +954,6 @@
               "part": "1부",
               "pub": "2026-06-20",
               "views": 94357,
-              "ctr": null,
               "avgViewDurationSec": 378,
               "avgViewPct": 33.22,
               "privacy": "public"
@@ -1072,7 +962,6 @@
               "part": "2부",
               "pub": "2026-06-21",
               "views": 36660,
-              "ctr": null,
               "avgViewDurationSec": 224,
               "avgViewPct": 27.23,
               "privacy": "public"
@@ -1081,7 +970,6 @@
               "part": "3부",
               "pub": "2026-06-22",
               "views": 7125,
-              "ctr": null,
               "avgViewDurationSec": 248,
               "avgViewPct": 31.75,
               "privacy": "public"
@@ -1090,7 +978,6 @@
               "part": "4부",
               "pub": "2026-06-23",
               "views": 18542,
-              "ctr": null,
               "avgViewDurationSec": 167,
               "avgViewPct": 23.52,
               "privacy": "public"
@@ -1099,7 +986,6 @@
               "part": "풀버전",
               "pub": "2026-06-24",
               "views": 27716,
-              "ctr": null,
               "avgViewDurationSec": 653,
               "avgViewPct": 19.55,
               "privacy": "public"
@@ -1112,7 +998,6 @@
           "videoCount": 5,
           "totalViews": 65538,
           "avgViews": 13108,
-          "avgCtr": null,
           "avgViewDurationSec": 338,
           "avgViewPct": 24.38,
           "videos": [
@@ -1120,7 +1005,6 @@
               "part": "1부",
               "pub": "2026-06-21",
               "views": 6724,
-              "ctr": null,
               "avgViewDurationSec": 254,
               "avgViewPct": 26.48,
               "privacy": "public"
@@ -1129,7 +1013,6 @@
               "part": "2부",
               "pub": "2026-06-22",
               "views": 13292,
-              "ctr": null,
               "avgViewDurationSec": 266,
               "avgViewPct": 26.27,
               "privacy": "public"
@@ -1138,7 +1021,6 @@
               "part": "3부",
               "pub": "2026-06-23",
               "views": 7067,
-              "ctr": null,
               "avgViewDurationSec": 279,
               "avgViewPct": 25.89,
               "privacy": "public"
@@ -1147,7 +1029,6 @@
               "part": "4부",
               "pub": "2026-06-24",
               "views": 11808,
-              "ctr": null,
               "avgViewDurationSec": 250,
               "avgViewPct": 26.6,
               "privacy": "public"
@@ -1156,7 +1037,6 @@
               "part": "풀버전",
               "pub": "2026-06-26",
               "views": 26647,
-              "ctr": null,
               "avgViewDurationSec": 643,
               "avgViewPct": 16.67,
               "privacy": "public"
@@ -1169,7 +1049,6 @@
           "videoCount": 5,
           "totalViews": 120781,
           "avgViews": 24156,
-          "avgCtr": null,
           "avgViewDurationSec": 474,
           "avgViewPct": 31.59,
           "videos": [
@@ -1177,7 +1056,6 @@
               "part": "1부",
               "pub": "2026-06-23",
               "views": 1070,
-              "ctr": null,
               "avgViewDurationSec": 316,
               "avgViewPct": 28.2,
               "privacy": "public"
@@ -1186,7 +1064,6 @@
               "part": "2부",
               "pub": "2026-06-24",
               "views": 52203,
-              "ctr": null,
               "avgViewDurationSec": 434,
               "avgViewPct": 36.39,
               "privacy": "public"
@@ -1195,7 +1072,6 @@
               "part": "3부",
               "pub": "2026-06-25",
               "views": 1835,
-              "ctr": null,
               "avgViewDurationSec": 264,
               "avgViewPct": 34.42,
               "privacy": "public"
@@ -1204,7 +1080,6 @@
               "part": "4부",
               "pub": "2026-06-26",
               "views": 39540,
-              "ctr": null,
               "avgViewDurationSec": 377,
               "avgViewPct": 34.64,
               "privacy": "public"
@@ -1213,7 +1088,6 @@
               "part": "풀버전",
               "pub": "2026-06-28",
               "views": 26133,
-              "ctr": null,
               "avgViewDurationSec": 979,
               "avgViewPct": 24.29,
               "privacy": "public"
@@ -1226,7 +1100,6 @@
           "videoCount": 5,
           "totalViews": 27866,
           "avgViews": 5573,
-          "avgCtr": null,
           "avgViewDurationSec": 329,
           "avgViewPct": 28.58,
           "videos": [
@@ -1234,7 +1107,6 @@
               "part": "1부",
               "pub": "2026-06-23",
               "views": 690,
-              "ctr": null,
               "avgViewDurationSec": 215,
               "avgViewPct": 22.34,
               "privacy": "public"
@@ -1243,7 +1115,6 @@
               "part": "2부",
               "pub": "2026-06-24",
               "views": 1119,
-              "ctr": null,
               "avgViewDurationSec": 229,
               "avgViewPct": 28.24,
               "privacy": "public"
@@ -1252,7 +1123,6 @@
               "part": "3부",
               "pub": "2026-06-25",
               "views": 4173,
-              "ctr": null,
               "avgViewDurationSec": 255,
               "avgViewPct": 33.27,
               "privacy": "public"
@@ -1261,7 +1131,6 @@
               "part": "4부",
               "pub": "2026-06-26",
               "views": 6690,
-              "ctr": null,
               "avgViewDurationSec": 244,
               "avgViewPct": 36.37,
               "privacy": "public"
@@ -1270,7 +1139,6 @@
               "part": "풀버전",
               "pub": "2026-06-29",
               "views": 15194,
-              "ctr": null,
               "avgViewDurationSec": 700,
               "avgViewPct": 22.66,
               "privacy": "public"
@@ -1283,7 +1151,6 @@
           "videoCount": 5,
           "totalViews": 104202,
           "avgViews": 20840,
-          "avgCtr": null,
           "avgViewDurationSec": 299,
           "avgViewPct": 29.29,
           "videos": [
@@ -1291,7 +1158,6 @@
               "part": "1부",
               "pub": "2026-06-24",
               "views": 8350,
-              "ctr": null,
               "avgViewDurationSec": 273,
               "avgViewPct": 34.23,
               "privacy": "public"
@@ -1300,7 +1166,6 @@
               "part": "2부",
               "pub": "2026-06-25",
               "views": 13061,
-              "ctr": null,
               "avgViewDurationSec": 199,
               "avgViewPct": 28.51,
               "privacy": "public"
@@ -1309,7 +1174,6 @@
               "part": "3부",
               "pub": "2026-06-26",
               "views": 18534,
-              "ctr": null,
               "avgViewDurationSec": 240,
               "avgViewPct": 31.38,
               "privacy": "public"
@@ -1318,7 +1182,6 @@
               "part": "4부",
               "pub": "2026-06-27",
               "views": 4478,
-              "ctr": null,
               "avgViewDurationSec": 215,
               "avgViewPct": 32.11,
               "privacy": "public"
@@ -1327,7 +1190,6 @@
               "part": "풀버전",
               "pub": "2026-06-28",
               "views": 59779,
-              "ctr": null,
               "avgViewDurationSec": 567,
               "avgViewPct": 20.21,
               "privacy": "public"
@@ -1340,7 +1202,6 @@
           "videoCount": 5,
           "totalViews": 50004,
           "avgViews": 10001,
-          "avgCtr": null,
           "avgViewDurationSec": 304,
           "avgViewPct": 27.26,
           "videos": [
@@ -1348,7 +1209,6 @@
               "part": "1부",
               "pub": "2026-07-01",
               "views": 25245,
-              "ctr": null,
               "avgViewDurationSec": 261,
               "avgViewPct": 30.08,
               "privacy": "public"
@@ -1357,7 +1217,6 @@
               "part": "2부",
               "pub": "2026-07-02",
               "views": 5323,
-              "ctr": null,
               "avgViewDurationSec": 261,
               "avgViewPct": 30.39,
               "privacy": "public"
@@ -1366,7 +1225,6 @@
               "part": "3부",
               "pub": "2026-07-03",
               "views": 1460,
-              "ctr": null,
               "avgViewDurationSec": 231,
               "avgViewPct": 29.63,
               "privacy": "public"
@@ -1375,7 +1233,6 @@
               "part": "4부",
               "pub": "2026-07-04",
               "views": 5370,
-              "ctr": null,
               "avgViewDurationSec": 216,
               "avgViewPct": 28.58,
               "privacy": "public"
@@ -1384,7 +1241,6 @@
               "part": "풀버전",
               "pub": "2026-07-06",
               "views": 12606,
-              "ctr": null,
               "avgViewDurationSec": 550,
               "avgViewPct": 17.61,
               "privacy": "public"
@@ -1397,7 +1253,6 @@
           "videoCount": 5,
           "totalViews": 147186,
           "avgViews": 29437,
-          "avgCtr": null,
           "avgViewDurationSec": 416,
           "avgViewPct": 35.46,
           "videos": [
@@ -1405,7 +1260,6 @@
               "part": "1부",
               "pub": "2026-07-01",
               "views": 44855,
-              "ctr": null,
               "avgViewDurationSec": 365,
               "avgViewPct": 30.47,
               "privacy": "public"
@@ -1414,7 +1268,6 @@
               "part": "2부",
               "pub": "2026-07-02",
               "views": 36543,
-              "ctr": null,
               "avgViewDurationSec": 356,
               "avgViewPct": 34.89,
               "privacy": "public"
@@ -1423,7 +1276,6 @@
               "part": "3부",
               "pub": "2026-07-03",
               "views": 11071,
-              "ctr": null,
               "avgViewDurationSec": 289,
               "avgViewPct": 45.85,
               "privacy": "public"
@@ -1432,7 +1284,6 @@
               "part": "4부",
               "pub": "2026-07-04",
               "views": 23039,
-              "ctr": null,
               "avgViewDurationSec": 326,
               "avgViewPct": 44.25,
               "privacy": "public"
@@ -1441,7 +1292,6 @@
               "part": "풀버전",
               "pub": "2026-07-05",
               "views": 31678,
-              "ctr": null,
               "avgViewDurationSec": 744,
               "avgViewPct": 21.86,
               "privacy": "public"
@@ -1469,7 +1319,6 @@
           "videoCount": 5,
           "totalViews": 59102,
           "avgViews": 11820,
-          "avgCtr": null,
           "avgViewDurationSec": 468,
           "avgViewPct": 32.39,
           "videos": [
@@ -1477,7 +1326,6 @@
               "part": "1부",
               "pub": "2026-07-03",
               "views": 9854,
-              "ctr": null,
               "avgViewDurationSec": 389,
               "avgViewPct": 40.58,
               "privacy": "public"
@@ -1486,7 +1334,6 @@
               "part": "2부",
               "pub": "2026-07-04",
               "views": 1959,
-              "ctr": null,
               "avgViewDurationSec": 186,
               "avgViewPct": 22.02,
               "privacy": "public"
@@ -1495,7 +1342,6 @@
               "part": "3부",
               "pub": "2026-07-05",
               "views": 3820,
-              "ctr": null,
               "avgViewDurationSec": 264,
               "avgViewPct": 32.95,
               "privacy": "public"
@@ -1504,7 +1350,6 @@
               "part": "4부",
               "pub": "2026-07-06",
               "views": 2137,
-              "ctr": null,
               "avgViewDurationSec": 409,
               "avgViewPct": 36.08,
               "privacy": "public"
@@ -1513,7 +1358,6 @@
               "part": "풀버전",
               "pub": "2026-07-08",
               "views": 41332,
-              "ctr": null,
               "avgViewDurationSec": 1091,
               "avgViewPct": 30.32,
               "privacy": "public"
@@ -1526,7 +1370,6 @@
           "videoCount": 5,
           "totalViews": 31812,
           "avgViews": 6362,
-          "avgCtr": null,
           "avgViewDurationSec": 255,
           "avgViewPct": 27.69,
           "videos": [
@@ -1534,7 +1377,6 @@
               "part": "1부",
               "pub": "2026-07-05",
               "views": 1487,
-              "ctr": null,
               "avgViewDurationSec": 216,
               "avgViewPct": 28.0,
               "privacy": "public"
@@ -1543,7 +1385,6 @@
               "part": "2부",
               "pub": "2026-07-06",
               "views": 8732,
-              "ctr": null,
               "avgViewDurationSec": 228,
               "avgViewPct": 32.92,
               "privacy": "public"
@@ -1552,7 +1393,6 @@
               "part": "3부",
               "pub": "2026-07-07",
               "views": 6541,
-              "ctr": null,
               "avgViewDurationSec": 196,
               "avgViewPct": 27.44,
               "privacy": "public"
@@ -1561,7 +1401,6 @@
               "part": "4부",
               "pub": "2026-07-08",
               "views": 3083,
-              "ctr": null,
               "avgViewDurationSec": 205,
               "avgViewPct": 33.76,
               "privacy": "public"
@@ -1570,7 +1409,6 @@
               "part": "풀버전",
               "pub": "2026-07-09",
               "views": 11969,
-              "ctr": null,
               "avgViewDurationSec": 430,
               "avgViewPct": 16.34,
               "privacy": "public"
@@ -1583,7 +1421,6 @@
           "videoCount": 5,
           "totalViews": 30324,
           "avgViews": 6065,
-          "avgCtr": null,
           "avgViewDurationSec": 288,
           "avgViewPct": 26.3,
           "videos": [
@@ -1591,7 +1428,6 @@
               "part": "1부",
               "pub": "2026-07-05",
               "views": 3045,
-              "ctr": null,
               "avgViewDurationSec": 245,
               "avgViewPct": 29.32,
               "privacy": "public"
@@ -1600,7 +1436,6 @@
               "part": "2부",
               "pub": "2026-07-06",
               "views": 8752,
-              "ctr": null,
               "avgViewDurationSec": 319,
               "avgViewPct": 31.09,
               "privacy": "public"
@@ -1609,7 +1444,6 @@
               "part": "3부",
               "pub": "2026-07-07",
               "views": 3201,
-              "ctr": null,
               "avgViewDurationSec": 175,
               "avgViewPct": 27.51,
               "privacy": "public"
@@ -1618,7 +1452,6 @@
               "part": "4부",
               "pub": "2026-07-08",
               "views": 8394,
-              "ctr": null,
               "avgViewDurationSec": 297,
               "avgViewPct": 31.35,
               "privacy": "public"
@@ -1627,7 +1460,6 @@
               "part": "풀버전",
               "pub": "2026-07-09",
               "views": 6932,
-              "ctr": null,
               "avgViewDurationSec": 402,
               "avgViewPct": 12.21,
               "privacy": "public"
@@ -1640,7 +1472,6 @@
           "videoCount": 5,
           "totalViews": 273266,
           "avgViews": 54653,
-          "avgCtr": null,
           "avgViewDurationSec": 638,
           "avgViewPct": 30.15,
           "videos": [
@@ -1648,7 +1479,6 @@
               "part": "1부",
               "pub": "2026-07-07",
               "views": 52005,
-              "ctr": null,
               "avgViewDurationSec": 538,
               "avgViewPct": 36.4,
               "privacy": "public"
@@ -1657,7 +1487,6 @@
               "part": "2부",
               "pub": "2026-07-08",
               "views": 40810,
-              "ctr": null,
               "avgViewDurationSec": 328,
               "avgViewPct": 32.74,
               "privacy": "public"
@@ -1666,7 +1495,6 @@
               "part": "3부",
               "pub": "2026-07-09",
               "views": 23179,
-              "ctr": null,
               "avgViewDurationSec": 354,
               "avgViewPct": 21.91,
               "privacy": "public"
@@ -1675,7 +1503,6 @@
               "part": "4부",
               "pub": "2026-07-10",
               "views": 31840,
-              "ctr": null,
               "avgViewDurationSec": 465,
               "avgViewPct": 31.84,
               "privacy": "public"
@@ -1684,7 +1511,6 @@
               "part": "풀버전",
               "pub": "2026-07-11",
               "views": 125432,
-              "ctr": null,
               "avgViewDurationSec": 1504,
               "avgViewPct": 27.88,
               "privacy": "public"
@@ -1697,7 +1523,6 @@
           "videoCount": 5,
           "totalViews": 100986,
           "avgViews": 20197,
-          "avgCtr": null,
           "avgViewDurationSec": 190,
           "avgViewPct": 22.32,
           "videos": [
@@ -1705,7 +1530,6 @@
               "part": "1부",
               "pub": "2026-07-09",
               "views": 36472,
-              "ctr": null,
               "avgViewDurationSec": 160,
               "avgViewPct": 23.45,
               "privacy": "public"
@@ -1714,7 +1538,6 @@
               "part": "2부",
               "pub": "2026-07-10",
               "views": 11876,
-              "ctr": null,
               "avgViewDurationSec": 196,
               "avgViewPct": 25.6,
               "privacy": "public"
@@ -1723,7 +1546,6 @@
               "part": "3부",
               "pub": "2026-07-11",
               "views": 17194,
-              "ctr": null,
               "avgViewDurationSec": 168,
               "avgViewPct": 26.56,
               "privacy": "public"
@@ -1732,7 +1554,6 @@
               "part": "4부",
               "pub": "2026-07-12",
               "views": 13887,
-              "ctr": null,
               "avgViewDurationSec": 162,
               "avgViewPct": 25.82,
               "privacy": "public"
@@ -1741,7 +1562,6 @@
               "part": "풀버전",
               "pub": "2026-07-13",
               "views": 21557,
-              "ctr": null,
               "avgViewDurationSec": 262,
               "avgViewPct": 10.17,
               "privacy": "public"
@@ -1754,7 +1574,6 @@
           "videoCount": 5,
           "totalViews": 26031,
           "avgViews": 5206,
-          "avgCtr": null,
           "avgViewDurationSec": 298,
           "avgViewPct": 22.87,
           "videos": [
@@ -1762,7 +1581,6 @@
               "part": "1부",
               "pub": "2026-07-12",
               "views": 3416,
-              "ctr": null,
               "avgViewDurationSec": 217,
               "avgViewPct": 24.6,
               "privacy": "public"
@@ -1771,7 +1589,6 @@
               "part": "2부",
               "pub": "2026-07-13",
               "views": 3703,
-              "ctr": null,
               "avgViewDurationSec": 288,
               "avgViewPct": 28.19,
               "privacy": "public"
@@ -1780,7 +1597,6 @@
               "part": "3부",
               "pub": "2026-07-14",
               "views": 3053,
-              "ctr": null,
               "avgViewDurationSec": 176,
               "avgViewPct": 21.88,
               "privacy": "public"
@@ -1789,7 +1605,6 @@
               "part": "4부",
               "pub": "2026-07-15",
               "views": 7079,
-              "ctr": null,
               "avgViewDurationSec": 305,
               "avgViewPct": 26.06,
               "privacy": "public"
@@ -1798,7 +1613,6 @@
               "part": "풀버전",
               "pub": "2026-07-17",
               "views": 8780,
-              "ctr": null,
               "avgViewDurationSec": 505,
               "avgViewPct": 13.61,
               "privacy": "public"
@@ -1811,7 +1625,6 @@
           "videoCount": 5,
           "totalViews": 116153,
           "avgViews": 23231,
-          "avgCtr": null,
           "avgViewDurationSec": 336,
           "avgViewPct": 26.13,
           "videos": [
@@ -1819,7 +1632,6 @@
               "part": "1부",
               "pub": "2026-07-14",
               "views": 16143,
-              "ctr": null,
               "avgViewDurationSec": 206,
               "avgViewPct": 23.82,
               "privacy": "public"
@@ -1828,7 +1640,6 @@
               "part": "2부",
               "pub": "2026-07-15",
               "views": 1447,
-              "ctr": null,
               "avgViewDurationSec": 228,
               "avgViewPct": 22.51,
               "privacy": "public"
@@ -1837,7 +1648,6 @@
               "part": "3부",
               "pub": "2026-07-16",
               "views": 3827,
-              "ctr": null,
               "avgViewDurationSec": 289,
               "avgViewPct": 32.87,
               "privacy": "public"
@@ -1846,7 +1656,6 @@
               "part": "4부",
               "pub": "2026-07-17",
               "views": 16386,
-              "ctr": null,
               "avgViewDurationSec": 381,
               "avgViewPct": 35.79,
               "privacy": "public"
@@ -1855,7 +1664,6 @@
               "part": "풀버전",
               "pub": "2026-07-18",
               "views": 78350,
-              "ctr": null,
               "avgViewDurationSec": 577,
               "avgViewPct": 15.66,
               "privacy": "public"
@@ -1868,7 +1676,6 @@
           "videoCount": 5,
           "totalViews": 83291,
           "avgViews": 16658,
-          "avgCtr": null,
           "avgViewDurationSec": 313,
           "avgViewPct": 31.29,
           "videos": [
@@ -1876,7 +1683,6 @@
               "part": "1부",
               "pub": "2026-07-15",
               "views": 9321,
-              "ctr": null,
               "avgViewDurationSec": 253,
               "avgViewPct": 30.94,
               "privacy": "public"
@@ -1885,7 +1691,6 @@
               "part": "2부",
               "pub": "2026-07-16",
               "views": 7769,
-              "ctr": null,
               "avgViewDurationSec": 228,
               "avgViewPct": 31.21,
               "privacy": "public"
@@ -1894,7 +1699,6 @@
               "part": "3부",
               "pub": "2026-07-17",
               "views": 4766,
-              "ctr": null,
               "avgViewDurationSec": 228,
               "avgViewPct": 34.23,
               "privacy": "public"
@@ -1903,7 +1707,6 @@
               "part": "4부",
               "pub": "2026-07-18",
               "views": 9876,
-              "ctr": null,
               "avgViewDurationSec": 300,
               "avgViewPct": 40.12,
               "privacy": "public"
@@ -1912,7 +1715,6 @@
               "part": "풀버전",
               "pub": "2026-07-19",
               "views": 51559,
-              "ctr": null,
               "avgViewDurationSec": 557,
               "avgViewPct": 19.96,
               "privacy": "public"
@@ -1925,7 +1727,6 @@
           "videoCount": 5,
           "totalViews": 147420,
           "avgViews": 29484,
-          "avgCtr": null,
           "avgViewDurationSec": 581,
           "avgViewPct": 35.68,
           "videos": [
@@ -1933,7 +1734,6 @@
               "part": "1부",
               "pub": "2026-07-21",
               "views": 38826,
-              "ctr": null,
               "avgViewDurationSec": 477,
               "avgViewPct": 40.08,
               "privacy": "public"
@@ -1942,7 +1742,6 @@
               "part": "2부",
               "pub": "2026-07-22",
               "views": 2446,
-              "ctr": null,
               "avgViewDurationSec": 308,
               "avgViewPct": 34.82,
               "privacy": "public"
@@ -1951,7 +1750,6 @@
               "part": "3부",
               "pub": "2026-07-23",
               "views": 32292,
-              "ctr": null,
               "avgViewDurationSec": 373,
               "avgViewPct": 37.22,
               "privacy": "public"
@@ -1960,7 +1758,6 @@
               "part": "4부",
               "pub": "2026-07-24",
               "views": 46266,
-              "ctr": null,
               "avgViewDurationSec": 553,
               "avgViewPct": 38.74,
               "privacy": "public"
@@ -1969,7 +1766,6 @@
               "part": "풀버전",
               "pub": "2026-07-26",
               "views": 27590,
-              "ctr": null,
               "avgViewDurationSec": 1196,
               "avgViewPct": 27.56,
               "privacy": "public"
@@ -1982,7 +1778,6 @@
           "videoCount": 5,
           "totalViews": 73735,
           "avgViews": 14747,
-          "avgCtr": null,
           "avgViewDurationSec": 257,
           "avgViewPct": 27.65,
           "videos": [
@@ -1990,7 +1785,6 @@
               "part": "1부",
               "pub": "2026-07-21",
               "views": 24765,
-              "ctr": null,
               "avgViewDurationSec": 223,
               "avgViewPct": 26.37,
               "privacy": "public"
@@ -1999,7 +1793,6 @@
               "part": "2부",
               "pub": "2026-07-22",
               "views": 12065,
-              "ctr": null,
               "avgViewDurationSec": 219,
               "avgViewPct": 28.73,
               "privacy": "public"
@@ -2008,7 +1801,6 @@
               "part": "3부",
               "pub": "2026-07-23",
               "views": 5660,
-              "ctr": null,
               "avgViewDurationSec": 246,
               "avgViewPct": 35.09,
               "privacy": "public"
@@ -2017,7 +1809,6 @@
               "part": "4부",
               "pub": "2026-07-24",
               "views": 10365,
-              "ctr": null,
               "avgViewDurationSec": 266,
               "avgViewPct": 36.59,
               "privacy": "public"
@@ -2026,7 +1817,6 @@
               "part": "풀버전",
               "pub": "2026-07-26",
               "views": 20880,
-              "ctr": null,
               "avgViewDurationSec": 330,
               "avgViewPct": 11.45,
               "privacy": "public"
@@ -2039,7 +1829,6 @@
           "videoCount": 5,
           "totalViews": 57335,
           "avgViews": 11467,
-          "avgCtr": null,
           "avgViewDurationSec": 503,
           "avgViewPct": 28.3,
           "videos": [
@@ -2047,7 +1836,6 @@
               "part": "1부",
               "pub": "2026-07-24",
               "views": 7445,
-              "ctr": null,
               "avgViewDurationSec": 357,
               "avgViewPct": 26.88,
               "privacy": "public"
@@ -2056,7 +1844,6 @@
               "part": "2부",
               "pub": "2026-07-25",
               "views": 10801,
-              "ctr": null,
               "avgViewDurationSec": 412,
               "avgViewPct": 35.31,
               "privacy": "public"
@@ -2065,7 +1852,6 @@
               "part": "3부",
               "pub": "2026-07-26",
               "views": 8617,
-              "ctr": null,
               "avgViewDurationSec": 265,
               "avgViewPct": 30.64,
               "privacy": "public"
@@ -2074,7 +1860,6 @@
               "part": "4부",
               "pub": "2026-07-27",
               "views": 14389,
-              "ctr": null,
               "avgViewDurationSec": 377,
               "avgViewPct": 25.21,
               "privacy": "public"
@@ -2083,7 +1868,6 @@
               "part": "풀버전",
               "pub": "2026-07-29",
               "views": 16083,
-              "ctr": null,
               "avgViewDurationSec": 1104,
               "avgViewPct": 23.45,
               "privacy": "public"
@@ -2096,7 +1880,6 @@
           "videoCount": 5,
           "totalViews": 63535,
           "avgViews": 12707,
-          "avgCtr": null,
           "avgViewDurationSec": 473,
           "avgViewPct": 34.65,
           "videos": [
@@ -2104,7 +1887,6 @@
               "part": "1부",
               "pub": "2026-07-28",
               "views": 4681,
-              "ctr": null,
               "avgViewDurationSec": 361,
               "avgViewPct": 39.97,
               "privacy": "public"
@@ -2113,7 +1895,6 @@
               "part": "2부",
               "pub": "2026-07-29",
               "views": 8397,
-              "ctr": null,
               "avgViewDurationSec": 293,
               "avgViewPct": 34.04,
               "privacy": "public"
@@ -2122,7 +1903,6 @@
               "part": "3부",
               "pub": "2026-07-30",
               "views": 11201,
-              "ctr": null,
               "avgViewDurationSec": 376,
               "avgViewPct": 37.73,
               "privacy": "public"
@@ -2131,7 +1911,6 @@
               "part": "4부",
               "pub": "2026-07-31",
               "views": 9604,
-              "ctr": null,
               "avgViewDurationSec": 331,
               "avgViewPct": 33.31,
               "privacy": "public"
@@ -2140,7 +1919,6 @@
               "part": "풀버전",
               "pub": "2026-08-02",
               "views": 29652,
-              "ctr": null,
               "avgViewDurationSec": 1006,
               "avgViewPct": 28.2,
               "privacy": "public"
@@ -2153,7 +1931,6 @@
           "videoCount": 4,
           "totalViews": 53885,
           "avgViews": 13471,
-          "avgCtr": null,
           "avgViewDurationSec": 285,
           "avgViewPct": 18.37,
           "videos": [
@@ -2161,7 +1938,6 @@
               "part": "1부",
               "pub": "2026-07-28",
               "views": 21736,
-              "ctr": null,
               "avgViewDurationSec": 311,
               "avgViewPct": 23.2,
               "privacy": "public"
@@ -2170,7 +1946,6 @@
               "part": "2부",
               "pub": "2026-07-29",
               "views": 9654,
-              "ctr": null,
               "avgViewDurationSec": 253,
               "avgViewPct": 20.12,
               "privacy": "public"
@@ -2179,7 +1954,6 @@
               "part": "3부",
               "pub": "2026-07-30",
               "views": 11590,
-              "ctr": null,
               "avgViewDurationSec": 277,
               "avgViewPct": 22.13,
               "privacy": "public"
@@ -2188,7 +1962,6 @@
               "part": "풀버전",
               "pub": "2026-07-31",
               "views": 10905,
-              "ctr": null,
               "avgViewDurationSec": 300,
               "avgViewPct": 8.01,
               "privacy": "public"
@@ -2201,7 +1974,6 @@
           "videoCount": 5,
           "totalViews": 46760,
           "avgViews": 9352,
-          "avgCtr": null,
           "avgViewDurationSec": 285,
           "avgViewPct": 23.74,
           "videos": [
@@ -2209,7 +1981,6 @@
               "part": "1부",
               "pub": "2026-07-31",
               "views": 10746,
-              "ctr": null,
               "avgViewDurationSec": 296,
               "avgViewPct": 26.2,
               "privacy": "public"
@@ -2218,7 +1989,6 @@
               "part": "2부",
               "pub": "2026-08-01",
               "views": 8769,
-              "ctr": null,
               "avgViewDurationSec": 220,
               "avgViewPct": 27.99,
               "privacy": "public"
@@ -2227,7 +1997,6 @@
               "part": "3부",
               "pub": "2026-08-02",
               "views": 4705,
-              "ctr": null,
               "avgViewDurationSec": 248,
               "avgViewPct": 28.31,
               "privacy": "public"
@@ -2236,7 +2005,6 @@
               "part": "4부",
               "pub": "2026-08-03",
               "views": 11177,
-              "ctr": null,
               "avgViewDurationSec": 306,
               "avgViewPct": 26.74,
               "privacy": "public"
@@ -2245,7 +2013,6 @@
               "part": "풀버전",
               "pub": "2026-08-04",
               "views": 11363,
-              "ctr": null,
               "avgViewDurationSec": 354,
               "avgViewPct": 9.45,
               "privacy": "public"
@@ -2258,7 +2025,6 @@
           "videoCount": 5,
           "totalViews": 101228,
           "avgViews": 20246,
-          "avgCtr": null,
           "avgViewDurationSec": 303,
           "avgViewPct": 26.85,
           "videos": [
@@ -2266,7 +2032,6 @@
               "part": "1부",
               "pub": "2026-08-01",
               "views": 43606,
-              "ctr": null,
               "avgViewDurationSec": 261,
               "avgViewPct": 25.05,
               "privacy": "public"
@@ -2275,7 +2040,6 @@
               "part": "2부",
               "pub": "2026-08-02",
               "views": 8555,
-              "ctr": null,
               "avgViewDurationSec": 276,
               "avgViewPct": 29.11,
               "privacy": "public"
@@ -2284,7 +2048,6 @@
               "part": "3부",
               "pub": "2026-08-03",
               "views": 22877,
-              "ctr": null,
               "avgViewDurationSec": 300,
               "avgViewPct": 35.05,
               "privacy": "public"
@@ -2293,7 +2056,6 @@
               "part": "4부",
               "pub": "2026-08-04",
               "views": 22070,
-              "ctr": null,
               "avgViewDurationSec": 299,
               "avgViewPct": 34.51,
               "privacy": "public"
@@ -2302,7 +2064,6 @@
               "part": "풀버전",
               "pub": "2026-08-05",
               "views": 4120,
-              "ctr": null,
               "avgViewDurationSec": 379,
               "avgViewPct": 10.54,
               "privacy": "public"
@@ -2323,7 +2084,6 @@
           "videoCount": 6,
           "totalViews": 79581,
           "avgViews": 13264,
-          "avgCtr": null,
           "avgViewDurationSec": 482,
           "avgViewPct": 35.13,
           "videos": [
@@ -2331,7 +2091,6 @@
               "part": "1부",
               "pub": "2026-08-04",
               "views": 23045,
-              "ctr": null,
               "avgViewDurationSec": 467,
               "avgViewPct": 37.75,
               "privacy": "public"
@@ -2340,7 +2099,6 @@
               "part": "2부",
               "pub": "2026-08-05",
               "views": 1381,
-              "ctr": null,
               "avgViewDurationSec": 233,
               "avgViewPct": 33.36,
               "privacy": "public"
@@ -2349,7 +2107,6 @@
               "part": "3부",
               "pub": "2026-08-06",
               "views": 3405,
-              "ctr": null,
               "avgViewDurationSec": 263,
               "avgViewPct": 39.25,
               "privacy": "public"
@@ -2358,7 +2115,6 @@
               "part": "4부",
               "pub": "2026-08-07",
               "views": 3646,
-              "ctr": null,
               "avgViewDurationSec": 259,
               "avgViewPct": 37.0,
               "privacy": "public"
@@ -2367,7 +2123,6 @@
               "part": "5부",
               "pub": "2026-08-08",
               "views": 14184,
-              "ctr": null,
               "avgViewDurationSec": 411,
               "avgViewPct": 34.19,
               "privacy": "public"
@@ -2376,7 +2131,6 @@
               "part": "풀버전",
               "pub": "2026-08-09",
               "views": 33920,
-              "ctr": null,
               "avgViewDurationSec": 1262,
               "avgViewPct": 29.26,
               "privacy": "public"
@@ -2389,7 +2143,6 @@
           "videoCount": 5,
           "totalViews": 112432,
           "avgViews": 22486,
-          "avgCtr": null,
           "avgViewDurationSec": 474,
           "avgViewPct": 29.19,
           "videos": [
@@ -2397,7 +2150,6 @@
               "part": "1부",
               "pub": "2026-08-06",
               "views": 14155,
-              "ctr": null,
               "avgViewDurationSec": 308,
               "avgViewPct": 32.41,
               "privacy": "public"
@@ -2406,7 +2158,6 @@
               "part": "2부",
               "pub": "2026-08-07",
               "views": 43339,
-              "ctr": null,
               "avgViewDurationSec": 481,
               "avgViewPct": 35.79,
               "privacy": "public"
@@ -2415,7 +2166,6 @@
               "part": "3부",
               "pub": "2026-08-08",
               "views": 4129,
-              "ctr": null,
               "avgViewDurationSec": 361,
               "avgViewPct": 29.91,
               "privacy": "public"
@@ -2424,7 +2174,6 @@
               "part": "4부",
               "pub": "2026-08-10",
               "views": 866,
-              "ctr": null,
               "avgViewDurationSec": 166,
               "avgViewPct": 22.15,
               "privacy": "public"
@@ -2433,7 +2182,6 @@
               "part": "풀버전",
               "pub": "2026-08-12",
               "views": 49943,
-              "ctr": null,
               "avgViewDurationSec": 1056,
               "avgViewPct": 25.71,
               "privacy": "public"
@@ -2446,7 +2194,6 @@
           "videoCount": 4,
           "totalViews": 92101,
           "avgViews": 23025,
-          "avgCtr": null,
           "avgViewDurationSec": 420,
           "avgViewPct": 26.66,
           "videos": [
@@ -2454,7 +2201,6 @@
               "part": "1부",
               "pub": "2026-08-05",
               "views": 12798,
-              "ctr": null,
               "avgViewDurationSec": 297,
               "avgViewPct": 24.91,
               "privacy": "public"
@@ -2463,7 +2209,6 @@
               "part": "2부",
               "pub": "2026-08-06",
               "views": 9583,
-              "ctr": null,
               "avgViewDurationSec": 316,
               "avgViewPct": 29.87,
               "privacy": "public"
@@ -2472,7 +2217,6 @@
               "part": "3부",
               "pub": "2026-08-07",
               "views": 47164,
-              "ctr": null,
               "avgViewDurationSec": 344,
               "avgViewPct": 30.09,
               "privacy": "public"
@@ -2481,7 +2225,6 @@
               "part": "풀버전",
               "pub": "2026-08-08",
               "views": 22556,
-              "ctr": null,
               "avgViewDurationSec": 721,
               "avgViewPct": 21.76,
               "privacy": "public"
@@ -2494,7 +2237,6 @@
           "videoCount": 5,
           "totalViews": 46366,
           "avgViews": 9273,
-          "avgCtr": null,
           "avgViewDurationSec": 351,
           "avgViewPct": 29.22,
           "videos": [
@@ -2502,7 +2244,6 @@
               "part": "1부",
               "pub": "2026-08-12",
               "views": 5201,
-              "ctr": null,
               "avgViewDurationSec": 243,
               "avgViewPct": 22.51,
               "privacy": "public"
@@ -2511,7 +2252,6 @@
               "part": "2부",
               "pub": "2026-08-13",
               "views": 2562,
-              "ctr": null,
               "avgViewDurationSec": 219,
               "avgViewPct": 27.07,
               "privacy": "public"
@@ -2520,7 +2260,6 @@
               "part": "3부",
               "pub": "2026-08-14",
               "views": 11757,
-              "ctr": null,
               "avgViewDurationSec": 271,
               "avgViewPct": 31.05,
               "privacy": "public"
@@ -2529,7 +2268,6 @@
               "part": "4부",
               "pub": "2026-08-15",
               "views": 8486,
-              "ctr": null,
               "avgViewDurationSec": 283,
               "avgViewPct": 43.15,
               "privacy": "public"
@@ -2538,7 +2276,6 @@
               "part": "풀버전",
               "pub": "2026-08-16",
               "views": 18360,
-              "ctr": null,
               "avgViewDurationSec": 739,
               "avgViewPct": 22.33,
               "privacy": "public"
@@ -2551,7 +2288,6 @@
           "videoCount": 5,
           "totalViews": 88588,
           "avgViews": 17718,
-          "avgCtr": null,
           "avgViewDurationSec": 420,
           "avgViewPct": 38.61,
           "videos": [
@@ -2559,7 +2295,6 @@
               "part": "1부",
               "pub": "2026-08-13",
               "views": 12284,
-              "ctr": null,
               "avgViewDurationSec": 402,
               "avgViewPct": 38.42,
               "privacy": "public"
@@ -2568,7 +2303,6 @@
               "part": "2부",
               "pub": "2026-08-14",
               "views": 21884,
-              "ctr": null,
               "avgViewDurationSec": 311,
               "avgViewPct": 40.93,
               "privacy": "public"
@@ -2577,7 +2311,6 @@
               "part": "3부",
               "pub": "2026-08-15",
               "views": 22918,
-              "ctr": null,
               "avgViewDurationSec": 312,
               "avgViewPct": 46.47,
               "privacy": "public"
@@ -2586,7 +2319,6 @@
               "part": "4부",
               "pub": "2026-08-16",
               "views": 8541,
-              "ctr": null,
               "avgViewDurationSec": 264,
               "avgViewPct": 40.31,
               "privacy": "public"
@@ -2595,7 +2327,6 @@
               "part": "풀버전",
               "pub": "2026-08-17",
               "views": 22961,
-              "ctr": null,
               "avgViewDurationSec": 811,
               "avgViewPct": 26.92,
               "privacy": "public"
@@ -2608,7 +2339,6 @@
           "videoCount": 4,
           "totalViews": 224144,
           "avgViews": 56036,
-          "avgCtr": null,
           "avgViewDurationSec": 339,
           "avgViewPct": 35.37,
           "videos": [
@@ -2616,7 +2346,6 @@
               "part": "2부",
               "pub": "2026-08-15",
               "views": 11932,
-              "ctr": null,
               "avgViewDurationSec": 258,
               "avgViewPct": 39.71,
               "privacy": "public"
@@ -2625,7 +2354,6 @@
               "part": "3부",
               "pub": "2026-08-16",
               "views": 34339,
-              "ctr": null,
               "avgViewDurationSec": 239,
               "avgViewPct": 40.87,
               "privacy": "public"
@@ -2634,7 +2362,6 @@
               "part": "4부",
               "pub": "2026-08-17",
               "views": 117382,
-              "ctr": null,
               "avgViewDurationSec": 208,
               "avgViewPct": 35.38,
               "privacy": "public"
@@ -2643,7 +2370,6 @@
               "part": "풀버전",
               "pub": "2026-08-19",
               "views": 60491,
-              "ctr": null,
               "avgViewDurationSec": 651,
               "avgViewPct": 25.51,
               "privacy": "public"
@@ -2716,19 +2442,16 @@
             "label": "2026년 8월",
             "videoCount": 75,
             "avgViews": 7119,
-            "avgCtr": null,
             "avgViewDurationSec": 223,
             "groups": {
               "라이브": {
                 "videoCount": 54,
                 "avgViews": 4505,
-                "avgCtr": null,
                 "avgViewDurationSec": 186
               },
               "통합본": {
                 "videoCount": 21,
                 "avgViews": 13841,
-                "avgCtr": null,
                 "avgViewDurationSec": 311
               }
             },
@@ -2746,19 +2469,16 @@
             "label": "2026년 8월",
             "videoCount": 23,
             "avgViews": 2831,
-            "avgCtr": null,
             "avgViewDurationSec": 356,
             "groups": {
               "라이브": {
                 "videoCount": 5,
                 "avgViews": 5292,
-                "avgCtr": null,
                 "avgViewDurationSec": 352
               },
               "통합본": {
                 "videoCount": 18,
                 "avgViews": 2148,
-                "avgCtr": null,
                 "avgViewDurationSec": 357
               }
             },
@@ -2776,19 +2496,16 @@
             "label": "2026년 8월",
             "videoCount": 8,
             "avgViews": 1906,
-            "avgCtr": null,
             "avgViewDurationSec": 317,
             "groups": {
               "라이브": {
                 "videoCount": 3,
                 "avgViews": 1699,
-                "avgCtr": null,
                 "avgViewDurationSec": 349
               },
               "통합본": {
                 "videoCount": 5,
                 "avgViews": 2029,
-                "avgCtr": null,
                 "avgViewDurationSec": 293
               }
             },
