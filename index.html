@@ -778,7 +778,8 @@ function buildGuestRanking() {
       // 표시 이름은 가장 짧은 형태를 써요 ("부자아빠 정재호 대표" 대신 "정재호 대표").
       if (g.name.length < c.name.length) c.name = g.name;
       c.appearances.push({ month: m.month, label: m.label, date: g.eventDate,
-                           views: g.totalViews || 0, videos: g.videoCount || 0 });
+                           views: g.totalViews || 0, videos: g.videoCount || 0,
+                           pct: g.avgViewPct, dur: g.avgViewDurationSec });
     });
   });
   // 캘린더에 잡혔지만 아직 업로드되지 않은 일정 = 다음 촬영 예정
@@ -798,6 +799,23 @@ function buildGuestRanking() {
     c.avgPerAppearance = c.count ? Math.round(c.totalViews / c.count) : 0;
     c.last = c.appearances[c.appearances.length - 1];
     c.tier = gradeOf(c.avgPerAppearance);
+    // 시청 지표는 편수로 가중 평균해요 (편수가 많은 회차가 더 크게 반영되도록).
+    const wsum = (k) => {
+      let w = 0, v = 0;
+      c.appearances.forEach(a => {
+        if (typeof a[k] === 'number' && a.videos) { w += a.videos; v += a[k] * a.videos; }
+      });
+      return w ? v / w : null;
+    };
+    c.avgViewPct = wsum('pct');
+    c.avgViewDurationSec = wsum('dur');
+    // 추세: 마지막 회차가 직전 회차보다 얼마나 올랐는지 (2회 이상일 때만)
+    if (c.count >= 2) {
+      const a = c.appearances[c.count - 2].views, b = c.appearances[c.count - 1].views;
+      c.trend = a ? (b - a) / a : null;
+    } else {
+      c.trend = null;
+    }
     // 오늘 이후로 잡힌 일정 중 가장 빠른 것
     const mine = upcoming.filter(u => sameGuest(c.key, u.key) && u.date >= todayStr)
       .map(u => u.date).sort();
@@ -807,6 +825,40 @@ function buildGuestRanking() {
   clusters.sort((a, b) => (GRADE_ORDER[b.tier] ?? -1) - (GRADE_ORDER[a.tier] ?? -1)
     || b.avgPerAppearance - a.avgPerAppearance);
   return clusters;
+}
+
+// 섭외 판단 알고리즘
+//  조회수(50%) + 시청지속률(35%) + 직전 대비 추세(15%)를 전체 평균과 견줘 점수를 냅니다.
+//  1.00 = 채널 평균 수준. 출연 1회는 표본이 적어 판단을 보류해요.
+function bookingCall(r, base) {
+  const viewIdx = base.views ? r.avgPerAppearance / base.views : 1;
+  const retIdx = (base.pct && typeof r.avgViewPct === 'number') ? r.avgViewPct / base.pct : 1;
+  // 추세는 ±50%로 잘라 과대반영을 막아요.
+  const tr = typeof r.trend === 'number' ? Math.max(-0.5, Math.min(0.5, r.trend)) : 0;
+  const score = viewIdx * 0.5 + retIdx * 0.35 + (1 + tr) * 0.15;
+
+  const parts = [];
+  parts.push(`조회 ${viewIdx >= 1 ? '+' : '−'}${Math.abs((viewIdx - 1) * 100).toFixed(0)}%`);
+  if (typeof r.avgViewPct === 'number' && base.pct) {
+    parts.push(`시청률 ${retIdx >= 1 ? '+' : '−'}${Math.abs((retIdx - 1) * 100).toFixed(0)}%`);
+  }
+  if (typeof r.trend === 'number') {
+    parts.push(`추세 ${r.trend >= 0 ? '+' : '−'}${Math.abs(r.trend * 100).toFixed(0)}%`);
+  }
+
+  let verdict, cls;
+  if (r.count === 1) {
+    // 1회 출연은 운·주제 영향이 커서 확정 판단을 미룹니다.
+    verdict = score >= 1.15 ? '재섭외 후보' : (score >= 0.85 ? '판단 보류' : '관망');
+    cls = score >= 1.15 ? 'perf-good' : (score >= 0.85 ? '' : 'perf-warn');
+    parts.push('표본 1회');
+  } else if (score >= 1.30) { verdict = '적극 섭외'; cls = 'perf-high'; }
+  else if (score >= 1.05) { verdict = '섭외 추천'; cls = 'perf-good'; }
+  else if (score >= 0.85) { verdict = '유지'; cls = ''; }
+  else if (score >= 0.65) { verdict = '재검토'; cls = 'perf-warn'; }
+  else { verdict = '섭외 보류'; cls = 'perf-bad'; }
+
+  return { score, verdict, cls, reason: parts.join(' · ') };
 }
 
 function renderGuestRanking() {
@@ -822,6 +874,11 @@ function renderGuestRanking() {
   }
   // 기준선: 전체 게스트의 '1회 출연당 평균'들의 평균
   const overall = rows.reduce((s, r) => s + r.avgPerAppearance, 0) / rows.length;
+  // 시청지속률 기준선 (값이 있는 게스트들의 평균)
+  const withPct = rows.filter(r => typeof r.avgViewPct === 'number');
+  const overallPct = withPct.length ? withPct.reduce((s, r) => s + r.avgViewPct, 0) / withPct.length : null;
+  const base = { views: overall, pct: overallPct };
+  rows.forEach(r => { r.call = bookingCall(r, base); });
 
   const sum = document.createElement('div');
   sum.className = 'kpi-row';
@@ -838,14 +895,17 @@ function renderGuestRanking() {
   table.className = 'video-table';
   table.innerHTML = '<thead><tr><th>#</th><th>게스트</th><th>티어</th>'
     + '<th class="num">총 출연</th><th class="num">1회당 평균</th><th class="num">평균 대비</th>'
-    + '<th class="num">누적 조회수</th><th>최근 출연</th><th>다음 촬영</th></tr></thead>';
+    + '<th class="num">시청률</th><th>최근 출연</th><th>다음 촬영</th><th>AI 분석</th></tr></thead>';
   const tbody = document.createElement('tbody');
   rows.forEach((r, i) => {
     const tr = document.createElement('tr');
     const tier = r.tier;
     const diff = overall ? (r.avgPerAppearance / overall - 1) * 100 : 0;
+    // 최근 출연은 월·일까지 보여줘요 (연도는 생략).
+    const ld = new Date(r.last.date);
+    const lastDate = `${ld.getMonth() + 1}월 ${ld.getDate()}일`;
     const next = r.nextDate
-      ? `<span class="chg-up">${new Date(r.nextDate).toLocaleDateString('ko-KR')}</span>`
+      ? (() => { const n = new Date(r.nextDate); return `<span class="chg-up">${n.getMonth() + 1}월 ${n.getDate()}일</span>`; })()
       : '<span style="color:var(--muted)">일정 없음</span>';
     const cls = diff >= 50 ? 'perf-high' : diff >= 20 ? 'perf-good'
               : diff <= -50 ? 'perf-bad' : diff <= -20 ? 'perf-warn' : '';
@@ -855,9 +915,11 @@ function renderGuestRanking() {
       + `<td class="num">${r.count}회</td>`
       + `<td class="num"><strong>${fmtNum(r.avgPerAppearance)}</strong></td>`
       + `<td class="num ${cls}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}%</td>`
-      + `<td class="num">${fmtNum(r.totalViews)}</td>`
-      + `<td>${escapeHtml(r.last.label)}</td>`
-      + `<td>${next}</td>`;
+      + `<td class="num">${typeof r.avgViewPct === 'number' ? r.avgViewPct.toFixed(1) + '%' : '–'}</td>`
+      + `<td>${escapeHtml(lastDate)}</td>`
+      + `<td>${next}</td>`
+      + `<td><span class="${r.call.cls}" style="font-weight:700">${r.call.verdict}</span>`
+      + `<div class="stat-sub">${escapeHtml(r.call.reason)}</div></td>`;
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -872,6 +934,14 @@ function renderGuestRanking() {
   note.textContent = '본채널 집계분만 대상이에요. 여러 번 출연한 게스트는 한 줄로 묶어 1회 출연당 평균을 냈고, '
     + '티어는 그 평균값 기준입니다 (S 20만 / A 15만 / B 10만 / C 8만 초과 / D 그 이하). '
     + '평균 대비 %는 전체 게스트의 1회 출연당 평균과 비교한 값이에요. 다음 촬영은 캘린더에 잡힌 예정 일정을 보여주며, 없으면 “일정 없음”으로 표시합니다.';
+  const note2 = document.createElement('p');
+  note2.className = 'fine-print';
+  note2.innerHTML = '<strong>AI 분석</strong>은 조회수(50%) + 시청지속률(35%) + 직전 회차 대비 추세(15%)를 '
+    + '채널 전체 평균과 견줘 점수화한 결과예요. 1.00이 평균 수준이고, '
+    + '<b>적극 섭외</b> 1.30↑ · <b>섭외 추천</b> 1.05↑ · <b>유지</b> 0.85↑ · <b>재검토</b> 0.65↑ · <b>섭외 보류</b> 그 아래입니다. '
+    + '출연이 1회뿐이면 주제·시기 운의 영향이 커서 확정하지 않고 <b>재섭외 후보 / 판단 보류 / 관망</b>으로만 표시해요. '
+    + '숫자만 본 참고값이니 최종 판단은 콘텐츠 맥락과 함께 보셔야 합니다.';
+  listEl.appendChild(note2);
   listEl.appendChild(note);
 }
 
