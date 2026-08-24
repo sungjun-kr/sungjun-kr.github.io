@@ -1073,7 +1073,8 @@ const LOGIC_QUESTIONS = [
   { key: 'thumb',  label: '썸네일 레퍼런스',      opts: ['1개', '2개', '3개 이상'] },
   { key: 'ref',    label: '레퍼런스 질문지 활용', opts: ['적극적', '중립', '소극적'] },
   { key: 'timing', label: '정보의 시황',          opts: ['적극적', '중립', '소극적'] },
-  { key: 'meta',   label: '작성 당시의 메타',     opts: ['조회수 높음', '조회수 평균', '조회수 낮음'] }
+  { key: 'topicViews', label: '해당 주제 조회수', opts: ['조회수 높음', '조회수 평균', '조회수 낮음'] },
+  { key: 'meta',       label: '메타',            opts: ['많음', '평균', '적음'] }
 ];
 const LOGIC_KEY = 'workLogic';
 
@@ -1094,7 +1095,8 @@ function logicSummary(rec) {
   if (rec.thumb) bits.push('썸 ' + rec.thumb.replace(' 이상', '+'));
   if (rec.ref) bits.push('질문 ' + rec.ref);
   if (rec.timing) bits.push('시황 ' + rec.timing);
-  if (rec.meta) bits.push('메타 ' + rec.meta.replace('조회수 ', ''));
+  if (rec.topicViews) bits.push('주제조회 ' + rec.topicViews.replace('조회수 ', ''));
+  if (rec.meta) bits.push('메타 ' + rec.meta);
   return bits.length ? bits.join(' · ') : null;
 }
 
