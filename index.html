@@ -912,7 +912,7 @@ function renderTopics() {
   note.className = 'fine-print';
   note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
     + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
-    + '풀버전·특집과 조회수 3만 이하는 제외했어요. '
+    + '풀버전·특집·라이브분과 조회수 3만 이하는 제외했어요. '
     + `맨 아래 "내 영상 TOP 10"은 캘린더 ${CALENDAR_PREFIX} 일정만 주제 구분 없이 모은 목록입니다.`;
   listEl.appendChild(note);
 }
@@ -1782,10 +1782,13 @@ async function fetchAllCalendarEvents() {
 async function refreshTopics() {
   const events = await fetchAllCalendarEvents();
   const since = new Date(Date.now() - TOPIC_DAYS * 86400000);
-  const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, since.toISOString(), new Date().toISOString());
+  let vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, since.toISOString(), new Date().toISOString());
+  // [라이브] 일정에서 나온 영상은 여기서도 빼요.
+  const liveIds = await liveClaimedIds(vids);
+  vids = vids.filter(v => !liveIds.has(v.videoId));
 
   // 촬영일이 업로드보다 앞서므로, 업로드일 기준 최근 60일 안의 일정까지 후보로 봅니다.
-  const evRecent = events.filter(e => e.date >= new Date(Date.now() - 60 * 86400000));
+  const evRecent = events.filter(e => e.tag !== '라이브' && e.date >= new Date(Date.now() - 60 * 86400000));
   const picked = [];
   vids.forEach(v => {
     if (v.title.includes('풀버전')) return;
