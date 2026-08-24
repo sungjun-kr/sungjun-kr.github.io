@@ -138,6 +138,16 @@ input[type="password"], input[type="text"] {
 .video-table th, .video-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gridline); }
 .video-table th { color: var(--muted); font-weight: 600; font-size: 12px; }
 .video-table td.num { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.btn-block {
+  font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+  border-radius: 6px; padding: 3px 8px; white-space: nowrap;
+  border: 1px solid var(--border); background: transparent; color: var(--text-secondary);
+}
+.btn-block:hover { border-color: var(--critical); color: var(--critical); }
+.btn-block.on { background: var(--critical); border-color: var(--critical); color: #fff; }
+tr.row-blocked { background: rgba(208,59,59,0.10); }
+tr.row-blocked td { color: var(--muted); }
+tr.row-blocked td:nth-child(2) { color: var(--critical); font-weight: 600; text-decoration: line-through; }
 .empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
 .section-head { font-size: 15px; font-weight: 600; margin: 28px 0 12px; color: var(--text-secondary); }
 .badge-priv { font-size: 10px; color: var(--warning, #a06600); border: 1px solid currentColor; border-radius: 4px; padding: 1px 4px; margin-left: 4px; vertical-align: middle; }
@@ -827,36 +837,46 @@ function buildGuestRanking() {
   return clusters;
 }
 
+// 재출연 불가 표시 — 이 브라우저에만 저장돼요 (게시 데이터와 별개).
+const BLOCKED_KEY = 'blockedGuests';
+function loadBlocked() {
+  try { return new Set(JSON.parse(localStorage.getItem(BLOCKED_KEY) || '[]')); }
+  catch (e) { return new Set(); }
+}
+function saveBlocked(set) {
+  try { localStorage.setItem(BLOCKED_KEY, JSON.stringify([...set])); } catch (e) {}
+}
+
 // 섭외 판단 알고리즘
-//  조회수(50%) + 시청지속률(35%) + 직전 대비 추세(15%)를 전체 평균과 견줘 점수를 냅니다.
-//  1.00 = 채널 평균 수준. 출연 1회는 표본이 적어 판단을 보류해요.
+//  조회수가 가장 중요한 지표라 비중을 크게 두고(75%), 그 조회수 우위를 '표본 수'로 할인해요.
+//  = 많이 나왔는데도 평균을 웃돈다면 진짜 실력, 한 번뿐이면 운일 수 있으니 덜 인정.
+//  시청지속률 15% + 직전 회차 대비 추세 10%로 보조 지표를 얹습니다.
+//  기준값 1.00 = 채널 평균 수준.
 function bookingCall(r, base) {
   const viewIdx = base.views ? r.avgPerAppearance / base.views : 1;
   const retIdx = (base.pct && typeof r.avgViewPct === 'number') ? r.avgViewPct / base.pct : 1;
-  // 추세는 ±50%로 잘라 과대반영을 막아요.
   const tr = typeof r.trend === 'number' ? Math.max(-0.5, Math.min(0.5, r.trend)) : 0;
-  const score = viewIdx * 0.5 + retIdx * 0.35 + (1 + tr) * 0.15;
 
-  const parts = [];
-  parts.push(`조회 ${viewIdx >= 1 ? '+' : '−'}${Math.abs((viewIdx - 1) * 100).toFixed(0)}%`);
-  if (typeof r.avgViewPct === 'number' && base.pct) {
-    parts.push(`시청률 ${retIdx >= 1 ? '+' : '−'}${Math.abs((retIdx - 1) * 100).toFixed(0)}%`);
-  }
-  if (typeof r.trend === 'number') {
-    parts.push(`추세 ${r.trend >= 0 ? '+' : '−'}${Math.abs(r.trend * 100).toFixed(0)}%`);
-  }
+  // 표본 신뢰도: 1회 0.2 → 5회 이상 1.0. 조회수 우위(또는 열위)를 이 비율만큼만 인정해요.
+  const reliability = Math.min(r.count, 5) / 5;
+  const viewTerm = 1 + (viewIdx - 1) * reliability;
+
+  const score = viewTerm * 0.75 + retIdx * 0.15 + (1 + tr) * 0.10;
+
+  const pctTxt = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(0)}%`;
+  const parts = [`조회 ${pctTxt((viewIdx - 1) * 100)}`];
+  if (typeof r.avgViewPct === 'number' && base.pct) parts.push(`시청률 ${pctTxt((retIdx - 1) * 100)}`);
+  if (typeof r.trend === 'number') parts.push(`추세 ${pctTxt(r.trend * 100)}`);
+  parts.push(`${r.count}회 반영 ${(reliability * 100).toFixed(0)}%`);
 
   let verdict, cls;
-  if (r.count === 1) {
-    // 1회 출연은 운·주제 영향이 커서 확정 판단을 미룹니다.
-    verdict = score >= 1.15 ? '재섭외 후보' : (score >= 0.85 ? '판단 보류' : '관망');
-    cls = score >= 1.15 ? 'perf-good' : (score >= 0.85 ? '' : 'perf-warn');
-    parts.push('표본 1회');
-  } else if (score >= 1.30) { verdict = '적극 섭외'; cls = 'perf-high'; }
+  if (score >= 1.30) { verdict = '적극 섭외'; cls = 'perf-high'; }
   else if (score >= 1.05) { verdict = '섭외 추천'; cls = 'perf-good'; }
   else if (score >= 0.85) { verdict = '유지'; cls = ''; }
   else if (score >= 0.65) { verdict = '재검토'; cls = 'perf-warn'; }
   else { verdict = '섭외 보류'; cls = 'perf-bad'; }
+  // 1회 출연은 아무리 좋아도 '적극 섭외'까지는 올리지 않아요 (표본 부족).
+  if (r.count === 1 && score >= 1.30) { verdict = '섭외 추천'; cls = 'perf-good'; }
 
   return { score, verdict, cls, reason: parts.join(' · ') };
 }
@@ -887,13 +907,16 @@ function renderGuestRanking() {
   sum.appendChild(statTile('1회 출연당 평균', fmtNum(Math.round(overall)), '이 값이 아래 % 기준선'));
   sum.appendChild(statTile('재출연 게스트', `${rows.filter(r => r.count > 1).length}명`));
   sum.appendChild(statTile('다음 촬영 예정', `${rows.filter(r => r.nextDate).length}명`));
+  const blockedNow = loadBlocked();
+  sum.appendChild(statTile('재출연 불가', `${rows.filter(r => blockedNow.has(r.key)).length}명`));
   listEl.appendChild(sum);
 
   const card = document.createElement('div');
   card.className = 'guest-card';
   const table = document.createElement('table');
   table.className = 'video-table';
-  table.innerHTML = '<thead><tr><th>#</th><th>게스트</th><th>티어</th>'
+  const blocked = loadBlocked();
+  table.innerHTML = '<thead><tr><th>#</th><th>게스트</th><th>섭외</th><th>티어</th>'
     + '<th class="num">총 출연</th><th class="num">1회당 평균</th><th class="num">평균 대비</th>'
     + '<th class="num">시청률</th><th>최근 출연</th><th>다음 촬영</th><th>AI 분석</th></tr></thead>';
   const tbody = document.createElement('tbody');
@@ -911,6 +934,7 @@ function renderGuestRanking() {
               : diff <= -50 ? 'perf-bad' : diff <= -20 ? 'perf-warn' : '';
     tr.innerHTML = `<td class="num">${i + 1}</td>`
       + `<td>${escapeHtml(r.name)}</td>`
+      + `<td></td>`
       + `<td>${tier ? `<span class="grade grade-${tier}">${tier}</span>` : '–'}</td>`
       + `<td class="num">${r.count}회</td>`
       + `<td class="num"><strong>${fmtNum(r.avgPerAppearance)}</strong></td>`
@@ -919,7 +943,26 @@ function renderGuestRanking() {
       + `<td>${escapeHtml(lastDate)}</td>`
       + `<td>${next}</td>`
       + `<td><span class="${r.call.cls}" style="font-weight:700">${r.call.verdict}</span>`
+      + `<span class="stat-sub" style="margin-left:6px">${r.call.score.toFixed(2)}</span>`
       + `<div class="stat-sub">${escapeHtml(r.call.reason)}</div></td>`;
+    // 재출연 불가 토글
+    const isBlocked = blocked.has(r.key);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-block' + (isBlocked ? ' on' : '');
+    btn.textContent = isBlocked ? '재출연 불가' : '가능';
+    btn.title = '누르면 재출연 불가로 표시돼요 (이 브라우저에만 저장됩니다)';
+    if (isBlocked) tr.classList.add('row-blocked');
+    btn.addEventListener('click', () => {
+      const set = loadBlocked();
+      if (set.has(r.key)) { set.delete(r.key); } else { set.add(r.key); }
+      saveBlocked(set);
+      const on = set.has(r.key);
+      btn.classList.toggle('on', on);
+      btn.textContent = on ? '재출연 불가' : '가능';
+      tr.classList.toggle('row-blocked', on);
+    });
+    tr.children[2].appendChild(btn);
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -936,11 +979,12 @@ function renderGuestRanking() {
     + '평균 대비 %는 전체 게스트의 1회 출연당 평균과 비교한 값이에요. 다음 촬영은 캘린더에 잡힌 예정 일정을 보여주며, 없으면 “일정 없음”으로 표시합니다.';
   const note2 = document.createElement('p');
   note2.className = 'fine-print';
-  note2.innerHTML = '<strong>AI 분석</strong>은 조회수(50%) + 시청지속률(35%) + 직전 회차 대비 추세(15%)를 '
-    + '채널 전체 평균과 견줘 점수화한 결과예요. 1.00이 평균 수준이고, '
-    + '<b>적극 섭외</b> 1.30↑ · <b>섭외 추천</b> 1.05↑ · <b>유지</b> 0.85↑ · <b>재검토</b> 0.65↑ · <b>섭외 보류</b> 그 아래입니다. '
-    + '출연이 1회뿐이면 주제·시기 운의 영향이 커서 확정하지 않고 <b>재섭외 후보 / 판단 보류 / 관망</b>으로만 표시해요. '
-    + '숫자만 본 참고값이니 최종 판단은 콘텐츠 맥락과 함께 보셔야 합니다.';
+  note2.innerHTML = '<strong>AI 분석</strong> — 조회수를 가장 크게(75%) 보고, 그 우위를 <b>표본 수로 할인</b>합니다. '
+    + '1회 출연은 20%만, 5회 이상이면 100% 인정해요. 많이 나왔는데도 평균을 웃돌면 실력, 한 번뿐이면 운일 수 있다는 뜻입니다. '
+    + '여기에 시청지속률 15% + 직전 회차 대비 추세 10%를 더합니다. 1.00이 채널 평균 수준이고, '
+    + '<b>적극 섭외</b> 1.30↑ · <b>섭외 추천</b> 1.05↑ · <b>유지</b> 0.85↑ · <b>재검토</b> 0.65↑ · <b>섭외 보류</b> 그 아래예요. '
+    + '1회 출연은 점수가 아무리 높아도 적극 섭외로 올리지 않습니다. '
+    + '클릭률은 브라우저에서 가져올 수 없어 빠져 있고, 숫자만 본 참고값이니 콘텐츠 맥락과 함께 보셔야 합니다.';
   listEl.appendChild(note2);
   listEl.appendChild(note);
 }
