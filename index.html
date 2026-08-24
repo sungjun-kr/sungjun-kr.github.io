@@ -1793,7 +1793,17 @@ async function refreshTopics() {
   vids.forEach(v => {
     if (v.title.includes('풀버전')) return;
     if (v.title.includes(EXCLUDE_KEYWORD)) return;
-    const ev = evRecent.find(e => titleHasGuest(v.title, e.core) && v.publishedAt >= e.date);
+    // 촬영일이 업로드보다 앞서면서 가장 가까운 일정을 골라요.
+    // (오래된 일정에 엉뚱하게 붙는 걸 막고, 21일을 넘기면 아예 매칭하지 않습니다.)
+    let ev = null, best = Infinity;
+    evRecent.forEach(e => {
+      if (!titleHasGuest(v.title, e.core)) return;
+      const gap = v.publishedAt - e.date;
+      if (gap < 0) return;
+      const days = gap / 86400000;
+      if (days > SET_WINDOW_DAYS) return;
+      if (days < best) { best = days; ev = e; }
+    });
     if (!ev) return;
     picked.push({ videoId: v.videoId, title: v.title, guest: ev.name, category: ev.category,
                   tag: ev.tag, pub: v.publishedAt.toISOString().slice(0, 10) });
