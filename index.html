@@ -44,6 +44,8 @@
   }
 }
 * { box-sizing: border-box; }
+/* hidden 속성이 display:flex 같은 규칙에 밀리지 않도록 확실히 숨겨요. */
+[hidden] { display: none !important; }
 body { margin: 0; background: var(--page-plane); color: var(--text-primary); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
 .page { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
