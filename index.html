@@ -575,10 +575,21 @@ function renderInner() {
     const sumRow = document.createElement('div');
     sumRow.className = 'kpi-row';
     const totVid = g5.reduce((s, g) => s + (g.videoCount || (g.videos || []).length), 0);
+    // 직전 달과 같은 방식으로 계산해 비교해요.
+    const pg = (prevMonth && prevMonth.guests) ? prevMonth.guests : [];
+    const pTotV = pg.reduce((s, g) => s + (g.totalViews || 0), 0);
+    const pTotVid = pg.reduce((s, g) => s + (g.videoCount || (g.videos || []).length), 0);
+    const pPerGuest = pg.length ? Math.round(pTotV / pg.length) : null;
+    const pPerVideo = pTotVid ? Math.round(pTotV / pTotVid) : null;
+    const pLabel = prevMonth ? prevMonth.label : null;
+
     sumRow.appendChild(statTile('집계 완료 게스트', `${g5.length}명`));
-    sumRow.appendChild(statTile('합계 조회수', fmtNum(totV)));
-    sumRow.appendChild(statTile('게스트당 평균 조회수', fmtNum(Math.round(monthAvgViews))));
-    sumRow.appendChild(statTile('영상당 평균 조회수', totVid ? fmtNum(Math.round(totV / totVid)) : '–', `영상 ${totVid}편`));
+    sumRow.appendChild(appendDelta(statTile('합계 조회수', fmtNum(totV)),
+      totV, pg.length ? pTotV : null, pLabel));
+    sumRow.appendChild(appendDelta(statTile('게스트당 평균 조회수', fmtNum(Math.round(monthAvgViews))),
+      Math.round(monthAvgViews), pPerGuest, pLabel));
+    sumRow.appendChild(appendDelta(statTile('영상당 평균 조회수', totVid ? fmtNum(Math.round(totV / totVid)) : '–', `영상 ${totVid}편`),
+      totVid ? Math.round(totV / totVid) : null, pPerVideo, pLabel));
     sumRow.appendChild(statTile('업로드 예정', `${(current.pending || []).length}명`));
     listEl.appendChild(sumRow);
 
@@ -1085,6 +1096,25 @@ function perfLevel(value, avg) {
   if (pct <= -50) return { cls: 'perf-bad', sub };
   if (pct <= -20) return { cls: 'perf-warn', sub };
   return { cls: null, sub };
+}
+
+// 타일 아래에 '전월 대비 +N (+x%)' 줄을 붙여요. 비교 대상이 없으면 안내만 남깁니다.
+function appendDelta(tile, cur, prev, prevLabel) {
+  const line = document.createElement('div');
+  line.className = 'stat-sub';
+  if (typeof cur !== 'number' || typeof prev !== 'number' || !prev) {
+    line.style.color = 'var(--muted)';
+    line.textContent = '전월 비교 없음';
+  } else {
+    const diff = cur - prev;
+    const pct = (diff / prev) * 100;
+    const sign = diff > 0 ? '+' : (diff < 0 ? '−' : '±');
+    line.className = 'stat-sub ' + (diff > 0 ? 'chg-up' : (diff < 0 ? 'chg-down' : 'chg-same'));
+    line.textContent = `전월 대비 ${sign}${fmtNum(Math.abs(diff))} (${diff > 0 ? '+' : (diff < 0 ? '−' : '')}${Math.abs(pct).toFixed(1)}%)`;
+    line.title = `${prevLabel || '직전 달'} ${fmtNum(prev)} → 이번 달 ${fmtNum(cur)}`;
+  }
+  tile.appendChild(line);
+  return tile;
 }
 
 function statTile(label, value, sub) {
