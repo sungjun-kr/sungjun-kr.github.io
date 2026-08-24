@@ -916,13 +916,21 @@ function renderGuestRanking() {
   const table = document.createElement('table');
   table.className = 'video-table';
   const blocked = loadBlocked();
+  // 재출연 불가로 표시한 게스트는 순위에서 빼고 맨 아래로 내려요.
+  rows.sort((a, b) => (blocked.has(a.key) ? 1 : 0) - (blocked.has(b.key) ? 1 : 0)
+    || (GRADE_ORDER[b.tier] ?? -1) - (GRADE_ORDER[a.tier] ?? -1)
+    || b.avgPerAppearance - a.avgPerAppearance);
   table.innerHTML = '<thead><tr><th>#</th><th>게스트</th><th>섭외</th><th>티어</th>'
     + '<th class="num">총 출연</th><th class="num">1회당 평균</th><th class="num">평균 대비</th>'
     + '<th class="num">시청률</th><th>최근 출연</th><th>다음 촬영</th><th>AI 분석</th></tr></thead>';
   const tbody = document.createElement('tbody');
-  rows.forEach((r, i) => {
+  let rank = 0;
+  rows.forEach((r) => {
     const tr = document.createElement('tr');
     const tier = r.tier;
+    const isBlockedRow = blocked.has(r.key);
+    if (!isBlockedRow) rank++;
+    const i = rank - 1;
     const diff = overall ? (r.avgPerAppearance / overall - 1) * 100 : 0;
     // 최근 출연은 월·일까지 보여줘요 (연도는 생략).
     const ld = new Date(r.last.date);
@@ -932,7 +940,7 @@ function renderGuestRanking() {
       : '<span style="color:var(--muted)">일정 없음</span>';
     const cls = diff >= 50 ? 'perf-high' : diff >= 20 ? 'perf-good'
               : diff <= -50 ? 'perf-bad' : diff <= -20 ? 'perf-warn' : '';
-    tr.innerHTML = `<td class="num">${i + 1}</td>`
+    tr.innerHTML = `<td class="num">${isBlockedRow ? '–' : (i + 1)}</td>`
       + `<td>${escapeHtml(r.name)}</td>`
       + `<td></td>`
       + `<td>${tier ? `<span class="grade grade-${tier}">${tier}</span>` : '–'}</td>`
@@ -957,10 +965,7 @@ function renderGuestRanking() {
       const set = loadBlocked();
       if (set.has(r.key)) { set.delete(r.key); } else { set.add(r.key); }
       saveBlocked(set);
-      const on = set.has(r.key);
-      btn.classList.toggle('on', on);
-      btn.textContent = on ? '재출연 불가' : '가능';
-      tr.classList.toggle('row-blocked', on);
+      renderGuestRanking();   // 위치·순번이 바로 반영되도록 다시 그려요
     });
     tr.children[2].appendChild(btn);
     tbody.appendChild(tr);
