@@ -361,18 +361,18 @@ function currentSectorLabel() {
   if (activeScope === 'team') return `팀원 ${monthLbl}`.trim();
   if (activeScope === 'guests') return '게스트 목록';
   if (activeScope === 'analysis') return '분석';
-  if (activeScope === 'topics') return '주제별 TOP';
+  if (activeScope === 'topics') return '주제별';
   return monthLbl;
 }
 
 function updateRefreshLabel() {
   const s = currentSectorLabel();
   // 게스트 목록은 기존 데이터로 계산되는 화면이라 새로고침 버튼이 필요 없어요.
-  const derived = activeScope === 'guests' || activeScope === 'analysis' || activeScope === 'topics';
+  const derived = activeScope === 'guests' || activeScope === 'analysis';
   $('refresh-btn').hidden = derived;
   $('refresh-btn').textContent = s ? `${s} 새로고침` : '새로고침';
   const allBtn = $('refresh-all-btn');
-  allBtn.hidden = derived || !(isAdmin && accessToken);
+  allBtn.hidden = derived || activeScope === 'topics' || !(isAdmin && accessToken);
   allBtn.textContent = activeScope === 'archive' ? '저장소 전체 새로고침'
     : activeScope === 'team' ? '팀원 전체 새로고침' : '본채널 전체 새로고침';
 }
@@ -835,37 +835,25 @@ function renderTopics() {
   const listEl = $('guest-list');
   listEl.innerHTML = '';
 
-  // 최근 14일 안에 올라온 영상만 대상으로 해요.
-  const cutoff = new Date(Date.now() - TOPIC_DAYS * 86400000).toISOString().slice(0, 10);
-  const buckets = {};
-  TOPIC_CATS.forEach(c => { buckets[c] = []; });
-  (publishedData.months || []).forEach(m => {
-    (m.guests || []).forEach(g => {
-      const cat = g.category;
-      if (!cat || !buckets[cat]) return;
-      (g.videos || []).forEach(v => {
-        if (v.part === '풀버전') return;                              // 풀버전 제외
-        if (v.title && v.title.includes(EXCLUDE_KEYWORD)) return;     // 특집 제외
-        if (typeof v.views !== 'number' || v.views <= TOPIC_MIN_VIEWS) return;
-        if (!v.pub || v.pub < cutoff) return;                         // 최근 14일분만
-        buckets[cat].push({ title: v.title, views: v.views, part: v.part, pub: v.pub, guest: g.name });
-      });
-    });
-  });
-
   const guide = document.createElement('p');
   guide.className = 'fine-print';
   guide.style.margin = '0 0 12px';
   guide.innerHTML = '<b>해당 제목은 최근 14일을 기반으로 적용됩니다.</b>';
   listEl.appendChild(guide);
 
+  const data = publishedData.topics;
+  if (!data || !data.cats) {
+    listEl.innerHTML += '<div class="empty-state">아직 수집된 데이터가 없어요.'
+      + (isAdmin ? ' 관리자 로그인 후 "주제별 새로고침"을 눌러 주세요.' : '') + '</div>';
+    return;
+  }
+
   const grid = document.createElement('div');
   grid.className = 'topic-grid';
-  let any = false;
   TOPIC_CATS.forEach(cat => {
     const col = document.createElement('div');
     col.className = 'guest-card topic-col';
-    const items = buckets[cat].sort((a, b) => b.views - a.views).slice(0, 10);
+    const items = data.cats[cat] || [];
     const h = document.createElement('h3');
     h.textContent = cat;
     col.appendChild(h);
@@ -875,12 +863,12 @@ function renderTopics() {
       e.textContent = '최근 14일 안에 조건에 맞는 영상이 없어요.';
       col.appendChild(e);
     } else {
-      any = true;
       items.forEach((it, idx) => {
         const box = document.createElement('div');
         box.className = 'topic-item';
         box.innerHTML = `<div class="topic-title">${idx + 1}. ${escapeHtml(it.title || '(제목 없음)')}</div>`
-          + `<div class="topic-meta"><b style="color:var(--series-1)">${fmtNum(it.views)}회</b> · ${escapeHtml(it.guest)} · ${escapeHtml(it.part || '')}</div>`;
+          + `<div class="topic-meta"><b style="color:var(--series-1)">${fmtNum(it.views)}회</b>`
+          + ` · ${escapeHtml(it.guest || '')} · ${escapeHtml(it.pub || '')}</div>`;
         col.appendChild(box);
       });
     }
@@ -890,9 +878,9 @@ function renderTopics() {
 
   const note = document.createElement('p');
   note.className = 'fine-print';
-  note.textContent = any
-    ? '본채널(웅달책방) 기준이에요. 캘린더 일정 뒤의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여줍니다. 풀버전·특집과 조회수 3만 이하는 제외했어요.'
-    : '아직 표시할 데이터가 없어요. 관리자로 로그인해 "본채널 전체 새로고침"을 눌러 주제 분류와 영상 제목을 가져와 주세요.';
+  note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
+    + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
+    + '풀버전·특집과 조회수 3만 이하는 제외했어요.';
   listEl.appendChild(note);
 }
 
@@ -1722,6 +1710,64 @@ async function fetchAnalyticsForVideos(videoIds) {
 }
 
 
+// 담당자 태그와 무관하게 캘린더 전체를 읽어요 (주제별 TOP은 팀 전원의 업로드가 대상).
+async function fetchAllCalendarEvents() {
+  const now = new Date();
+  const timeMin = new Date(now.getFullYear(), 0, 1).toISOString();
+  const timeMax = new Date(now.getFullYear() + 1, 0, 1).toISOString();
+  let items = [], pageToken = '';
+  do {
+    const qs = new URLSearchParams({ timeMin, timeMax, singleEvents: 'true', orderBy: 'startTime', maxResults: '2500' });
+    if (pageToken) qs.set('pageToken', pageToken);
+    const d = await authFetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?${qs}`);
+    items = items.concat(d.items || []);
+    pageToken = d.nextPageToken || '';
+  } while (pageToken);
+
+  return items.map(ev => {
+    const raw = nfc(ev.summary || '');
+    const cm = raw.match(/\(([^)]*)\)\s*$/);
+    const category = cm ? cm[1].trim() : null;
+    const name = raw.replace(/^\s*\[[^\]]*\]\s*/, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+    const dateStr = (ev.start && (ev.start.dateTime || ev.start.date)) || null;
+    return { name, core: coreName(name), category, date: dateStr ? new Date(dateStr) : null };
+  }).filter(e => e.date && e.core);
+}
+
+// 주제별 TOP 수집 — 최근 업로드분을 담당자 구분 없이 모아 분야별로 줄 세워요.
+async function refreshTopics() {
+  const events = (await fetchAllCalendarEvents()).filter(e => TOPIC_CATS.includes(e.category));
+  const since = new Date(Date.now() - TOPIC_DAYS * 86400000);
+  const vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, since.toISOString(), new Date().toISOString());
+
+  // 촬영일이 업로드보다 앞서므로, 업로드일 기준 최근 60일 안의 일정까지 후보로 봅니다.
+  const evRecent = events.filter(e => e.date >= new Date(Date.now() - 60 * 86400000));
+  const picked = [];
+  vids.forEach(v => {
+    if (v.title.includes('풀버전')) return;
+    if (v.title.includes(EXCLUDE_KEYWORD)) return;
+    const ev = evRecent.find(e => titleHasGuest(v.title, e.core) && v.publishedAt >= e.date);
+    if (!ev) return;
+    picked.push({ videoId: v.videoId, title: v.title, guest: ev.name, category: ev.category,
+                  pub: v.publishedAt.toISOString().slice(0, 10) });
+  });
+
+  const views = await fetchViewCounts(picked.map(p => p.videoId));
+  const cats = {};
+  TOPIC_CATS.forEach(c => { cats[c] = []; });
+  picked.forEach(p => {
+    const n = views[p.videoId];
+    if (typeof n !== 'number' || n <= TOPIC_MIN_VIEWS) return;
+    cats[p.category].push({ title: p.title, views: n, guest: p.guest, pub: p.pub });
+  });
+  TOPIC_CATS.forEach(c => {
+    cats[c] = cats[c].sort((a, b) => b.views - a.views).slice(0, 10);
+  });
+
+  publishedData.topics = { days: TOPIC_DAYS, minViews: TOPIC_MIN_VIEWS, cats, updatedAt: new Date().toISOString() };
+  publishedData.updatedAt = new Date().toISOString();
+}
+
 // ---------------- 섹터(월) 단위 새로고침 ----------------
 
 // 한 번의 갱신 작업 안에서는 캘린더를 재사용해요.
@@ -1773,7 +1819,11 @@ async function refreshCurrentSector() {
   const t0 = Date.now();
   clearRefreshCache();
   try {
-    if (activeScope === 'team') {
+    if (activeScope === 'topics') {
+      btn.textContent = '수집 중…';
+      $('sync-status').textContent = '최근 14일 업로드분을 주제별로 모으는 중…';
+      await refreshTopics();
+    } else if (activeScope === 'team') {
       btn.textContent = '수집 중…';
       for (const t of TEAM_MEMBERS) {
         $('sync-status').textContent = `팀원 「${t}」 ${activeMonth} 수집 중…`;
