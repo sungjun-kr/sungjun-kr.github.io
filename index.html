@@ -823,8 +823,11 @@ function renderInner() {
 
 // ---------------- 저장소 (웅달책방_투자 / _교양 / _부동산) ----------------
 
-// 주제별 TOP — 캘린더 분류(투자/교양/부동산)별로 조회수 상위 3편을 보여줘요 (풀버전 제외).
+// 주제별 TOP — 캘린더 분류(투자/교양/부동산)별로 최근 업로드분 중 조회수 상위 10편을 보여줘요.
+//  풀버전·특집은 빼고, 조회수 3만 이하도 제외합니다.
 const TOPIC_CATS = ['투자', '교양', '부동산'];
+const TOPIC_DAYS = 14;          // 최근 며칠 업로드분을 볼지
+const TOPIC_MIN_VIEWS = 30000;  // 이 값 이하(3만 이하)는 제외
 
 function renderTopics() {
   $('archive-tabs').hidden = true;
@@ -832,6 +835,8 @@ function renderTopics() {
   const listEl = $('guest-list');
   listEl.innerHTML = '';
 
+  // 최근 14일 안에 올라온 영상만 대상으로 해요.
+  const cutoff = new Date(Date.now() - TOPIC_DAYS * 86400000).toISOString().slice(0, 10);
   const buckets = {};
   TOPIC_CATS.forEach(c => { buckets[c] = []; });
   (publishedData.months || []).forEach(m => {
@@ -841,11 +846,18 @@ function renderTopics() {
       (g.videos || []).forEach(v => {
         if (v.part === '풀버전') return;                              // 풀버전 제외
         if (v.title && v.title.includes(EXCLUDE_KEYWORD)) return;     // 특집 제외
-        if (typeof v.views !== 'number') return;
+        if (typeof v.views !== 'number' || v.views <= TOPIC_MIN_VIEWS) return;
+        if (!v.pub || v.pub < cutoff) return;                         // 최근 14일분만
         buckets[cat].push({ title: v.title, views: v.views, part: v.part, pub: v.pub, guest: g.name });
       });
     });
   });
+
+  const guide = document.createElement('p');
+  guide.className = 'fine-print';
+  guide.style.margin = '0 0 12px';
+  guide.innerHTML = '<b>해당 제목은 최근 14일을 기반으로 적용됩니다.</b>';
+  listEl.appendChild(guide);
 
   const grid = document.createElement('div');
   grid.className = 'topic-grid';
@@ -853,14 +865,14 @@ function renderTopics() {
   TOPIC_CATS.forEach(cat => {
     const col = document.createElement('div');
     col.className = 'guest-card topic-col';
-    const items = buckets[cat].sort((a, b) => b.views - a.views).slice(0, 3);
+    const items = buckets[cat].sort((a, b) => b.views - a.views).slice(0, 10);
     const h = document.createElement('h3');
     h.textContent = cat;
     col.appendChild(h);
     if (!items.length) {
       const e = document.createElement('div');
       e.className = 'topic-meta';
-      e.textContent = '아직 영상이 없어요.';
+      e.textContent = '최근 14일 안에 조건에 맞는 영상이 없어요.';
       col.appendChild(e);
     } else {
       any = true;
@@ -879,7 +891,7 @@ function renderTopics() {
   const note = document.createElement('p');
   note.className = 'fine-print';
   note.textContent = any
-    ? '캘린더 일정 뒤의 분류(투자/교양/부동산)를 기준으로, 분야별 조회수 상위 3편을 보여줘요. 풀버전과 특집은 제외했습니다.'
+    ? '본채널(웅달책방) 기준이에요. 캘린더 일정 뒤의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여줍니다. 풀버전·특집과 조회수 3만 이하는 제외했어요.'
     : '아직 표시할 데이터가 없어요. 관리자로 로그인해 "본채널 전체 새로고침"을 눌러 주제 분류와 영상 제목을 가져와 주세요.';
   listEl.appendChild(note);
 }
