@@ -1,8 +1,9 @@
 {
-  "updatedAt": "2026-08-24T09:45:00.000Z",
+  "updatedAt": "2026-08-24T10:30:00.000Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
+  "teamBasis": "캘린더 담당 태그([준혁]/[다혜]/[준하]) 기준. 촬영일부터 21일 내 업로드된, 게스트 이름이 들어간 영상을 모두 집계하되 특집(합동 출연)은 제외해요. 본채널의 풀버전+3부 세트 규칙은 적용하지 않습니다.",
   "months": [
     {
       "month": "2026-05",
@@ -264,6 +265,57 @@
           ]
         },
         {
+          "name": "차영주 소장님",
+          "eventDate": "2026-05-14",
+          "videoCount": 5,
+          "totalViews": 61808,
+          "avgViews": 12362,
+          "avgViewDurationSec": 292,
+          "avgViewPct": 29.86,
+          "videos": [
+            {
+              "part": "1부",
+              "pub": "2026-05-16",
+              "views": 4301,
+              "avgViewDurationSec": 209,
+              "avgViewPct": 26.33,
+              "privacy": "public"
+            },
+            {
+              "part": "2부",
+              "pub": "2026-05-17",
+              "views": 14139,
+              "avgViewDurationSec": 232,
+              "avgViewPct": 37.66,
+              "privacy": "public"
+            },
+            {
+              "part": "3부",
+              "pub": "2026-05-18",
+              "views": 21293,
+              "avgViewDurationSec": 191,
+              "avgViewPct": 33.13,
+              "privacy": "public"
+            },
+            {
+              "part": "4부",
+              "pub": "2026-05-19",
+              "views": 11123,
+              "avgViewDurationSec": 226,
+              "avgViewPct": 29.15,
+              "privacy": "public"
+            },
+            {
+              "part": "풀버전",
+              "pub": "2026-05-23",
+              "views": 10952,
+              "avgViewDurationSec": 604,
+              "avgViewPct": 23.04,
+              "privacy": "public"
+            }
+          ]
+        },
+        {
           "name": "이철재 기자",
           "eventDate": "2026-05-15",
           "videoCount": 5,
@@ -369,15 +421,15 @@
           "name": "류한수 교수",
           "eventDate": "2026-05-21",
           "videoCount": 5,
-          "totalViews": 169801,
-          "avgViews": 33960,
+          "totalViews": 169803,
+          "avgViews": 33961,
           "avgViewDurationSec": 515,
           "avgViewPct": 30.82,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-05-23",
-              "views": 26872,
+              "views": 26874,
               "avgViewDurationSec": 334,
               "avgViewPct": 32.47,
               "privacy": "public"
@@ -420,7 +472,7 @@
           "name": "금남일 대표",
           "eventDate": "2026-05-21",
           "videoCount": 5,
-          "totalViews": 209201,
+          "totalViews": 209200,
           "avgViews": 41840,
           "avgViewDurationSec": 300,
           "avgViewPct": 26.64,
@@ -452,7 +504,7 @@
             {
               "part": "4부",
               "pub": "2026-05-27",
-              "views": 9645,
+              "views": 9644,
               "avgViewDurationSec": 237,
               "avgViewPct": 29.06,
               "privacy": "public"
@@ -471,8 +523,8 @@
           "name": "김민석 특파원",
           "eventDate": "2026-05-25",
           "videoCount": 5,
-          "totalViews": 151682,
-          "avgViews": 30336,
+          "totalViews": 151683,
+          "avgViews": 30337,
           "avgViewDurationSec": 443,
           "avgViewPct": 31.79,
           "videos": [
@@ -487,7 +539,7 @@
             {
               "part": "2부",
               "pub": "2026-05-27",
-              "views": 26592,
+              "views": 26593,
               "avgViewDurationSec": 317,
               "avgViewPct": 34.91,
               "privacy": "public"
@@ -522,8 +574,8 @@
           "name": "최창규 본부장",
           "eventDate": "2026-05-26",
           "videoCount": 5,
-          "totalViews": 35372,
-          "avgViews": 7074,
+          "totalViews": 35374,
+          "avgViews": 7075,
           "avgViewDurationSec": 236,
           "avgViewPct": 23.59,
           "videos": [
@@ -546,7 +598,7 @@
             {
               "part": "3부",
               "pub": "2026-05-30",
-              "views": 12429,
+              "views": 12431,
               "avgViewDurationSec": 231,
               "avgViewPct": 32.18,
               "privacy": "public"
@@ -613,15 +665,8 @@
           ]
         }
       ],
-      "pending": [
-        {
-          "name": "차영주 소장님",
-          "eventDate": "2026-05-14",
-          "uploaded": 0,
-          "note": "미업로드"
-        }
-      ],
-      "updatedAt": "2026-08-24T09:45:00.000Z"
+      "pending": [],
+      "updatedAt": "2026-08-24T10:30:00.000Z"
     },
     {
       "month": "2026-06",
@@ -682,15 +727,15 @@
           "name": "이명찬 박사",
           "eventDate": "2026-06-04",
           "videoCount": 5,
-          "totalViews": 266835,
-          "avgViews": 53367,
+          "totalViews": 266841,
+          "avgViews": 53368,
           "avgViewDurationSec": 480,
           "avgViewPct": 32.34,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-06-06",
-              "views": 37427,
+              "views": 37429,
               "avgViewDurationSec": 373,
               "avgViewPct": 34.13,
               "privacy": "public"
@@ -722,7 +767,7 @@
             {
               "part": "풀버전",
               "pub": "2026-06-12",
-              "views": 116426,
+              "views": 116430,
               "avgViewDurationSec": 1017,
               "avgViewPct": 25.68,
               "privacy": "public"
@@ -784,8 +829,8 @@
           "name": "김경록 미래에셋 고문",
           "eventDate": "2026-06-09",
           "videoCount": 5,
-          "totalViews": 84177,
-          "avgViews": 16835,
+          "totalViews": 84188,
+          "avgViews": 16838,
           "avgViewDurationSec": 365,
           "avgViewPct": 28.09,
           "videos": [
@@ -808,7 +853,7 @@
             {
               "part": "3부",
               "pub": "2026-06-14",
-              "views": 43324,
+              "views": 43335,
               "avgViewDurationSec": 360,
               "avgViewPct": 28.06,
               "privacy": "public"
@@ -945,7 +990,7 @@
           "name": "이헌주 교수님",
           "eventDate": "2026-06-15",
           "videoCount": 5,
-          "totalViews": 89714,
+          "totalViews": 89716,
           "avgViews": 17943,
           "avgViewDurationSec": 352,
           "avgViewPct": 26.43,
@@ -985,7 +1030,7 @@
             {
               "part": "풀버전",
               "pub": "2026-06-29",
-              "views": 72473,
+              "views": 72475,
               "avgViewDurationSec": 851,
               "avgViewPct": 25.69,
               "privacy": "public"
@@ -1047,7 +1092,7 @@
           "name": "금남일 대표",
           "eventDate": "2026-06-19",
           "videoCount": 5,
-          "totalViews": 65538,
+          "totalViews": 65540,
           "avgViews": 13108,
           "avgViewDurationSec": 338,
           "avgViewPct": 24.38,
@@ -1063,7 +1108,7 @@
             {
               "part": "2부",
               "pub": "2026-06-22",
-              "views": 13292,
+              "views": 13293,
               "avgViewDurationSec": 266,
               "avgViewPct": 26.27,
               "privacy": "public"
@@ -1071,7 +1116,7 @@
             {
               "part": "3부",
               "pub": "2026-06-23",
-              "views": 7067,
+              "views": 7068,
               "avgViewDurationSec": 279,
               "avgViewPct": 25.89,
               "privacy": "public"
@@ -1310,7 +1355,7 @@
             {
               "part": "1부",
               "pub": "2026-07-01",
-              "views": 44855,
+              "views": 44856,
               "avgViewDurationSec": 365,
               "avgViewPct": 30.47,
               "privacy": "public"
@@ -1334,7 +1379,7 @@
             {
               "part": "4부",
               "pub": "2026-07-04",
-              "views": 23039,
+              "views": 23038,
               "avgViewDurationSec": 326,
               "avgViewPct": 44.25,
               "privacy": "public"
@@ -1351,7 +1396,7 @@
         }
       ],
       "pending": [],
-      "updatedAt": "2026-08-24T09:45:00.000Z"
+      "updatedAt": "2026-08-24T10:30:00.000Z"
     },
     {
       "month": "2026-07",
@@ -1361,8 +1406,8 @@
           "name": "이명찬 박사",
           "eventDate": "2026-07-01",
           "videoCount": 5,
-          "totalViews": 59102,
-          "avgViews": 11820,
+          "totalViews": 59107,
+          "avgViews": 11821,
           "avgViewDurationSec": 468,
           "avgViewPct": 32.39,
           "videos": [
@@ -1401,7 +1446,7 @@
             {
               "part": "풀버전",
               "pub": "2026-07-08",
-              "views": 41332,
+              "views": 41337,
               "avgViewDurationSec": 1091,
               "avgViewPct": 30.32,
               "privacy": "public"
@@ -1412,8 +1457,8 @@
           "name": "이창대 대표",
           "eventDate": "2026-07-03",
           "videoCount": 5,
-          "totalViews": 31812,
-          "avgViews": 6362,
+          "totalViews": 31813,
+          "avgViews": 6363,
           "avgViewDurationSec": 255,
           "avgViewPct": 27.69,
           "videos": [
@@ -1436,7 +1481,7 @@
             {
               "part": "3부",
               "pub": "2026-07-07",
-              "views": 6541,
+              "views": 6542,
               "avgViewDurationSec": 196,
               "avgViewPct": 27.44,
               "privacy": "public"
@@ -1463,7 +1508,7 @@
           "name": "민재기 팀장",
           "eventDate": "2026-07-03",
           "videoCount": 5,
-          "totalViews": 30324,
+          "totalViews": 30326,
           "avgViews": 6065,
           "avgViewDurationSec": 288,
           "avgViewPct": 26.3,
@@ -1495,7 +1540,7 @@
             {
               "part": "4부",
               "pub": "2026-07-08",
-              "views": 8394,
+              "views": 8396,
               "avgViewDurationSec": 297,
               "avgViewPct": 31.35,
               "privacy": "public"
@@ -1514,15 +1559,15 @@
           "name": "금철영 기자",
           "eventDate": "2026-07-06",
           "videoCount": 5,
-          "totalViews": 273269,
-          "avgViews": 54654,
+          "totalViews": 273276,
+          "avgViews": 54655,
           "avgViewDurationSec": 638,
           "avgViewPct": 30.15,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-07-07",
-              "views": 52005,
+              "views": 52006,
               "avgViewDurationSec": 538,
               "avgViewPct": 36.4,
               "privacy": "public"
@@ -1538,7 +1583,7 @@
             {
               "part": "3부",
               "pub": "2026-07-09",
-              "views": 23179,
+              "views": 23181,
               "avgViewDurationSec": 354,
               "avgViewPct": 21.91,
               "privacy": "public"
@@ -1554,7 +1599,7 @@
             {
               "part": "풀버전",
               "pub": "2026-07-11",
-              "views": 125432,
+              "views": 125436,
               "avgViewDurationSec": 1504,
               "avgViewPct": 27.88,
               "privacy": "public"
@@ -1718,7 +1763,7 @@
           "name": "이영훈 영업이사",
           "eventDate": "2026-07-14",
           "videoCount": 5,
-          "totalViews": 83291,
+          "totalViews": 83292,
           "avgViews": 16658,
           "avgViewDurationSec": 313,
           "avgViewPct": 31.29,
@@ -1726,7 +1771,7 @@
             {
               "part": "1부",
               "pub": "2026-07-15",
-              "views": 9321,
+              "views": 9322,
               "avgViewDurationSec": 253,
               "avgViewPct": 30.94,
               "privacy": "public"
@@ -1769,8 +1814,8 @@
           "name": "김민석 특파원",
           "eventDate": "2026-07-20",
           "videoCount": 5,
-          "totalViews": 147420,
-          "avgViews": 29484,
+          "totalViews": 147425,
+          "avgViews": 29485,
           "avgViewDurationSec": 581,
           "avgViewPct": 35.68,
           "videos": [
@@ -1793,7 +1838,7 @@
             {
               "part": "3부",
               "pub": "2026-07-23",
-              "views": 32292,
+              "views": 32297,
               "avgViewDurationSec": 373,
               "avgViewPct": 37.22,
               "privacy": "public"
@@ -1871,7 +1916,7 @@
           "name": "안승범 대표",
           "eventDate": "2026-07-22",
           "videoCount": 5,
-          "totalViews": 57335,
+          "totalViews": 57336,
           "avgViews": 11467,
           "avgViewDurationSec": 503,
           "avgViewPct": 28.3,
@@ -1895,7 +1940,7 @@
             {
               "part": "3부",
               "pub": "2026-07-26",
-              "views": 8617,
+              "views": 8618,
               "avgViewDurationSec": 265,
               "avgViewPct": 30.64,
               "privacy": "public"
@@ -1922,8 +1967,8 @@
           "name": "류한수 교수",
           "eventDate": "2026-07-27",
           "videoCount": 5,
-          "totalViews": 63535,
-          "avgViews": 12707,
+          "totalViews": 63543,
+          "avgViews": 12709,
           "avgViewDurationSec": 473,
           "avgViewPct": 34.65,
           "videos": [
@@ -1938,7 +1983,7 @@
             {
               "part": "2부",
               "pub": "2026-07-29",
-              "views": 8397,
+              "views": 8398,
               "avgViewDurationSec": 293,
               "avgViewPct": 34.04,
               "privacy": "public"
@@ -1946,7 +1991,7 @@
             {
               "part": "3부",
               "pub": "2026-07-30",
-              "views": 11201,
+              "views": 11202,
               "avgViewDurationSec": 376,
               "avgViewPct": 37.73,
               "privacy": "public"
@@ -1954,7 +1999,7 @@
             {
               "part": "4부",
               "pub": "2026-07-31",
-              "views": 9604,
+              "views": 9608,
               "avgViewDurationSec": 331,
               "avgViewPct": 33.31,
               "privacy": "public"
@@ -1962,7 +2007,7 @@
             {
               "part": "풀버전",
               "pub": "2026-08-02",
-              "views": 29652,
+              "views": 29654,
               "avgViewDurationSec": 1006,
               "avgViewPct": 28.2,
               "privacy": "public"
@@ -2016,8 +2061,8 @@
           "name": "금남일 대표",
           "eventDate": "2026-07-29",
           "videoCount": 5,
-          "totalViews": 46760,
-          "avgViews": 9352,
+          "totalViews": 46764,
+          "avgViews": 9353,
           "avgViewDurationSec": 285,
           "avgViewPct": 23.74,
           "videos": [
@@ -2048,7 +2093,7 @@
             {
               "part": "4부",
               "pub": "2026-08-03",
-              "views": 11177,
+              "views": 11181,
               "avgViewDurationSec": 306,
               "avgViewPct": 26.74,
               "privacy": "public"
@@ -2067,7 +2112,7 @@
           "name": "김민규 대표",
           "eventDate": "2026-07-31",
           "videoCount": 5,
-          "totalViews": 101228,
+          "totalViews": 101232,
           "avgViews": 20246,
           "avgViewDurationSec": 303,
           "avgViewPct": 26.85,
@@ -2099,7 +2144,7 @@
             {
               "part": "4부",
               "pub": "2026-08-04",
-              "views": 22070,
+              "views": 22074,
               "avgViewDurationSec": 299,
               "avgViewPct": 34.51,
               "privacy": "public"
@@ -2116,7 +2161,7 @@
         }
       ],
       "pending": [],
-      "updatedAt": "2026-08-24T09:45:00.000Z"
+      "updatedAt": "2026-08-24T10:30:00.000Z"
     },
     {
       "month": "2026-08",
@@ -2126,8 +2171,8 @@
           "name": "이명찬 박사",
           "eventDate": "2026-08-03",
           "videoCount": 6,
-          "totalViews": 79588,
-          "avgViews": 13265,
+          "totalViews": 79593,
+          "avgViews": 13266,
           "avgViewDurationSec": 482,
           "avgViewPct": 35.13,
           "videos": [
@@ -2166,7 +2211,7 @@
             {
               "part": "5부",
               "pub": "2026-08-08",
-              "views": 14184,
+              "views": 14189,
               "avgViewDurationSec": 411,
               "avgViewPct": 34.19,
               "privacy": "public"
@@ -2185,8 +2230,8 @@
           "name": "성일광 교수",
           "eventDate": "2026-08-04",
           "videoCount": 5,
-          "totalViews": 112432,
-          "avgViews": 22486,
+          "totalViews": 112617,
+          "avgViews": 22523,
           "avgViewDurationSec": 474,
           "avgViewPct": 29.19,
           "videos": [
@@ -2201,7 +2246,7 @@
             {
               "part": "2부",
               "pub": "2026-08-07",
-              "views": 43339,
+              "views": 43498,
               "avgViewDurationSec": 481,
               "avgViewPct": 35.79,
               "privacy": "public"
@@ -2217,7 +2262,7 @@
             {
               "part": "4부",
               "pub": "2026-08-10",
-              "views": 866,
+              "views": 867,
               "avgViewDurationSec": 166,
               "avgViewPct": 22.15,
               "privacy": "public"
@@ -2225,7 +2270,7 @@
             {
               "part": "풀버전",
               "pub": "2026-08-12",
-              "views": 49943,
+              "views": 49968,
               "avgViewDurationSec": 1056,
               "avgViewPct": 25.71,
               "privacy": "public"
@@ -2236,8 +2281,8 @@
           "name": "권영화 교수님",
           "eventDate": "2026-08-04",
           "videoCount": 4,
-          "totalViews": 92101,
-          "avgViews": 23025,
+          "totalViews": 92102,
+          "avgViews": 23026,
           "avgViewDurationSec": 420,
           "avgViewPct": 26.66,
           "videos": [
@@ -2260,7 +2305,7 @@
             {
               "part": "3부",
               "pub": "2026-08-07",
-              "views": 47164,
+              "views": 47165,
               "avgViewDurationSec": 344,
               "avgViewPct": 30.09,
               "privacy": "public"
@@ -2287,7 +2332,7 @@
             {
               "part": "1부",
               "pub": "2026-08-12",
-              "views": 5201,
+              "views": 5206,
               "avgViewDurationSec": 243,
               "avgViewPct": 22.51,
               "privacy": "public"
@@ -2303,7 +2348,7 @@
             {
               "part": "3부",
               "pub": "2026-08-14",
-              "views": 11758,
+              "views": 11756,
               "avgViewDurationSec": 271,
               "avgViewPct": 31.05,
               "privacy": "public"
@@ -2311,7 +2356,7 @@
             {
               "part": "4부",
               "pub": "2026-08-15",
-              "views": 8486,
+              "views": 8488,
               "avgViewDurationSec": 283,
               "avgViewPct": 43.15,
               "privacy": "public"
@@ -2319,7 +2364,7 @@
             {
               "part": "풀버전",
               "pub": "2026-08-16",
-              "views": 18360,
+              "views": 18355,
               "avgViewDurationSec": 739,
               "avgViewPct": 22.33,
               "privacy": "public"
@@ -2330,15 +2375,15 @@
           "name": "부자아빠 정재호 대표",
           "eventDate": "2026-08-12",
           "videoCount": 5,
-          "totalViews": 88605,
-          "avgViews": 17721,
+          "totalViews": 88748,
+          "avgViews": 17750,
           "avgViewDurationSec": 420,
           "avgViewPct": 38.61,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-08-13",
-              "views": 12284,
+              "views": 12283,
               "avgViewDurationSec": 402,
               "avgViewPct": 38.42,
               "privacy": "public"
@@ -2354,15 +2399,15 @@
             {
               "part": "3부",
               "pub": "2026-08-15",
-              "views": 22918,
+              "views": 22935,
               "avgViewDurationSec": 312,
-              "avgViewPct": 46.47,
+              "avgViewPct": 46.46,
               "privacy": "public"
             },
             {
               "part": "4부",
               "pub": "2026-08-16",
-              "views": 8541,
+              "views": 8542,
               "avgViewDurationSec": 264,
               "avgViewPct": 40.31,
               "privacy": "public"
@@ -2370,9 +2415,9 @@
             {
               "part": "풀버전",
               "pub": "2026-08-17",
-              "views": 22978,
+              "views": 23104,
               "avgViewDurationSec": 811,
-              "avgViewPct": 26.92,
+              "avgViewPct": 26.93,
               "privacy": "public"
             }
           ]
@@ -2381,15 +2426,15 @@
           "name": "이형수 대표",
           "eventDate": "2026-08-13",
           "videoCount": 4,
-          "totalViews": 224293,
-          "avgViews": 56073,
+          "totalViews": 224702,
+          "avgViews": 56176,
           "avgViewDurationSec": 339,
           "avgViewPct": 35.37,
           "videos": [
             {
               "part": "2부",
               "pub": "2026-08-15",
-              "views": 11932,
+              "views": 11933,
               "avgViewDurationSec": 258,
               "avgViewPct": 39.71,
               "privacy": "public"
@@ -2397,7 +2442,7 @@
             {
               "part": "3부",
               "pub": "2026-08-16",
-              "views": 34361,
+              "views": 34383,
               "avgViewDurationSec": 239,
               "avgViewPct": 40.87,
               "privacy": "public"
@@ -2405,7 +2450,7 @@
             {
               "part": "4부",
               "pub": "2026-08-17",
-              "views": 117408,
+              "views": 117467,
               "avgViewDurationSec": 208,
               "avgViewPct": 35.38,
               "privacy": "public"
@@ -2413,9 +2458,9 @@
             {
               "part": "풀버전",
               "pub": "2026-08-19",
-              "views": 60592,
-              "avgViewDurationSec": 651,
-              "avgViewPct": 25.51,
+              "views": 60919,
+              "avgViewDurationSec": 652,
+              "avgViewPct": 25.52,
               "privacy": "public"
             }
           ]
@@ -2447,12 +2492,6 @@
           "note": "미업로드"
         },
         {
-          "name": "김인만 소장",
-          "eventDate": "2026-08-25",
-          "uploaded": 0,
-          "note": "미업로드"
-        },
-        {
           "name": "박현도 교수",
           "eventDate": "2026-08-26",
           "uploaded": 0,
@@ -2465,13 +2504,71 @@
           "note": "미업로드"
         },
         {
+          "name": "김인만 소장님",
+          "eventDate": "2026-08-27",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
           "name": "김민규 대표",
           "eventDate": "2026-08-28",
           "uploaded": 0,
           "note": "미업로드"
         }
       ],
-      "updatedAt": "2026-08-24T09:45:00.000Z"
+      "updatedAt": "2026-08-24T10:30:00.000Z"
+    },
+    {
+      "month": "2026-09",
+      "label": "2026년 9월",
+      "guests": [],
+      "pending": [
+        {
+          "name": "이철재 기자",
+          "eventDate": "2026-09-02",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
+          "name": "이영훈 영업이사",
+          "eventDate": "2026-09-08",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
+          "name": "차영주 소장",
+          "eventDate": "2026-09-10",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
+          "name": "금철영 기자",
+          "eventDate": "2026-09-15",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
+          "name": "차영주 소장",
+          "eventDate": "2026-09-23",
+          "uploaded": 0,
+          "note": "미업로드"
+        }
+      ],
+      "updatedAt": "2026-08-24T10:30:00.000Z"
+    },
+    {
+      "month": "2026-10",
+      "label": "2026년 10월",
+      "guests": [],
+      "pending": [
+        {
+          "name": "차영주 소장",
+          "eventDate": "2026-10-01",
+          "uploaded": 0,
+          "note": "미업로드"
+        }
+      ],
+      "updatedAt": "2026-08-24T10:30:00.000Z"
     }
   ],
   "archive": {
@@ -2499,7 +2596,7 @@
                 "avgViewDurationSec": 311
               }
             },
-            "updatedAt": "2026-08-24T09:45:00.000Z"
+            "updatedAt": "2026-08-24T10:30:00.000Z"
           }
         ]
       },
@@ -2526,7 +2623,7 @@
                 "avgViewDurationSec": 357
               }
             },
-            "updatedAt": "2026-08-24T09:45:00.000Z"
+            "updatedAt": "2026-08-24T10:30:00.000Z"
           }
         ]
       },
@@ -2553,7 +2650,92 @@
                 "avgViewDurationSec": 293
               }
             },
-            "updatedAt": "2026-08-24T09:45:00.000Z"
+            "updatedAt": "2026-08-24T10:30:00.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  "team": {
+    "members": [
+      {
+        "key": "준혁",
+        "months": [
+          {
+            "month": "2026-07",
+            "label": "2026년 7월",
+            "guestCount": 8,
+            "scheduled": 8,
+            "videoCount": 26,
+            "totalViews": 1770827,
+            "avgViewsPerGuest": 221353,
+            "avgViewsPerVideo": 68109,
+            "updatedAt": "2026-08-24T10:30:00.000Z"
+          },
+          {
+            "month": "2026-08",
+            "label": "2026년 8월",
+            "guestCount": 3,
+            "scheduled": 5,
+            "videoCount": 15,
+            "totalViews": 284708,
+            "avgViewsPerGuest": 94903,
+            "avgViewsPerVideo": 18981,
+            "updatedAt": "2026-08-24T10:30:00.000Z"
+          }
+        ]
+      },
+      {
+        "key": "다혜",
+        "months": [
+          {
+            "month": "2026-07",
+            "label": "2026년 7월",
+            "guestCount": 16,
+            "scheduled": 16,
+            "videoCount": 120,
+            "totalViews": 4148669,
+            "avgViewsPerGuest": 259292,
+            "avgViewsPerVideo": 34572,
+            "updatedAt": "2026-08-24T10:30:00.000Z"
+          },
+          {
+            "month": "2026-08",
+            "label": "2026년 8월",
+            "guestCount": 11,
+            "scheduled": 14,
+            "videoCount": 68,
+            "totalViews": 3109855,
+            "avgViewsPerGuest": 282714,
+            "avgViewsPerVideo": 45733,
+            "updatedAt": "2026-08-24T10:30:00.000Z"
+          }
+        ]
+      },
+      {
+        "key": "준하",
+        "months": [
+          {
+            "month": "2026-07",
+            "label": "2026년 7월",
+            "guestCount": 12,
+            "scheduled": 12,
+            "videoCount": 97,
+            "totalViews": 3200086,
+            "avgViewsPerGuest": 266674,
+            "avgViewsPerVideo": 32991,
+            "updatedAt": "2026-08-24T10:30:00.000Z"
+          },
+          {
+            "month": "2026-08",
+            "label": "2026년 8월",
+            "guestCount": 5,
+            "scheduled": 17,
+            "videoCount": 41,
+            "totalViews": 1094317,
+            "avgViewsPerGuest": 218863,
+            "avgViewsPerVideo": 26691,
+            "updatedAt": "2026-08-24T10:30:00.000Z"
           }
         ]
       }
