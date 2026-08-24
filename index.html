@@ -325,14 +325,18 @@ function currentSectorLabel() {
   })();
   if (activeScope === 'archive') return `${activeArchive} ${monthLbl}`.trim();
   if (activeScope === 'team') return `팀원 ${monthLbl}`.trim();
+  if (activeScope === 'guests') return '게스트 목록';
   return monthLbl;
 }
 
 function updateRefreshLabel() {
   const s = currentSectorLabel();
+  // 게스트 목록은 기존 데이터로 계산되는 화면이라 새로고침 버튼이 필요 없어요.
+  const derived = activeScope === 'guests';
+  $('refresh-btn').hidden = derived;
   $('refresh-btn').textContent = s ? `${s} 새로고침` : '새로고침';
   const allBtn = $('refresh-all-btn');
-  allBtn.hidden = !(isAdmin && accessToken);
+  allBtn.hidden = derived || !(isAdmin && accessToken);
   allBtn.textContent = activeScope === 'archive' ? '저장소 전체 새로고침'
     : activeScope === 'team' ? '팀원 전체 새로고침' : '본채널 전체 새로고침';
 }
@@ -493,6 +497,7 @@ function renderInner() {
   scopeEl.innerHTML = '';
   if (archive.length || team.length || isAdmin) {
     const defs = [['main', '본채널']];
+    if ((publishedData.months || []).length) defs.push(['guests', '게스트']);
     if (archive.length) defs.push(['archive', '저장소']);
     if (team.length || isAdmin) defs.push(['team', '팀원']);
     defs.forEach(([key, label]) => {
@@ -502,6 +507,11 @@ function renderInner() {
       btn.addEventListener('click', () => { activeScope = key; activeMonth = null; render(); });
       scopeEl.appendChild(btn);
     });
+  }
+
+  if (activeScope === 'guests') {
+    renderGuestRanking();
+    return;
   }
 
   if (activeScope === 'team') {
@@ -742,6 +752,115 @@ function renderInner() {
 }
 
 // ---------------- 저장소 (웅달책방_투자 / _교양 / _부동산) ----------------
+
+// 게스트 섹터 — 지금까지 출연한 모든 게스트를 인물 단위로 묶어 1회 출연당 평균을 냅니다.
+function buildGuestRanking() {
+  const clusters = [];
+  (publishedData.months || []).forEach(m => {
+    (m.guests || []).forEach(g => {
+      const key = guestKey(g.name);
+      if (!key) return;
+      let c = clusters.find(x => sameGuest(x.key, key));
+      if (!c) { c = { key, name: g.name, appearances: [] }; clusters.push(c); }
+      // 표시 이름은 가장 짧은 형태를 써요 ("부자아빠 정재호 대표" 대신 "정재호 대표").
+      if (g.name.length < c.name.length) c.name = g.name;
+      c.appearances.push({ month: m.month, label: m.label, date: g.eventDate,
+                           views: g.totalViews || 0, videos: g.videoCount || 0 });
+    });
+  });
+  // 캘린더에 잡혔지만 아직 업로드되지 않은 일정 = 다음 촬영 예정
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const upcoming = [];
+  (publishedData.months || []).forEach(m => {
+    (m.pending || []).forEach(p => {
+      const key = guestKey(p.name);
+      if (key && p.eventDate) upcoming.push({ key, date: p.eventDate });
+    });
+  });
+
+  clusters.forEach(c => {
+    c.appearances.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    c.count = c.appearances.length;
+    c.totalViews = c.appearances.reduce((s, a) => s + a.views, 0);
+    c.avgPerAppearance = c.count ? Math.round(c.totalViews / c.count) : 0;
+    c.last = c.appearances[c.appearances.length - 1];
+    c.tier = gradeOf(c.avgPerAppearance);
+    // 오늘 이후로 잡힌 일정 중 가장 빠른 것
+    const mine = upcoming.filter(u => sameGuest(c.key, u.key) && u.date >= todayStr)
+      .map(u => u.date).sort();
+    c.nextDate = mine.length ? mine[0] : null;
+  });
+  // 티어가 높은 순서(S→D), 같은 티어 안에서는 평균이 높은 순서
+  clusters.sort((a, b) => (GRADE_ORDER[b.tier] ?? -1) - (GRADE_ORDER[a.tier] ?? -1)
+    || b.avgPerAppearance - a.avgPerAppearance);
+  return clusters;
+}
+
+function renderGuestRanking() {
+  $('archive-tabs').hidden = true;
+  $('month-tabs').innerHTML = '';
+  const listEl = $('guest-list');
+  listEl.innerHTML = '';
+
+  const rows = buildGuestRanking();
+  if (!rows.length) {
+    listEl.innerHTML = '<div class="empty-state">아직 게스트 데이터가 없어요.</div>';
+    return;
+  }
+  // 기준선: 전체 게스트의 '1회 출연당 평균'들의 평균
+  const overall = rows.reduce((s, r) => s + r.avgPerAppearance, 0) / rows.length;
+
+  const sum = document.createElement('div');
+  sum.className = 'kpi-row';
+  sum.appendChild(statTile('총 게스트', `${rows.length}명`));
+  sum.appendChild(statTile('총 출연', `${rows.reduce((s, r) => s + r.count, 0)}회`));
+  sum.appendChild(statTile('1회 출연당 평균', fmtNum(Math.round(overall)), '이 값이 아래 % 기준선'));
+  sum.appendChild(statTile('재출연 게스트', `${rows.filter(r => r.count > 1).length}명`));
+  sum.appendChild(statTile('다음 촬영 예정', `${rows.filter(r => r.nextDate).length}명`));
+  listEl.appendChild(sum);
+
+  const card = document.createElement('div');
+  card.className = 'guest-card';
+  const table = document.createElement('table');
+  table.className = 'video-table';
+  table.innerHTML = '<thead><tr><th>#</th><th>게스트</th><th>티어</th>'
+    + '<th class="num">총 출연</th><th class="num">1회당 평균</th><th class="num">평균 대비</th>'
+    + '<th class="num">누적 조회수</th><th>최근 출연</th><th>다음 촬영</th></tr></thead>';
+  const tbody = document.createElement('tbody');
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    const tier = r.tier;
+    const diff = overall ? (r.avgPerAppearance / overall - 1) * 100 : 0;
+    const next = r.nextDate
+      ? `<span class="chg-up">${new Date(r.nextDate).toLocaleDateString('ko-KR')}</span>`
+      : '<span style="color:var(--muted)">일정 없음</span>';
+    const cls = diff >= 50 ? 'perf-high' : diff >= 20 ? 'perf-good'
+              : diff <= -50 ? 'perf-bad' : diff <= -20 ? 'perf-warn' : '';
+    tr.innerHTML = `<td class="num">${i + 1}</td>`
+      + `<td>${escapeHtml(r.name)}</td>`
+      + `<td>${tier ? `<span class="grade grade-${tier}">${tier}</span>` : '–'}</td>`
+      + `<td class="num">${r.count}회</td>`
+      + `<td class="num"><strong>${fmtNum(r.avgPerAppearance)}</strong></td>`
+      + `<td class="num ${cls}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}%</td>`
+      + `<td class="num">${fmtNum(r.totalViews)}</td>`
+      + `<td>${escapeHtml(r.last.label)}</td>`
+      + `<td>${next}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  const wrap = document.createElement('div');
+  wrap.style.overflowX = 'auto';
+  wrap.appendChild(table);
+  card.appendChild(wrap);
+  listEl.appendChild(card);
+
+  const note = document.createElement('p');
+  note.className = 'fine-print';
+  note.textContent = '본채널 집계분만 대상이에요. 여러 번 출연한 게스트는 한 줄로 묶어 1회 출연당 평균을 냈고, '
+    + '티어는 그 평균값 기준입니다 (S 20만 / A 15만 / B 10만 / C 8만 초과 / D 그 이하). '
+    + '평균 대비 %는 전체 게스트의 1회 출연당 평균과 비교한 값이에요. 다음 촬영은 캘린더에 잡힌 예정 일정을 보여주며, 없으면 “일정 없음”으로 표시합니다.';
+  listEl.appendChild(note);
+}
 
 // 팀원 섹터 — 담당자별 평균 조회수만 한눈에 보여줘요.
 function renderTeam(members) {
