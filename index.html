@@ -74,7 +74,12 @@ input[type="password"], input[type="text"] {
 .scope-tabs { margin-bottom: 12px; }
 .scope-tabs .month-tab { font-size: 14px; padding: 9px 20px; }
 .scope-tabs { align-items: center; }
-.month-tab.tab-right { margin-left: auto; font-size: 12px; padding: 6px 14px; }
+.month-tab.tab-right {
+  margin-left: auto; font-size: 12px; padding: 6px 14px;
+  border-color: var(--good); color: var(--good); font-weight: 700;
+}
+.month-tab.tab-right:hover { background: rgba(12,163,12,0.10); }
+.month-tab.tab-right.active { background: var(--good); border-color: var(--good); color: #fff; }
 .topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .topic-col h3 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
 .topic-item { border-top: 1px solid var(--gridline); padding: 8px 0; }
@@ -850,6 +855,31 @@ function renderTopics() {
     return;
   }
 
+  // 내 담당 영상만 모은 칸 (주제 무관)
+  const mineCard = document.createElement('div');
+  mineCard.className = 'guest-card topic-col';
+  mineCard.style.marginBottom = '12px';
+  const mh = document.createElement('h3');
+  mh.textContent = '내 영상 TOP 10';
+  mineCard.appendChild(mh);
+  const mineItems = data.mine || [];
+  if (!mineItems.length) {
+    const e = document.createElement('div');
+    e.className = 'topic-meta';
+    e.textContent = '최근 14일 안에 조건에 맞는 내 영상이 없어요.';
+    mineCard.appendChild(e);
+  } else {
+    mineItems.forEach((it, idx) => {
+      const box = document.createElement('div');
+      box.className = 'topic-item';
+      box.innerHTML = `<div class="topic-title">${idx + 1}. ${escapeHtml(it.title || '(제목 없음)')}</div>`
+        + `<div class="topic-meta"><b style="color:var(--series-1)">${fmtNum(it.views)}회</b>`
+        + ` · ${escapeHtml(it.guest || '')}${it.category ? ' · ' + escapeHtml(it.category) : ''} · ${escapeHtml(it.pub || '')}</div>`;
+      mineCard.appendChild(box);
+    });
+  }
+  listEl.appendChild(mineCard);
+
   const grid = document.createElement('div');
   grid.className = 'topic-grid';
   TOPIC_CATS.forEach(cat => {
@@ -877,31 +907,6 @@ function renderTopics() {
     grid.appendChild(col);
   });
   listEl.appendChild(grid);
-
-  // 내 담당 영상만 모은 칸 (주제 무관)
-  const mineCard = document.createElement('div');
-  mineCard.className = 'guest-card topic-col';
-  mineCard.style.marginTop = '12px';
-  const mh = document.createElement('h3');
-  mh.textContent = '내 영상 TOP 10';
-  mineCard.appendChild(mh);
-  const mineItems = data.mine || [];
-  if (!mineItems.length) {
-    const e = document.createElement('div');
-    e.className = 'topic-meta';
-    e.textContent = '최근 14일 안에 조건에 맞는 내 영상이 없어요.';
-    mineCard.appendChild(e);
-  } else {
-    mineItems.forEach((it, idx) => {
-      const box = document.createElement('div');
-      box.className = 'topic-item';
-      box.innerHTML = `<div class="topic-title">${idx + 1}. ${escapeHtml(it.title || '(제목 없음)')}</div>`
-        + `<div class="topic-meta"><b style="color:var(--series-1)">${fmtNum(it.views)}회</b>`
-        + ` · ${escapeHtml(it.guest || '')}${it.category ? ' · ' + escapeHtml(it.category) : ''} · ${escapeHtml(it.pub || '')}</div>`;
-      mineCard.appendChild(box);
-    });
-  }
-  listEl.appendChild(mineCard);
 
   const note = document.createElement('p');
   note.className = 'fine-print';
@@ -1660,14 +1665,23 @@ async function fetchNonPublicUploads(publicItems, earliestNeeded) {
   try {
     const known = new Set(publicItems.map(v => v.videoId));
     const fmt = d => d.toISOString().slice(0, 10);
-    const qs = new URLSearchParams({
-      ids: `channel==${YOUTUBE_CHANNEL_ID}`,
-      startDate: fmt(earliestNeeded),
-      endDate: new Date().toISOString().slice(0, 10),
-      metrics: 'views', dimensions: 'video', sort: '-views', maxResults: '200'
-    });
-    const data = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
-    const unknownIds = (data.rows || []).map(r => r[0]).filter(id => !known.has(id));
+    // Analytics는 한 번에 200행까지만 줘요. 비공개 영상은 조회수가 낮아 상위 200에 못 드는 경우가 있어서
+    // startIndex로 페이지를 넘겨 그 기간의 영상을 전부 훑습니다.
+    const allIds = [];
+    for (let start = 1; start <= 1801; start += 200) {
+      const qs = new URLSearchParams({
+        ids: `channel==${YOUTUBE_CHANNEL_ID}`,
+        startDate: fmt(earliestNeeded),
+        endDate: new Date().toISOString().slice(0, 10),
+        metrics: 'views', dimensions: 'video', sort: '-views',
+        maxResults: '200', startIndex: String(start)
+      });
+      const page = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`).catch(() => null);
+      const rows = (page && page.rows) || [];
+      rows.forEach(r => allIds.push(r[0]));
+      if (rows.length < 200) break;
+    }
+    const unknownIds = [...new Set(allIds)].filter(id => !known.has(id));
     if (!unknownIds.length) return [];
 
     const out = [];
@@ -1804,11 +1818,43 @@ async function refreshTopics() {
   publishedData.updatedAt = new Date().toISOString();
 }
 
+// [라이브] 일정이 만들어낸 영상을 골라내요.
+//  규칙: 캘린더 날짜 다음날 1부 → 그 다음날 2부 → 그 다음날 풀버전 (고정 패턴).
+//  하루 정도 밀리는 경우가 있어 +1~+5일까지 허용합니다.
+let _liveCache = null;
+async function liveEvents() {
+  if (!_liveCache) {
+    _liveCache = (await fetchAllCalendarEvents()).filter(e => e.tag === '라이브');
+  }
+  return _liveCache;
+}
+
+async function liveClaimedIds(vids) {
+  const claimed = new Set();
+  let evs = [];
+  try { evs = await liveEvents(); } catch (e) { return claimed; }
+  evs.forEach(ev => {
+    const from = new Date(ev.date.getTime() + 1 * 86400000);
+    const to = new Date(ev.date.getTime() + 5 * 86400000);
+    to.setHours(23, 59, 59, 999);
+    vids.forEach(v => {
+      if (claimed.has(v.videoId)) return;
+      if (!titleHasGuest(v.title, ev.core)) return;
+      if (v.publishedAt < from || v.publishedAt > to) return;
+      // 라이브는 1부·2부·풀버전만 나와요.
+      const m = v.title.match(/([1-5])부/);
+      const isLivePart = (m && (m[1] === '1' || m[1] === '2')) || v.title.includes('풀버전');
+      if (isLivePart) claimed.add(v.videoId);
+    });
+  });
+  return claimed;
+}
+
 // ---------------- 섹터(월) 단위 새로고침 ----------------
 
 // 한 번의 갱신 작업 안에서는 캘린더를 재사용해요.
 let _calCache = {};
-function clearRefreshCache() { _calCache = {}; }
+function clearRefreshCache() { _calCache = {}; _liveCache = null; }
 async function calendarCached(prefix = CALENDAR_PREFIX) {
   if (!_calCache[prefix]) _calCache[prefix] = await fetchCalendarGuestEvents(prefix);
   return _calCache[prefix];
@@ -1900,9 +1946,12 @@ async function refreshMainMonth(monthKeyStr) {
   if (!events.length) throw new Error(`${monthKeyStr}에 "${CALENDAR_PREFIX}" 일정이 없어요.`);
 
   let vids = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, searchAfter.toISOString(), searchBefore.toISOString());
-  // 비공개 영상 보강 (search는 공개분만 반환해요)
+  // 비공개 영상 보강 (업로드 목록에는 비공개가 빠져 있어요)
   const extra = await fetchNonPublicUploads(vids, searchAfter);
   vids = vids.concat(extra.filter(v => v.publishedAt <= searchBefore));
+  // [라이브] 일정이 만든 영상은 게스트 세트에서 빼요.
+  const liveIds = await liveClaimedIds(vids);
+  vids = vids.filter(v => !liveIds.has(v.videoId));
 
   const used = new Set();
   const sets = events.map(ev => {
