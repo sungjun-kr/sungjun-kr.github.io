@@ -534,9 +534,21 @@ function renderInner() {
   const prevMonth = curIdx > 0 ? months[curIdx - 1] : null;   // 등급 변화 비교용 직전 달
   const listEl = $('guest-list');
   listEl.innerHTML = '';
-  if (!current || !current.guests.length) {
+  if (!current) {
     listEl.innerHTML = '<div class="empty-state">이 달에는 게스트가 없어요.</div>';
     return;
+  }
+  // 아직 업로드된 게스트가 없어도 촬영 예정 목록은 보여줘요 (다음 달 미리보기).
+  if (!current.guests.length && !(current.pending || []).length) {
+    listEl.innerHTML = '<div class="empty-state">이 달에는 게스트가 없어요.</div>';
+    return;
+  }
+  if (!current.guests.length) {
+    const msg = document.createElement('div');
+    msg.className = 'fine-print';
+    msg.style.marginBottom = '14px';
+    msg.textContent = '아직 업로드된 게스트가 없어요. 캘린더에 잡힌 촬영 일정만 표시합니다.';
+    listEl.appendChild(msg);
   }
   // 요약 (집계 완료된 게스트 기준)
   const g5 = current.guests;
