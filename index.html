@@ -1668,21 +1668,18 @@ async function fetchNonPublicUploads(publicItems, earliestNeeded) {
   try {
     const known = new Set(publicItems.map(v => v.videoId));
     const fmt = d => d.toISOString().slice(0, 10);
-    // Analytics는 한 번에 200행까지만 줘요. 비공개 영상은 조회수가 낮아 상위 200에 못 드는 경우가 있어서
-    // startIndex로 페이지를 넘겨 그 기간의 영상을 전부 훑습니다.
+    // Analytics는 한 번에 200행까지만 주고 startIndex는 지원하지 않아요.
+    // 비공개 영상은 조회수가 낮아 상위 200에 못 드니, 내림차순과 오름차순을 함께 조회해 합칩니다.
     const allIds = [];
-    for (let start = 1; start <= 1801; start += 200) {
+    for (const order of ['-views', 'views']) {
       const qs = new URLSearchParams({
         ids: `channel==${YOUTUBE_CHANNEL_ID}`,
         startDate: fmt(earliestNeeded),
         endDate: new Date().toISOString().slice(0, 10),
-        metrics: 'views', dimensions: 'video', sort: '-views',
-        maxResults: '200', startIndex: String(start)
+        metrics: 'views', dimensions: 'video', sort: order, maxResults: '200'
       });
       const page = await authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`).catch(() => null);
-      const rows = (page && page.rows) || [];
-      rows.forEach(r => allIds.push(r[0]));
-      if (rows.length < 200) break;
+      ((page && page.rows) || []).forEach(r => allIds.push(r[0]));
     }
     const unknownIds = [...new Set(allIds)].filter(id => !known.has(id));
     if (!unknownIds.length) return [];
@@ -1713,6 +1710,22 @@ async function fetchNonPublicUploads(publicItems, earliestNeeded) {
 
 // 조회수는 Data API의 실시간 누적값을 씁니다.
 // (Analytics API의 views는 2~3일 지연되어 최근 업로드분이 크게 과소 집계돼요.)
+// 영상 길이(초)를 가져와요 — 쇼츠를 걸러낼 때 씁니다.
+async function fetchDurations(videoIds) {
+  const out = {};
+  const batches = [];
+  for (let i = 0; i < videoIds.length; i += 50) batches.push(videoIds.slice(i, i + 50));
+  const pages = await Promise.all(batches.map(b =>
+    authFetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${b.join(',')}`).catch(() => null)));
+  pages.forEach(data => {
+    ((data && data.items) || []).forEach(it => {
+      const m = (it.contentDetails.duration || '').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (m) out[it.id] = (+(m[1] || 0)) * 3600 + (+(m[2] || 0)) * 60 + (+(m[3] || 0));
+    });
+  });
+  return out;
+}
+
 async function fetchViewCounts(videoIds) {
   const result = {};
   const batches = [];
@@ -2122,7 +2135,13 @@ async function refreshArchiveMonth(channelKey, monthKeyStr) {
   const end = new Date(Date.UTC(y, mo, 1, -9));
 
   const vids = await fetchVideosInRange(entry.channelId, start.toISOString(), end.toISOString());
-  const items = vids.map(v => ({ ...v, g: archiveGroupOf(v.title) })).filter(v => v.g);
+  let items = vids.map(v => ({ ...v, g: archiveGroupOf(v.title) })).filter(v => v.g);
+  // 쇼츠(3분 미만)는 조회수 계산에서 빼요.
+  const durs = await fetchDurations(items.map(v => v.videoId));
+  items = items.filter(v => {
+    const d = durs[v.videoId];
+    return typeof d !== 'number' || d >= 180;
+  });
   const ids = items.map(v => v.videoId);
   const [views, an] = await Promise.all([
     fetchViewCounts(ids), fetchArchiveAnalytics(entry.channelId, ids)
