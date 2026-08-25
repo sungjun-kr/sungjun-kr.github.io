@@ -511,7 +511,28 @@ async function loadPublishedData() {
   } catch (err) {
     publishedData = { updatedAt: null, months: [] };
   }
+  mergeSharedState();
   render();
+}
+
+// 게시본에 담긴 기록을 이 브라우저에도 반영해요 (다른 기기에서 적은 내용이 보이도록).
+// 같은 항목을 양쪽에서 고쳤다면 이 브라우저 값이 우선입니다.
+function mergeSharedState() {
+  try {
+    const pubLogic = publishedData.workLogic || {};
+    const local = loadLogic();
+    const merged = {};
+    Object.entries(pubLogic).forEach(([k, v]) => { merged[k] = { ...v }; });
+    Object.entries(local).forEach(([k, v]) => {
+      merged[k] = { ...(merged[k] || {}) };
+      Object.entries(v).forEach(([part, ans]) => { merged[k][part] = { ...(merged[k][part] || {}), ...ans }; });
+    });
+    saveLogic(merged);
+
+    const set = loadBlocked();
+    (publishedData.blocked || []).forEach(k => set.add(k));
+    saveBlocked(set);
+  } catch (e) { console.warn('공유 기록 병합 실패:', e.message); }
 }
 
 function render() {
@@ -1034,7 +1055,7 @@ function renderAnalysis() {
 
   const note = document.createElement('p');
   note.className = 'fine-print';
-  note.textContent = '작업 로직은 이 브라우저에만 저장돼요. 기록한 내용은 본채널 각 게스트의 편별 표에도 함께 표시됩니다.';
+  note.textContent = '작업 로직은 입력 즉시 이 브라우저에 저장되고, "게시하기"를 누르면 사이트에도 올라가 다른 기기에서도 보여요. 기록한 내용은 본채널 각 게스트의 편별 표에도 함께 표시됩니다.';
   listEl.appendChild(note);
 }
 
@@ -1256,7 +1277,7 @@ function renderGuestRanking() {
     btn.type = 'button';
     btn.className = 'btn-block' + (isBlocked ? ' on' : '');
     btn.textContent = isBlocked ? '재출연 불가' : '가능';
-    btn.title = '누르면 재출연 불가로 표시돼요 (이 브라우저에만 저장됩니다)';
+    btn.title = '누르면 재출연 불가로 표시돼요. "게시하기"를 누르면 다른 기기에도 반영됩니다.';
     if (isBlocked) tr.classList.add('row-blocked');
     btn.addEventListener('click', () => {
       const set = loadBlocked();
@@ -2311,6 +2332,9 @@ async function fetchArchiveAnalytics(channelId, videoIds) {
 
 async function publishToGithub() {
   if (!publishedData) return;
+  // 브라우저에만 있던 기록(작업 로직·재출연 불가)도 함께 올려요.
+  publishedData.workLogic = loadLogic();
+  publishedData.blocked = [...loadBlocked()];
   let pat = localStorage.getItem('gh_pat');
   if (!pat) {
     pat = prompt('GitHub Personal Access Token을 입력하세요 (repo 쓰기 권한 필요, 이 브라우저에만 저장돼요):');
