@@ -1386,6 +1386,9 @@ function renderArchive(channels) {
   const allRow = document.createElement('div');
   allRow.className = 'kpi-row';
   allRow.appendChild(statTile('채널', ch.name));
+  allRow.appendChild(statTile('구독자',
+    typeof ch.subscribers === 'number' ? fmtNum(ch.subscribers) + '명' : '–',
+    ch.subsAt ? new Date(ch.subsAt).toLocaleDateString('ko-KR') + ' 기준' : null));
   allRow.appendChild(statTile('총 영상 수', `${cur.videoCount || 0}편`));
   allRow.appendChild(statTile('평균 조회수', fmtNum(cur.avgViews)));
   allRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(cur.avgViewDurationSec)));
@@ -2146,12 +2149,23 @@ async function refreshArchiveMonth(channelKey, monthKeyStr) {
     groups, updatedAt: new Date().toISOString()
   };
 
+  // 채널 구독자 수도 함께 가져와요.
+  let subs = null;
+  try {
+    const st = await authFetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${entry.channelId}`);
+    const item = st.items && st.items[0];
+    if (item && item.statistics) {
+      subs = item.statistics.hiddenSubscriberCount ? null : Number(item.statistics.subscriberCount);
+    }
+  } catch (e) { console.warn('구독자 수 조회 실패:', e.message); }
+
   publishedData.archive = publishedData.archive || { channels: [] };
   let ch = publishedData.archive.channels.find(c => c.key === channelKey);
   if (!ch) {
     ch = { key: entry.key, name: entry.name, channelId: entry.channelId, months: [] };
     publishedData.archive.channels.push(ch);
   }
+  if (subs !== null) { ch.subscribers = subs; ch.subsAt = new Date().toISOString(); }
   const i = ch.months.findIndex(m => m.month === monthKeyStr);
   if (i >= 0) ch.months[i] = monthEntry; else ch.months.push(monthEntry);
   ch.months.sort((a, b) => a.month.localeCompare(b.month));
