@@ -46,6 +46,16 @@
 * { box-sizing: border-box; }
 /* hidden 속성이 display:flex 같은 규칙에 밀리지 않도록 확실히 숨겨요. */
 [hidden] { display: none !important; }
+/* 게시 결과 알림 */
+#toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  z-index: 9999; max-width: 90vw; padding: 14px 22px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,0.28);
+  opacity: 0; transition: opacity 0.2s;
+}
+#toast.show { opacity: 1; }
+#toast.ok { background: var(--good); }
+#toast.bad { background: var(--critical); }
 body { margin: 0; background: var(--page-plane); color: var(--text-primary); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
 .page { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -184,6 +194,7 @@ footer.fine-print { text-align: center; margin-top: 30px; }
 </style>
 </head>
 <body>
+<div id="toast" hidden></div>
 <div class="page">
   <div class="topbar">
     <h1>게스트 성과 대시보드</h1>
@@ -1567,6 +1578,20 @@ function statTile(label, value, sub) {
   return tile;
 }
 
+// 화면 하단에 크게 알림을 띄워요.
+function showToast(msg, ok = true) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = ok ? 'ok' : 'bad';
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('show'));
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => { el.hidden = true; }, 250);
+  }, 5000);
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str || '';
@@ -2364,10 +2389,13 @@ async function publishToGithub() {
       if (putRes.status === 401) { localStorage.removeItem('gh_pat'); }
       throw new Error(`게시 실패: ${putRes.status} ${body}`);
     }
-    $('sync-status').textContent = '게시 완료! 몇 분 안에 모두에게 반영돼요.';
+    const when = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    $('sync-status').textContent = `게시 완료 (${when}) — 몇 분 안에 모두에게 반영돼요.`;
+    showToast(`✓ 게시 완료 — ${when}. 다른 기기에도 반영됩니다.`, true);
   } catch (err) {
     console.error(err);
     $('sync-status').textContent = '게시 중 오류: ' + err.message;
+    showToast('게시 실패 — ' + err.message.slice(0, 80), false);
   }
 }
 
