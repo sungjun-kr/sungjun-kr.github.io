@@ -51,9 +51,7 @@
   position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
   z-index: 9999; max-width: 90vw; padding: 14px 22px; border-radius: 10px;
   font-size: 14px; font-weight: 700; color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,0.28);
-  opacity: 0; transition: opacity 0.2s;
 }
-#toast.show { opacity: 1; }
 #toast.ok { background: var(--good); }
 #toast.bad { background: var(--critical); }
 body { margin: 0; background: var(--page-plane); color: var(--text-primary); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
@@ -1583,14 +1581,9 @@ function showToast(msg, ok = true) {
   const el = $('toast');
   el.textContent = msg;
   el.className = ok ? 'ok' : 'bad';
-  el.hidden = false;
-  void el.offsetWidth;              // 배경 탭에서도 확실히 나타나도록 강제 반영
-  el.classList.add('show');
+  el.hidden = false;                // 전환 효과 없이 바로 띄워요 (배경 탭에서도 확실히 보이도록)
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => {
-    el.classList.remove('show');
-    setTimeout(() => { el.hidden = true; }, 250);
-  }, 5000);
+  showToast._t = setTimeout(() => { el.hidden = true; }, 6000);
 }
 
 function escapeHtml(str) {
