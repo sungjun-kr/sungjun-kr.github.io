@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T01:09:18.195Z",
+  "updatedAt": "2026-08-25T05:45:34.435Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -3170,8 +3170,8 @@
           "eventDate": "2026-08-03",
           "category": "교양",
           "videoCount": 6,
-          "totalViews": 79704,
-          "avgViews": 13284,
+          "totalViews": 79731,
+          "avgViews": 13289,
           "avgViewDurationSec": 482,
           "avgViewPct": 35.13,
           "videos": [
@@ -3216,7 +3216,7 @@
               "pub": "2026-08-08",
               "title": "\"일본 보복 소용없다\" 한국 국산화 소식에 발칵, 초비상 걸린 일본 미칠 지경 (이명찬 박사 / 5부)",
               "privacy": "public",
-              "views": 14200,
+              "views": 14205,
               "avgViewDurationSec": 411,
               "avgViewPct": 34.18
             },
@@ -3225,7 +3225,7 @@
               "pub": "2026-08-09",
               "title": "\"일본인들만 모르고 있다\" 엔화가 곧 휴지조각 된다 (이명찬 박사 / 풀버전)",
               "privacy": "public",
-              "views": 34013,
+              "views": 34035,
               "avgViewDurationSec": 1262,
               "avgViewPct": 29.26
             }
@@ -3236,8 +3236,8 @@
           "eventDate": "2026-08-04",
           "category": "교양",
           "videoCount": 5,
-          "totalViews": 113800,
-          "avgViews": 22760,
+          "totalViews": 114089,
+          "avgViews": 22818,
           "avgViewDurationSec": 474,
           "avgViewPct": 29.17,
           "videos": [
@@ -3255,7 +3255,7 @@
               "pub": "2026-08-07",
               "title": "미국 몰락하고 이스라엘은 파멸? 곧 세계질서 판도 반대로 된다 (성일광 교수 / 2부)",
               "privacy": "public",
-              "views": 44504,
+              "views": 44758,
               "avgViewDurationSec": 480,
               "avgViewPct": 35.72
             },
@@ -3264,7 +3264,7 @@
               "pub": "2026-08-08",
               "title": "다른나라에서 난리난 이슬람 한국에서 유독 꼼짝 못하는 이유 (성일광 교수 / 3부)",
               "privacy": "public",
-              "views": 4131,
+              "views": 4132,
               "avgViewDurationSec": 361,
               "avgViewPct": 29.909999999999997
             },
@@ -3282,7 +3282,7 @@
               "pub": "2026-08-12",
               "title": "\"정말 아무도 모른다\" 이스라엘-튀르키예 전쟁임박? 곧 중동이 발칵 뒤집힌다 (성일광 교수 / 풀버전)",
               "privacy": "public",
-              "views": 50140,
+              "views": 50174,
               "avgViewDurationSec": 1055,
               "avgViewPct": 25.69
             }
@@ -3293,7 +3293,7 @@
           "eventDate": "2026-08-04",
           "category": "투자",
           "videoCount": 4,
-          "totalViews": 92111,
+          "totalViews": 92112,
           "avgViews": 23028,
           "avgViewDurationSec": 420,
           "avgViewPct": 26.65,
@@ -3330,7 +3330,7 @@
               "pub": "2026-08-08",
               "title": "지금 개미들만 모르고 있어요 삼전 앞으로 더 무서울 겁니다 (권영화 교수 / 풀버전)",
               "privacy": "public",
-              "views": 22559,
+              "views": 22560,
               "avgViewDurationSec": 721,
               "avgViewPct": 21.75
             }
@@ -3341,8 +3341,8 @@
           "eventDate": "2026-08-11",
           "category": "투자",
           "videoCount": 5,
-          "totalViews": 46410,
-          "avgViews": 9282,
+          "totalViews": 46426,
+          "avgViews": 9285,
           "avgViewDurationSec": 350,
           "avgViewPct": 29.19,
           "videos": [
@@ -3351,7 +3351,7 @@
               "pub": "2026-08-12",
               "title": "\"아직 안심할 때 아닙니다\" 외국인들 일부러 판 깔았다? 목요일 장 열리면 분위기 싹 다 바뀌나 (이영훈 영업이사 / 1부)",
               "privacy": "public",
-              "views": 5236,
+              "views": 5242,
               "avgViewDurationSec": 242,
               "avgViewPct": 22.47
             },
@@ -3369,7 +3369,7 @@
               "pub": "2026-08-14",
               "title": "로봇은 딱 2개만 사모으세요 곧 세계 1위 엄청난 대상승 탄다? (이영훈 영업이사 / 3부)",
               "privacy": "public",
-              "views": 11763,
+              "views": 11770,
               "avgViewDurationSec": 270,
               "avgViewPct": 30.990000000000002
             },
@@ -3378,7 +3378,7 @@
               "pub": "2026-08-15",
               "title": "\"지금 개미들만 모르고 있어요\" 앞으로 2차전지 '이렇게' 됩니다 (이영훈 영업이사 / 4부)",
               "privacy": "public",
-              "views": 8491,
+              "views": 8494,
               "avgViewDurationSec": 282,
               "avgViewPct": 43.08
             },
@@ -3398,8 +3398,8 @@
           "eventDate": "2026-08-12",
           "category": "투자",
           "videoCount": 5,
-          "totalViews": 89454,
-          "avgViews": 17891,
+          "totalViews": 89625,
+          "avgViews": 17925,
           "avgViewDurationSec": 421,
           "avgViewPct": 38.63,
           "videos": [
@@ -3408,7 +3408,7 @@
               "pub": "2026-08-13",
               "title": "\"가장 중요한 시기가 왔다\" 삼전 하이닉스 지금 팔지말고, 한 주라도 있다면 '이렇게' 하세요 (부자아빠 정재호 대표 / 1부)",
               "privacy": "public",
-              "views": 12290,
+              "views": 12291,
               "avgViewDurationSec": 401,
               "avgViewPct": 38.38
             },
@@ -3417,7 +3417,7 @@
               "pub": "2026-08-14",
               "title": "'이 주식' 10만원이라도 사보세요 평생 노후 돈 걱정 없습니다 (부자아빠 정재호 대표 / 2부)",
               "privacy": "public",
-              "views": 21966,
+              "views": 21969,
               "avgViewDurationSec": 311,
               "avgViewPct": 40.89
             },
@@ -3426,7 +3426,7 @@
               "pub": "2026-08-15",
               "title": "\"조선, 방산주 아닙니다\" 조만간 수십 배 갑니다 당장 '이 주식' 사모으세요 (부자아빠 정재호 대표 / 3부)",
               "privacy": "public",
-              "views": 23068,
+              "views": 23102,
               "avgViewDurationSec": 311,
               "avgViewPct": 46.35
             },
@@ -3435,7 +3435,7 @@
               "pub": "2026-08-16",
               "title": "노후에 가장 좋은 취미 압도적 1위 '이것'입니다 (부자아빠 정재호 대표 / 4부)",
               "privacy": "public",
-              "views": 8566,
+              "views": 8577,
               "avgViewDurationSec": 264,
               "avgViewPct": 40.38
             },
@@ -3444,7 +3444,7 @@
               "pub": "2026-08-17",
               "title": "'이 주식' 10만원이라도 사보세요 평생 노후 돈 걱정 없습니다 (부자아빠 정재호 대표 / 풀버전)",
               "privacy": "public",
-              "views": 23564,
+              "views": 23686,
               "avgViewDurationSec": 818,
               "avgViewPct": 27.149999999999995
             }
@@ -3455,8 +3455,8 @@
           "eventDate": "2026-08-13",
           "category": "투자",
           "videoCount": 4,
-          "totalViews": 226821,
-          "avgViews": 56705,
+          "totalViews": 227321,
+          "avgViews": 56830,
           "avgViewDurationSec": 337,
           "avgViewPct": 35.27,
           "videos": [
@@ -3474,7 +3474,7 @@
               "pub": "2026-08-16",
               "title": "\"돈 축제 제대로 시작됩니다\" 삼성 파운드리 수율 드디어 잡혔다 TSMC는 지금 완전 미칠 지경 (이형수 대표 / 3부)",
               "privacy": "public",
-              "views": 34424,
+              "views": 34446,
               "avgViewDurationSec": 239,
               "avgViewPct": 40.86
             },
@@ -3483,7 +3483,7 @@
               "pub": "2026-08-17",
               "title": "\"제 2의 한미반도체\" 현금 5천으로 싹 다 기판주 사라? 앞으로 삼성전기보다 100배 오르나 (이형수 대표 / 4부)",
               "privacy": "public",
-              "views": 117989,
+              "views": 118104,
               "avgViewDurationSec": 208,
               "avgViewPct": 35.31
             },
@@ -3492,20 +3492,71 @@
               "pub": "2026-08-19",
               "title": "\"제 2의 한미반도체?\" 현금 5천으로 싹 다 기판주 사라, 앞으로 삼성전기보다 무섭게 오른다? (이형수 대표 / 풀버전)",
               "privacy": "public",
-              "views": 62481,
+              "views": 62844,
               "avgViewDurationSec": 643,
               "avgViewPct": 25.19
+            }
+          ]
+        },
+        {
+          "name": "이희근 대표",
+          "eventDate": "2026-08-18",
+          "category": "투자",
+          "videoCount": 5,
+          "totalViews": 22780,
+          "avgViews": 4556,
+          "avgViewDurationSec": 265,
+          "avgViewPct": 29.26,
+          "videos": [
+            {
+              "part": "1부",
+              "pub": "2026-08-20",
+              "title": "\"개미들만 착각하고 있어요\" 삼성전자, 내일 아침 난리납니다 (이희근 대표 / 1부)",
+              "privacy": "public",
+              "views": 2209,
+              "avgViewDurationSec": 243,
+              "avgViewPct": 26.14
+            },
+            {
+              "part": "2부",
+              "pub": "2026-08-21",
+              "title": "\"현대차, 로보티즈 아닙니다\" 로봇은 그냥 '이것'만 사세요, 올해 결국 '이렇게' 될 겁니다 (이희근 대표 / 2부)",
+              "privacy": "public",
+              "views": 10306,
+              "avgViewDurationSec": 262,
+              "avgViewPct": 28.6
+            },
+            {
+              "part": "3부",
+              "pub": "2026-08-22",
+              "title": "\"지금 당장 사서 모으세요\" 2차전지 개미들 오래 기다렸다 에코프로 곧 '여기까지' 갑니다 (이희근 대표 / 3부)",
+              "privacy": "public",
+              "views": 7538,
+              "avgViewDurationSec": 326,
+              "avgViewPct": 37.83
+            },
+            {
+              "part": "4부",
+              "pub": "2026-08-23",
+              "title": "\"조선, 방산주 절대 아닙니다\" 조만간 10배, 100배 갈겁니다 당장 '이 주식' 사세요 (이희근 대표 / 4부)",
+              "privacy": "public",
+              "views": 2561,
+              "avgViewDurationSec": 228,
+              "avgViewPct": 24.47
+            },
+            {
+              "part": "풀버전",
+              "pub": "2026-08-25",
+              "title": "로봇은 그냥 '이것'만 사세요 올해 결국 '이렇게' 될 겁니다 (이희근 대표 / 풀버전)",
+              "privacy": "public",
+              "views": 166,
+              "avgViewDurationSec": null,
+              "avgViewPct": null
             }
           ]
         }
       ],
       "pending": [
-        {
-          "name": "이희근 대표",
-          "eventDate": "2026-08-18",
-          "uploaded": 4,
-          "note": "일부만 업로드됨 (4편)"
-        },
         {
           "name": "김민석 특파원",
           "eventDate": "2026-08-20",
@@ -3555,7 +3606,7 @@
           "note": "미업로드"
         }
       ],
-      "updatedAt": "2026-08-25T00:44:49.950Z"
+      "updatedAt": "2026-08-25T05:45:34.435Z"
     },
     {
       "month": "2026-09",
@@ -3944,5 +3995,160 @@
       }
     ],
     "updatedAt": "2026-08-25T00:45:23.330Z"
-  }
+  },
+  "workLogic": {
+    "이시연|2026-08-21": {
+      "1부": {
+        "ref": "소극적",
+        "thumb": "1개",
+        "timing": "적극적",
+        "topicViews": "조회수 낮음",
+        "meta": "적음"
+      },
+      "2부": {
+        "ref": "중립",
+        "meta": "적음",
+        "topicViews": "조회수 평균",
+        "thumb": "2개",
+        "timing": "적극적"
+      },
+      "3부": {
+        "ref": "적극적",
+        "thumb": "2개",
+        "timing": "소극적",
+        "topicViews": "조회수 높음",
+        "meta": "적음"
+      },
+      "4부": {
+        "ref": "소극적",
+        "timing": "소극적",
+        "meta": "적음",
+        "topicViews": "조회수 평균",
+        "thumb": "1개"
+      }
+    },
+    "차영주|2026-08-24": {
+      "1부": {
+        "thumb": "3개 이상",
+        "ref": "중립",
+        "timing": "적극적",
+        "topicViews": "조회수 높음",
+        "meta": "많음"
+      },
+      "2부": {
+        "thumb": "3개 이상",
+        "ref": "중립",
+        "timing": "적극적",
+        "topicViews": "조회수 높음",
+        "meta": "많음"
+      },
+      "3부": {
+        "thumb": "1개",
+        "ref": "적극적",
+        "timing": "소극적",
+        "meta": "적음",
+        "topicViews": "조회수 높음"
+      },
+      "4부": {
+        "thumb": "2개",
+        "ref": "소극적",
+        "timing": "적극적",
+        "meta": "적음",
+        "topicViews": "조회수 높음"
+      }
+    },
+    "이형수|2026-08-13": {
+      "1부": {
+        "thumb": "2개",
+        "ref": "소극적",
+        "timing": "중립",
+        "topicViews": "조회수 평균",
+        "meta": "많음"
+      },
+      "2부": {
+        "meta": "적음",
+        "thumb": "3개 이상",
+        "ref": "소극적",
+        "timing": "적극적",
+        "topicViews": "조회수 평균"
+      },
+      "3부": {
+        "meta": "평균",
+        "ref": "중립",
+        "thumb": "2개",
+        "topicViews": "조회수 평균",
+        "timing": "중립"
+      },
+      "4부": {
+        "meta": "적음",
+        "ref": "소극적",
+        "topicViews": "조회수 평균",
+        "timing": "소극적",
+        "thumb": "2개"
+      }
+    },
+    "이희근|2026-08-18": {
+      "1부": {
+        "thumb": "2개",
+        "ref": "중립",
+        "timing": "중립",
+        "topicViews": "조회수 높음",
+        "meta": "많음"
+      },
+      "2부": {
+        "ref": "소극적",
+        "meta": "적음",
+        "topicViews": "조회수 낮음",
+        "timing": "중립",
+        "thumb": "3개 이상"
+      },
+      "3부": {
+        "meta": "적음",
+        "ref": "중립",
+        "thumb": "2개"
+      },
+      "4부": {
+        "thumb": "2개",
+        "ref": "소극적",
+        "timing": "적극적",
+        "topicViews": "조회수 낮음",
+        "meta": "적음"
+      }
+    },
+    "김민석|2026-08-20": {
+      "1부": {
+        "meta": "적음",
+        "thumb": "2개",
+        "ref": "소극적",
+        "timing": "적극적",
+        "topicViews": "조회수 낮음"
+      },
+      "2부": {
+        "thumb": "3개 이상",
+        "ref": "소극적",
+        "timing": "적극적",
+        "topicViews": "조회수 평균",
+        "meta": "적음"
+      },
+      "3부": {
+        "meta": "평균",
+        "thumb": "2개",
+        "ref": "중립",
+        "timing": "적극적",
+        "topicViews": "조회수 높음"
+      },
+      "4부": {
+        "thumb": "1개",
+        "ref": "소극적",
+        "timing": "적극적",
+        "topicViews": "조회수 낮음",
+        "meta": "적음"
+      }
+    }
+  },
+  "blocked": [
+    "김광석",
+    "존리",
+    "이명찬"
+  ]
 }
