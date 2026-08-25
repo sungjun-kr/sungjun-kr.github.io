@@ -214,6 +214,7 @@ footer.fine-print { text-align: center; margin-top: 30px; }
     <section id="dashboard-view" hidden>
       <div class="toolbar">
         <span id="last-updated" class="muted-text"></span>
+        <button id="relogin-btn" class="btn-secondary" hidden>관리자 다시 로그인</button>
         <button id="refresh-btn" class="btn-secondary">새로고침</button>
         <button id="refresh-all-btn" class="btn-secondary" hidden>전체 새로고침</button>
         <button id="publish-btn" class="btn-secondary" hidden>게시하기</button>
@@ -353,14 +354,31 @@ $('refresh-btn').addEventListener('click', async () => {
   if (isAdmin && accessToken) {
     await refreshCurrentSector();
   } else {
+    // 열람자(또는 로그인 만료) 상태에서는 게시된 데이터만 다시 읽어요.
     btn.disabled = true;
     const label = btn.textContent;
     btn.textContent = '불러오는 중…';
+    const before = publishedData.updatedAt;
     await loadPublishedData();
     btn.textContent = label;
     btn.disabled = false;
+    const expired = !!sessionStorage.getItem('gToken') || !!localStorage.getItem('gh_pat');
+    const when = publishedData.updatedAt
+      ? new Date(publishedData.updatedAt).toLocaleString('ko-KR') : '없음';
+    if (expired) {
+      showToast('구글 로그인이 만료됐어요 — 새 데이터를 가져오려면 다시 로그인해 주세요.', false);
+      $('sync-status').hidden = false;
+      $('sync-status').textContent = `게시된 데이터만 다시 읽었어요 (게시 시각: ${when}). 최신 수집은 관리자 로그인이 필요해요.`;
+    } else {
+      showToast(before === publishedData.updatedAt
+        ? `이미 최신이에요 (게시 시각: ${when})`
+        : `새 데이터를 불러왔어요 (게시 시각: ${when})`, true);
+    }
   }
 });
+
+const _reloginBtn = document.getElementById('relogin-btn');
+if (_reloginBtn) _reloginBtn.addEventListener('click', () => { $('admin-link').click(); });
 
 // 현재 보고 있는 섹터 이름 (버튼 라벨용)
 function currentSectorLabel() {
@@ -382,6 +400,12 @@ function currentSectorLabel() {
 }
 
 function updateRefreshLabel() {
+  // 예전에 관리자로 들어왔는데 지금 토큰이 없으면 다시 로그인 버튼을 띄워요.
+  const relogin = $('relogin-btn');
+  if (relogin) {
+    const wasAdmin = !!sessionStorage.getItem('gToken') || !!localStorage.getItem('gh_pat');
+    relogin.hidden = !(wasAdmin && !accessToken);
+  }
   const s = currentSectorLabel();
   // 게스트 목록은 기존 데이터로 계산되는 화면이라 새로고침 버튼이 필요 없어요.
   const derived = activeScope === 'guests' || activeScope === 'analysis';
