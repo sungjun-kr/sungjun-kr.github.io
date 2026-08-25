@@ -1584,7 +1584,8 @@ function showToast(msg, ok = true) {
   el.textContent = msg;
   el.className = ok ? 'ok' : 'bad';
   el.hidden = false;
-  requestAnimationFrame(() => el.classList.add('show'));
+  void el.offsetWidth;              // 배경 탭에서도 확실히 나타나도록 강제 반영
+  el.classList.add('show');
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => {
     el.classList.remove('show');
