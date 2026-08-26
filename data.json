@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-26T05:05:51.706Z",
+  "updatedAt": "2026-08-26T07:33:02.639Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -3678,25 +3678,25 @@
             "month": "2026-08",
             "label": "2026년 8월",
             "videoCount": 81,
-            "avgViews": 7025,
+            "avgViews": 7029,
             "avgViewDurationSec": 226,
             "groups": {
               "라이브": {
                 "videoCount": 56,
-                "avgViews": 4361,
+                "avgViews": 4362,
                 "avgViewDurationSec": 189
               },
               "통합본": {
                 "videoCount": 25,
-                "avgViews": 12994,
+                "avgViews": 13002,
                 "avgViewDurationSec": 310
               }
             },
-            "updatedAt": "2026-08-26T05:05:15.325Z"
+            "updatedAt": "2026-08-26T07:32:58.379Z"
           }
         ],
         "subscribers": 1400,
-        "subsAt": "2026-08-26T05:05:15.525Z"
+        "subsAt": "2026-08-26T07:32:58.570Z"
       },
       {
         "key": "교양",
@@ -3707,25 +3707,25 @@
             "month": "2026-08",
             "label": "2026년 8월",
             "videoCount": 27,
-            "avgViews": 6337,
+            "avgViews": 6476,
             "avgViewDurationSec": 400,
             "groups": {
               "라이브": {
                 "videoCount": 6,
-                "avgViews": 6198,
+                "avgViews": 6351,
                 "avgViewDurationSec": 542
               },
               "통합본": {
                 "videoCount": 21,
-                "avgViews": 6376,
+                "avgViews": 6512,
                 "avgViewDurationSec": 361
               }
             },
-            "updatedAt": "2026-08-26T05:05:17.275Z"
+            "updatedAt": "2026-08-26T07:33:00.389Z"
           }
         ],
-        "subscribers": 977,
-        "subsAt": "2026-08-26T05:05:17.475Z"
+        "subscribers": 1000,
+        "subsAt": "2026-08-26T07:33:00.639Z"
       },
       {
         "key": "부동산",
@@ -3736,25 +3736,25 @@
             "month": "2026-08",
             "label": "2026년 8월",
             "videoCount": 10,
-            "avgViews": 2758,
+            "avgViews": 2828,
             "avgViewDurationSec": 385,
             "groups": {
               "라이브": {
                 "videoCount": 4,
-                "avgViews": 3329,
+                "avgViews": 3442,
                 "avgViewDurationSec": 368
               },
               "통합본": {
                 "videoCount": 6,
-                "avgViews": 2378,
+                "avgViews": 2419,
                 "avgViewDurationSec": 396
               }
             },
-            "updatedAt": "2026-08-26T05:05:19.185Z"
+            "updatedAt": "2026-08-26T07:33:02.420Z"
           }
         ],
-        "subscribers": 102,
-        "subsAt": "2026-08-26T05:05:19.386Z"
+        "subscribers": 103,
+        "subsAt": "2026-08-26T07:33:02.639Z"
       }
     ]
   },
