@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T05:45:34.435Z",
+  "updatedAt": "2026-08-26T00:59:37.006Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -3170,17 +3170,17 @@
           "eventDate": "2026-08-03",
           "category": "교양",
           "videoCount": 6,
-          "totalViews": 79731,
-          "avgViews": 13289,
+          "totalViews": 79855,
+          "avgViews": 13309,
           "avgViewDurationSec": 482,
-          "avgViewPct": 35.13,
+          "avgViewPct": 35.12,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-08-04",
               "title": "\"일본인들만 모르고 있다\" 엔화가 곧 휴지조각 된다 (이명찬 박사 / 1부)",
               "privacy": "public",
-              "views": 23050,
+              "views": 23055,
               "avgViewDurationSec": 467,
               "avgViewPct": 37.74
             },
@@ -3207,27 +3207,27 @@
               "pub": "2026-08-07",
               "title": "\"일본이 발칵 뒤집혔다\" 그만좀 오라고 애원하던 일본, 파리 날리는 현실에 환장할 지경 (이명찬 박사 / 4부)",
               "privacy": "public",
-              "views": 3654,
-              "avgViewDurationSec": 258,
-              "avgViewPct": 36.99
+              "views": 3658,
+              "avgViewDurationSec": 259,
+              "avgViewPct": 37.01
             },
             {
               "part": "5부",
               "pub": "2026-08-08",
               "title": "\"일본 보복 소용없다\" 한국 국산화 소식에 발칵, 초비상 걸린 일본 미칠 지경 (이명찬 박사 / 5부)",
               "privacy": "public",
-              "views": 14205,
+              "views": 14222,
               "avgViewDurationSec": 411,
-              "avgViewPct": 34.18
+              "avgViewPct": 34.14
             },
             {
               "part": "풀버전",
               "pub": "2026-08-09",
               "title": "\"일본인들만 모르고 있다\" 엔화가 곧 휴지조각 된다 (이명찬 박사 / 풀버전)",
               "privacy": "public",
-              "views": 34035,
-              "avgViewDurationSec": 1262,
-              "avgViewPct": 29.26
+              "views": 34133,
+              "avgViewDurationSec": 1261,
+              "avgViewPct": 29.23
             }
           ]
         },
@@ -3236,17 +3236,17 @@
           "eventDate": "2026-08-04",
           "category": "교양",
           "videoCount": 5,
-          "totalViews": 114089,
-          "avgViews": 22818,
-          "avgViewDurationSec": 474,
-          "avgViewPct": 29.17,
+          "totalViews": 115074,
+          "avgViews": 23015,
+          "avgViewDurationSec": 473,
+          "avgViewPct": 29.15,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-08-06",
               "title": "\"자폭 버튼 누르려는 이란\" 곧 전쟁보다 끔찍한 일 터진다 (성일광 교수 / 1부)",
               "privacy": "public",
-              "views": 14155,
+              "views": 14156,
               "avgViewDurationSec": 308,
               "avgViewPct": 32.4
             },
@@ -3255,16 +3255,16 @@
               "pub": "2026-08-07",
               "title": "미국 몰락하고 이스라엘은 파멸? 곧 세계질서 판도 반대로 된다 (성일광 교수 / 2부)",
               "privacy": "public",
-              "views": 44758,
-              "avgViewDurationSec": 480,
-              "avgViewPct": 35.72
+              "views": 45643,
+              "avgViewDurationSec": 479,
+              "avgViewPct": 35.66
             },
             {
               "part": "3부",
               "pub": "2026-08-08",
               "title": "다른나라에서 난리난 이슬람 한국에서 유독 꼼짝 못하는 이유 (성일광 교수 / 3부)",
               "privacy": "public",
-              "views": 4132,
+              "views": 4133,
               "avgViewDurationSec": 361,
               "avgViewPct": 29.909999999999997
             },
@@ -3273,18 +3273,18 @@
               "pub": "2026-08-10",
               "title": "\"한국은 무조건 1순위\" 중동국가들이 석유를 유독 한국에게만 퍼주는 이유 (성일광 교수 / 4부)",
               "privacy": "public",
-              "views": 870,
-              "avgViewDurationSec": 166,
-              "avgViewPct": 22.15
+              "views": 871,
+              "avgViewDurationSec": 165,
+              "avgViewPct": 22.09
             },
             {
               "part": "풀버전",
               "pub": "2026-08-12",
               "title": "\"정말 아무도 모른다\" 이스라엘-튀르키예 전쟁임박? 곧 중동이 발칵 뒤집힌다 (성일광 교수 / 풀버전)",
               "privacy": "public",
-              "views": 50174,
-              "avgViewDurationSec": 1055,
-              "avgViewPct": 25.69
+              "views": 50271,
+              "avgViewDurationSec": 1054,
+              "avgViewPct": 25.670000000000005
             }
           ]
         },
@@ -3293,8 +3293,8 @@
           "eventDate": "2026-08-04",
           "category": "투자",
           "videoCount": 4,
-          "totalViews": 92112,
-          "avgViews": 23028,
+          "totalViews": 92121,
+          "avgViews": 23030,
           "avgViewDurationSec": 420,
           "avgViewPct": 26.65,
           "videos": [
@@ -3312,7 +3312,7 @@
               "pub": "2026-08-06",
               "title": "지금 삼성전자 반드시 사세요, 1년 내에 '여기까지' 오를 겁니다 (권영화 교수 / 2부)",
               "privacy": "public",
-              "views": 9583,
+              "views": 9584,
               "avgViewDurationSec": 316,
               "avgViewPct": 29.86
             },
@@ -3321,7 +3321,7 @@
               "pub": "2026-08-07",
               "title": "\"돈 축제 제대로 시작됩니다\" 삼성 파운드리 수율 드디어 잡혔다, TSMC는 지금 완전 미칠지경 (권영화 교수 / 3부)",
               "privacy": "public",
-              "views": 47171,
+              "views": 47173,
               "avgViewDurationSec": 344,
               "avgViewPct": 30.09
             },
@@ -3330,7 +3330,7 @@
               "pub": "2026-08-08",
               "title": "지금 개미들만 모르고 있어요 삼전 앞으로 더 무서울 겁니다 (권영화 교수 / 풀버전)",
               "privacy": "public",
-              "views": 22560,
+              "views": 22566,
               "avgViewDurationSec": 721,
               "avgViewPct": 21.75
             }
@@ -3341,55 +3341,55 @@
           "eventDate": "2026-08-11",
           "category": "투자",
           "videoCount": 5,
-          "totalViews": 46426,
-          "avgViews": 9285,
+          "totalViews": 46453,
+          "avgViews": 9291,
           "avgViewDurationSec": 350,
-          "avgViewPct": 29.19,
+          "avgViewPct": 29.16,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-08-12",
               "title": "\"아직 안심할 때 아닙니다\" 외국인들 일부러 판 깔았다? 목요일 장 열리면 분위기 싹 다 바뀌나 (이영훈 영업이사 / 1부)",
               "privacy": "public",
-              "views": 5242,
+              "views": 5253,
               "avgViewDurationSec": 242,
-              "avgViewPct": 22.47
+              "avgViewPct": 22.39
             },
             {
               "part": "2부",
               "pub": "2026-08-13",
               "title": "\"개미들만 착각하고 있어요\" 삼성전자, 내일 아침 난리납니다 (이영훈 영업이사 / 2부)",
               "privacy": "public",
-              "views": 2562,
+              "views": 2565,
               "avgViewDurationSec": 219,
-              "avgViewPct": 27.07
+              "avgViewPct": 27.08
             },
             {
               "part": "3부",
               "pub": "2026-08-14",
               "title": "로봇은 딱 2개만 사모으세요 곧 세계 1위 엄청난 대상승 탄다? (이영훈 영업이사 / 3부)",
               "privacy": "public",
-              "views": 11770,
+              "views": 11777,
               "avgViewDurationSec": 270,
-              "avgViewPct": 30.990000000000002
+              "avgViewPct": 30.98
             },
             {
               "part": "4부",
               "pub": "2026-08-15",
               "title": "\"지금 개미들만 모르고 있어요\" 앞으로 2차전지 '이렇게' 됩니다 (이영훈 영업이사 / 4부)",
               "privacy": "public",
-              "views": 8494,
+              "views": 8498,
               "avgViewDurationSec": 282,
-              "avgViewPct": 43.08
+              "avgViewPct": 43.01
             },
             {
               "part": "풀버전",
               "pub": "2026-08-16",
               "title": "\"아직 안심할 때 아닙니다\" 외국인들 일부러 판 깔았나 화요일 장열리면 분위기 싹 다 바뀐다? (이영훈 영업이사 / 풀버전)",
               "privacy": "public",
-              "views": 18358,
+              "views": 18360,
               "avgViewDurationSec": 739,
-              "avgViewPct": 22.33
+              "avgViewPct": 22.32
             }
           ]
         },
@@ -3398,26 +3398,26 @@
           "eventDate": "2026-08-12",
           "category": "투자",
           "videoCount": 5,
-          "totalViews": 89625,
-          "avgViews": 17925,
+          "totalViews": 90071,
+          "avgViews": 18014,
           "avgViewDurationSec": 421,
-          "avgViewPct": 38.63,
+          "avgViewPct": 38.61,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-08-13",
               "title": "\"가장 중요한 시기가 왔다\" 삼전 하이닉스 지금 팔지말고, 한 주라도 있다면 '이렇게' 하세요 (부자아빠 정재호 대표 / 1부)",
               "privacy": "public",
-              "views": 12291,
+              "views": 12294,
               "avgViewDurationSec": 401,
-              "avgViewPct": 38.38
+              "avgViewPct": 38.36
             },
             {
               "part": "2부",
               "pub": "2026-08-14",
               "title": "'이 주식' 10만원이라도 사보세요 평생 노후 돈 걱정 없습니다 (부자아빠 정재호 대표 / 2부)",
               "privacy": "public",
-              "views": 21969,
+              "views": 22011,
               "avgViewDurationSec": 311,
               "avgViewPct": 40.89
             },
@@ -3426,27 +3426,27 @@
               "pub": "2026-08-15",
               "title": "\"조선, 방산주 아닙니다\" 조만간 수십 배 갑니다 당장 '이 주식' 사모으세요 (부자아빠 정재호 대표 / 3부)",
               "privacy": "public",
-              "views": 23102,
+              "views": 23217,
               "avgViewDurationSec": 311,
-              "avgViewPct": 46.35
+              "avgViewPct": 46.27
             },
             {
               "part": "4부",
               "pub": "2026-08-16",
               "title": "노후에 가장 좋은 취미 압도적 1위 '이것'입니다 (부자아빠 정재호 대표 / 4부)",
               "privacy": "public",
-              "views": 8577,
+              "views": 8602,
               "avgViewDurationSec": 264,
-              "avgViewPct": 40.38
+              "avgViewPct": 40.36
             },
             {
               "part": "풀버전",
               "pub": "2026-08-17",
               "title": "'이 주식' 10만원이라도 사보세요 평생 노후 돈 걱정 없습니다 (부자아빠 정재호 대표 / 풀버전)",
               "privacy": "public",
-              "views": 23686,
+              "views": 23947,
               "avgViewDurationSec": 818,
-              "avgViewPct": 27.149999999999995
+              "avgViewPct": 27.16
             }
           ]
         },
@@ -3455,46 +3455,46 @@
           "eventDate": "2026-08-13",
           "category": "투자",
           "videoCount": 4,
-          "totalViews": 227321,
-          "avgViews": 56830,
-          "avgViewDurationSec": 337,
-          "avgViewPct": 35.27,
+          "totalViews": 228326,
+          "avgViews": 57082,
+          "avgViewDurationSec": 335,
+          "avgViewPct": 35.16,
           "videos": [
             {
               "part": "2부",
               "pub": "2026-08-15",
               "title": "'뜻 밖의 호재' 제대로 터졌다 삼성 다음주 난리날 겁니다 (이형수 대표 / 2부)",
               "privacy": "public",
-              "views": 11927,
+              "views": 11929,
               "avgViewDurationSec": 258,
-              "avgViewPct": 39.7
+              "avgViewPct": 39.71
             },
             {
               "part": "3부",
               "pub": "2026-08-16",
               "title": "\"돈 축제 제대로 시작됩니다\" 삼성 파운드리 수율 드디어 잡혔다 TSMC는 지금 완전 미칠 지경 (이형수 대표 / 3부)",
               "privacy": "public",
-              "views": 34446,
+              "views": 34519,
               "avgViewDurationSec": 239,
-              "avgViewPct": 40.86
+              "avgViewPct": 40.84
             },
             {
               "part": "4부",
               "pub": "2026-08-17",
               "title": "\"제 2의 한미반도체\" 현금 5천으로 싹 다 기판주 사라? 앞으로 삼성전기보다 100배 오르나 (이형수 대표 / 4부)",
               "privacy": "public",
-              "views": 118104,
-              "avgViewDurationSec": 208,
-              "avgViewPct": 35.31
+              "views": 118528,
+              "avgViewDurationSec": 207,
+              "avgViewPct": 35.24
             },
             {
               "part": "풀버전",
               "pub": "2026-08-19",
               "title": "\"제 2의 한미반도체?\" 현금 5천으로 싹 다 기판주 사라, 앞으로 삼성전기보다 무섭게 오른다? (이형수 대표 / 풀버전)",
               "privacy": "public",
-              "views": 62844,
-              "avgViewDurationSec": 643,
-              "avgViewPct": 25.19
+              "views": 63350,
+              "avgViewDurationSec": 634,
+              "avgViewPct": 24.84
             }
           ]
         },
@@ -3503,53 +3503,53 @@
           "eventDate": "2026-08-18",
           "category": "투자",
           "videoCount": 5,
-          "totalViews": 22780,
-          "avgViews": 4556,
-          "avgViewDurationSec": 265,
-          "avgViewPct": 29.26,
+          "totalViews": 29081,
+          "avgViews": 5816,
+          "avgViewDurationSec": 266,
+          "avgViewPct": 29.36,
           "videos": [
             {
               "part": "1부",
               "pub": "2026-08-20",
               "title": "\"개미들만 착각하고 있어요\" 삼성전자, 내일 아침 난리납니다 (이희근 대표 / 1부)",
               "privacy": "public",
-              "views": 2209,
-              "avgViewDurationSec": 243,
-              "avgViewPct": 26.14
+              "views": 2214,
+              "avgViewDurationSec": 242,
+              "avgViewPct": 26.039999999999996
             },
             {
               "part": "2부",
               "pub": "2026-08-21",
               "title": "\"현대차, 로보티즈 아닙니다\" 로봇은 그냥 '이것'만 사세요, 올해 결국 '이렇게' 될 겁니다 (이희근 대표 / 2부)",
               "privacy": "public",
-              "views": 10306,
-              "avgViewDurationSec": 262,
-              "avgViewPct": 28.6
+              "views": 10995,
+              "avgViewDurationSec": 253,
+              "avgViewPct": 27.66
             },
             {
               "part": "3부",
               "pub": "2026-08-22",
               "title": "\"지금 당장 사서 모으세요\" 2차전지 개미들 오래 기다렸다 에코프로 곧 '여기까지' 갑니다 (이희근 대표 / 3부)",
               "privacy": "public",
-              "views": 7538,
-              "avgViewDurationSec": 326,
-              "avgViewPct": 37.83
+              "views": 7602,
+              "avgViewDurationSec": 328,
+              "avgViewPct": 38.07
             },
             {
               "part": "4부",
               "pub": "2026-08-23",
               "title": "\"조선, 방산주 절대 아닙니다\" 조만간 10배, 100배 갈겁니다 당장 '이 주식' 사세요 (이희근 대표 / 4부)",
               "privacy": "public",
-              "views": 2561,
-              "avgViewDurationSec": 228,
-              "avgViewPct": 24.47
+              "views": 2752,
+              "avgViewDurationSec": 239,
+              "avgViewPct": 25.69
             },
             {
               "part": "풀버전",
               "pub": "2026-08-25",
-              "title": "로봇은 그냥 '이것'만 사세요 올해 결국 '이렇게' 될 겁니다 (이희근 대표 / 풀버전)",
+              "title": "\"폭락에 판 개미들 오열\" 수요일 삼전닉스 탈출 기회? '이 가격'에 팔고 나와야 합니다 (이희근 대표 / 풀버전)",
               "privacy": "public",
-              "views": 166,
+              "views": 5518,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -3560,14 +3560,14 @@
         {
           "name": "김민석 특파원",
           "eventDate": "2026-08-20",
-          "uploaded": 3,
-          "note": "일부만 업로드됨 (3편)"
+          "uploaded": 4,
+          "note": "일부만 업로드됨 (4편)"
         },
         {
           "name": "이시연 대표",
           "eventDate": "2026-08-21",
-          "uploaded": 2,
-          "note": "일부만 업로드됨 (2편)"
+          "uploaded": 3,
+          "note": "일부만 업로드됨 (3편)"
         },
         {
           "name": "차영주 소장",
@@ -3606,7 +3606,7 @@
           "note": "미업로드"
         }
       ],
-      "updatedAt": "2026-08-25T05:45:34.435Z"
+      "updatedAt": "2026-08-26T00:59:37.006Z"
     },
     {
       "month": "2026-09",
