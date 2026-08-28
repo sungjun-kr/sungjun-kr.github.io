@@ -966,7 +966,8 @@ function renderTopics() {
   note.className = 'fine-print';
   note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
     + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
-    + '편 라벨(1~5부)이 붙은 단일 영상만 세며, 라벨 없는 재편집본·풀버전·특집·라이브분과 조회수 3만 이하는 제외했어요. '
+    + '편 라벨(1~5부)이 붙은 단일 영상만 세요. 라벨 없는 재편집본·풀버전·특집·쇼츠(3분 미만)와 조회수 3만 이하는 빼고, '
+    + '라이브는 캘린더 [라이브] 일정과 “풀버전은 있는데 3부가 없는 세트”(라이브 구성) 두 가지로 걸러냅니다. '
     + `맨 아래 "내 영상 TOP 10"은 캘린더 ${CALENDAR_PREFIX} 일정만 주제 구분 없이 모은 목록입니다.`;
   listEl.appendChild(note);
 }
@@ -1869,7 +1870,7 @@ async function refreshTopics() {
 
   // 촬영일이 업로드보다 앞서므로, 업로드일 기준 최근 60일 안의 일정까지 후보로 봅니다.
   const evRecent = events.filter(e => e.tag !== '라이브' && e.date >= new Date(Date.now() - 60 * 86400000));
-  const picked = [];
+  let picked = [];
   vids.forEach(v => {
     // 편 라벨(1~5부)이 붙은 단일 영상만 대상으로 해요.
     // 라벨 없는 재편집·통합 영상, 풀버전, 특집은 제외합니다.
@@ -1889,7 +1890,37 @@ async function refreshTopics() {
     });
     if (!ev) return;
     picked.push({ videoId: v.videoId, title: v.title, guest: ev.name, category: ev.category,
-                  tag: ev.tag, pub: v.publishedAt.toISOString().slice(0, 10) });
+                  tag: ev.tag, setKey: ev.core + '|' + ev.date.toISOString().slice(0, 10),
+                  pub: v.publishedAt.toISOString().slice(0, 10) });
+  });
+
+  // 라이브형 세트 걸러내기 —
+  //  일반 촬영: 1~3부(또는 1~4부) + 풀버전
+  //  라이브   : 1부 + 2부 + 풀버전  (3부가 없음)
+  //  → 같은 게스트·같은 촬영 건에서 풀버전이 나왔는데 3부가 없으면 라이브로 봅니다.
+  const setInfo = {};
+  vids.forEach(v => {
+    const ev = evRecent.find(e => titleHasGuest(v.title, e.core)
+      && v.publishedAt >= e.date && (v.publishedAt - e.date) / 86400000 <= SET_WINDOW_DAYS);
+    if (!ev) return;
+    const key = ev.core + '|' + ev.date.toISOString().slice(0, 10);
+    const info = setInfo[key] || (setInfo[key] = { parts: new Set(), full: false });
+    const m = v.title.match(/([1-5])부/);
+    if (m) info.parts.add(m[1]);
+    if (v.title.includes('풀버전')) info.full = true;
+  });
+  const liveLike = new Set(
+    Object.entries(setInfo)
+      .filter(([, i]) => i.full && !i.parts.has('3'))   // 풀버전은 있는데 3부가 없음
+      .map(([k]) => k)
+  );
+  picked = picked.filter(p => !liveLike.has(p.setKey));
+
+  // 쇼츠(3분 미만)는 빼요.
+  const durs = await fetchDurations(picked.map(p => p.videoId));
+  picked = picked.filter(p => {
+    const d = durs[p.videoId];
+    return typeof d !== 'number' || d >= 180;
   });
 
   const views = await fetchViewCounts(picked.map(p => p.videoId));
