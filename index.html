@@ -966,7 +966,7 @@ function renderTopics() {
   note.className = 'fine-print';
   note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
     + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
-    + '풀버전·특집·라이브분과 조회수 3만 이하는 제외했어요. '
+    + '편 라벨(1~5부)이 붙은 단일 영상만 세며, 라벨 없는 재편집본·풀버전·특집·라이브분과 조회수 3만 이하는 제외했어요. '
     + `맨 아래 "내 영상 TOP 10"은 캘린더 ${CALENDAR_PREFIX} 일정만 주제 구분 없이 모은 목록입니다.`;
   listEl.appendChild(note);
 }
@@ -1871,6 +1871,9 @@ async function refreshTopics() {
   const evRecent = events.filter(e => e.tag !== '라이브' && e.date >= new Date(Date.now() - 60 * 86400000));
   const picked = [];
   vids.forEach(v => {
+    // 편 라벨(1~5부)이 붙은 단일 영상만 대상으로 해요.
+    // 라벨 없는 재편집·통합 영상, 풀버전, 특집은 제외합니다.
+    if (!/\d+\s*부/.test(v.title)) return;
     if (v.title.includes('풀버전')) return;
     if (v.title.includes(EXCLUDE_KEYWORD)) return;
     // 촬영일이 업로드보다 앞서면서 가장 가까운 일정을 골라요.
