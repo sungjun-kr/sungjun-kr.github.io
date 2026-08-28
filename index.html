@@ -967,7 +967,7 @@ function renderTopics() {
   note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
     + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
     + '편 라벨(1~5부)이 붙은 단일 영상만 세요. 라벨 없는 재편집본·풀버전·특집·쇼츠(3분 미만)와 조회수 3만 이하는 빼고, '
-    + '라이브는 캘린더 [라이브] 일정과 “풀버전은 있는데 3부가 없는 세트”(라이브 구성) 두 가지로 걸러냅니다. '
+    + '라이브 여부는 캘린더 태그로만 판단해요 — [라이브]로 적힌 일정에서 나온 영상은 빼고, [성준] 등 담당자 태그는 그대로 집계합니다. '
     + `맨 아래 "내 영상 TOP 10"은 캘린더 ${CALENDAR_PREFIX} 일정만 주제 구분 없이 모은 목록입니다.`;
   listEl.appendChild(note);
 }
@@ -1869,7 +1869,7 @@ async function refreshTopics() {
   vids = vids.filter(v => !liveIds.has(v.videoId));
 
   // 촬영일이 업로드보다 앞서므로, 업로드일 기준 최근 60일 안의 일정까지 후보로 봅니다.
-  const evRecent = events.filter(e => e.tag !== '라이브' && e.date >= new Date(Date.now() - 60 * 86400000));
+  const evRecent = events.filter(e => e.date >= new Date(Date.now() - 60 * 86400000));
   let picked = [];
   vids.forEach(v => {
     // 편 라벨(1~5부)이 붙은 단일 영상만 대상으로 해요.
@@ -1889,32 +1889,11 @@ async function refreshTopics() {
       if (days < best) { best = days; ev = e; }
     });
     if (!ev) return;
+    if (ev.tag === '라이브') return;      // 캘린더에 [라이브]로 적힌 건 제외
     picked.push({ videoId: v.videoId, title: v.title, guest: ev.name, category: ev.category,
                   tag: ev.tag, setKey: ev.core + '|' + ev.date.toISOString().slice(0, 10),
                   pub: v.publishedAt.toISOString().slice(0, 10) });
   });
-
-  // 라이브형 세트 걸러내기 —
-  //  일반 촬영: 1~3부(또는 1~4부) + 풀버전
-  //  라이브   : 1부 + 2부 + 풀버전  (3부가 없음)
-  //  → 같은 게스트·같은 촬영 건에서 풀버전이 나왔는데 3부가 없으면 라이브로 봅니다.
-  const setInfo = {};
-  vids.forEach(v => {
-    const ev = evRecent.find(e => titleHasGuest(v.title, e.core)
-      && v.publishedAt >= e.date && (v.publishedAt - e.date) / 86400000 <= SET_WINDOW_DAYS);
-    if (!ev) return;
-    const key = ev.core + '|' + ev.date.toISOString().slice(0, 10);
-    const info = setInfo[key] || (setInfo[key] = { parts: new Set(), full: false });
-    const m = v.title.match(/([1-5])부/);
-    if (m) info.parts.add(m[1]);
-    if (v.title.includes('풀버전')) info.full = true;
-  });
-  const liveLike = new Set(
-    Object.entries(setInfo)
-      .filter(([, i]) => i.full && !i.parts.has('3'))   // 풀버전은 있는데 3부가 없음
-      .map(([k]) => k)
-  );
-  picked = picked.filter(p => !liveLike.has(p.setKey));
 
   // 쇼츠(3분 미만)는 빼요.
   const durs = await fetchDurations(picked.map(p => p.videoId));
@@ -1958,25 +1937,18 @@ async function liveEvents() {
 
 async function liveClaimedIds(vids) {
   const claimed = new Set();
-  let evs = [];
-  try { evs = await liveEvents(); } catch (e) { return claimed; }
-  // 날짜만 비교해요 (시각 차이로 하루 어긋나는 걸 막기 위해).
-  const dayStr = d => new Date(d.getTime() + 9 * 3600000).toISOString().slice(0, 10);
-  const plus = (d, n) => {
-    const x = new Date(d.getTime() + 9 * 3600000);
-    x.setUTCDate(x.getUTCDate() + n);
-    return x.toISOString().slice(0, 10);
-  };
-  evs.forEach(ev => {
-    const from = plus(ev.date, 1);   // 다음날 1부
-    const to = plus(ev.date, 5);     // 밀리는 경우까지 여유
-    vids.forEach(v => {
-      if (claimed.has(v.videoId)) return;
-      if (!titleHasGuest(v.title, ev.core)) return;
-      const day = dayStr(v.publishedAt);
-      if (day < from || day > to) return;
-      claimed.add(v.videoId);        // 라이브분은 편 라벨 유무와 무관하게 전부 제외
+  let all = [];
+  try { all = await fetchAllCalendarEvents(); } catch (e) { return claimed; }
+  vids.forEach(v => {
+    // 이 영상 앞에 있는 일정 중 가장 가까운 것을 찾아, 그 태그가 [라이브]면 제외해요.
+    let best = null, gap = Infinity;
+    all.forEach(e => {
+      if (!titleHasGuest(v.title, e.core)) return;
+      const d = (v.publishedAt - e.date) / 86400000;
+      if (d < 0 || d > SET_WINDOW_DAYS) return;
+      if (d < gap) { gap = d; best = e; }
     });
+    if (best && best.tag === '라이브') claimed.add(v.videoId);
   });
   return claimed;
 }
