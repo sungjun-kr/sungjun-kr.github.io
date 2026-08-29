@@ -967,7 +967,7 @@ function renderTopics() {
   note.textContent = '본채널(웅달책방)에 올라온 영상 전체가 대상이에요 — 담당자 구분 없이 팀 전원의 업로드를 함께 봅니다. '
     + '캘린더 일정 끝의 분류(투자/교양/부동산)로 나눠 최근 14일 업로드분 중 조회수 상위 10편을 보여주고, '
     + '편 라벨(1~5부)이 붙은 단일 영상만 세요. 라벨 없는 재편집본·풀버전·특집·쇼츠(3분 미만)와 조회수 3만 이하는 빼고, '
-    + '라이브 여부는 캘린더 태그로만 판단해요 — [라이브]로 적힌 일정에서 나온 영상은 빼고, [성준] 등 담당자 태그는 그대로 집계합니다. '
+    + '라이브 여부는 캘린더 태그로 판단해요 — [라이브] 일정에서 나온 영상은 빼고 담당자 태그는 그대로 집계합니다. 영상 설명란에 촬영일이 적혀 있으면 그 날짜의 일정을 우선 연결하고, 없으면 업로드일 기준으로 맞춥니다. '
     + `맨 아래 "내 영상 TOP 10"은 캘린더 ${CALENDAR_PREFIX} 일정만 주제 구분 없이 모은 목록입니다.`;
   listEl.appendChild(note);
 }
@@ -1649,6 +1649,31 @@ function nfc(str) {
   return String(str || '').normalize('NFC');
 }
 
+// 영상 설명란의 "8월 25일에 촬영되었습니다" 같은 문구에서 촬영일을 읽어요.
+// 기입이 빠진 영상도 있어서, 있으면 우선 쓰고 없으면 기존 방식(업로드일 기준)으로 넘어갑니다.
+function shootDateFromDesc(desc, publishedAt) {
+  if (!desc) return null;
+  const t = nfc(desc);
+  let m = t.match(/(\d{4})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})\s*일?\s*에?\s*촬영/);
+  let y, mo, da;
+  if (m) { y = +m[1]; mo = +m[2]; da = +m[3]; }
+  else {
+    m = t.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일에?\s*촬영/);
+    if (!m) return null;
+    mo = +m[1]; da = +m[2];
+    // 연도가 없으면 업로드 연도를 쓰되, 12월→1월처럼 해가 바뀐 경우를 보정해요.
+    const pub = new Date(publishedAt);
+    y = pub.getFullYear();
+    if (mo === 12 && pub.getMonth() === 0) y -= 1;
+  }
+  if (!(mo >= 1 && mo <= 12 && da >= 1 && da <= 31)) return null;
+  const d = new Date(Date.UTC(y, mo - 1, da, -9));
+  // 업로드보다 미래이거나 60일 이상 과거면 잘못 읽은 것으로 보고 버립니다.
+  const gap = (new Date(publishedAt) - d) / 86400000;
+  if (gap < -1 || gap > 60) return null;
+  return d;
+}
+
 function titleHasGuest(title, core) {
   if (!title || !core) return false;
   if (title.includes(core)) return true;
@@ -1877,17 +1902,25 @@ async function refreshTopics() {
     if (!/\d+\s*부/.test(v.title)) return;
     if (v.title.includes('풀버전')) return;
     if (v.title.includes(EXCLUDE_KEYWORD)) return;
-    // 촬영일이 업로드보다 앞서면서 가장 가까운 일정을 골라요.
-    // (오래된 일정에 엉뚱하게 붙는 걸 막고, 21일을 넘기면 아예 매칭하지 않습니다.)
-    let ev = null, best = Infinity;
-    evRecent.forEach(e => {
-      if (!titleHasGuest(v.title, e.core)) return;
-      const gap = v.publishedAt - e.date;
-      if (gap < 0) return;
-      const days = gap / 86400000;
-      if (days > SET_WINDOW_DAYS) return;
-      if (days < best) { best = days; ev = e; }
-    });
+    // 설명란 촬영일이 있으면 그 날짜 일정을 먼저 쓰고, 없으면 업로드 앞의 가장 가까운 일정을 골라요.
+    let ev = null;
+    const shot = shootDateFromDesc(v.desc, v.publishedAt);
+    if (shot) {
+      const k = new Date(shot.getTime() + 9 * 3600000).toISOString().slice(0, 10);
+      ev = evRecent.find(e => titleHasGuest(v.title, e.core)
+        && new Date(e.date.getTime() + 9 * 3600000).toISOString().slice(0, 10) === k) || null;
+    }
+    if (!ev) {
+      let best = Infinity;
+      evRecent.forEach(e => {
+        if (!titleHasGuest(v.title, e.core)) return;
+        const gap = v.publishedAt - e.date;
+        if (gap < 0) return;
+        const days = gap / 86400000;
+        if (days > SET_WINDOW_DAYS) return;
+        if (days < best) { best = days; ev = e; }
+      });
+    }
     if (!ev) return;
     if (ev.tag === '라이브') return;      // 캘린더에 [라이브]로 적힌 건 제외
     picked.push({ videoId: v.videoId, title: v.title, guest: ev.name, category: ev.category,
@@ -1939,15 +1972,23 @@ async function liveClaimedIds(vids) {
   const claimed = new Set();
   let all = [];
   try { all = await fetchAllCalendarEvents(); } catch (e) { return claimed; }
+  const dayKey = d => new Date(d.getTime() + 9 * 3600000).toISOString().slice(0, 10);
   vids.forEach(v => {
-    // 이 영상 앞에 있는 일정 중 가장 가까운 것을 찾아, 그 태그가 [라이브]면 제외해요.
-    let best = null, gap = Infinity;
-    all.forEach(e => {
-      if (!titleHasGuest(v.title, e.core)) return;
-      const d = (v.publishedAt - e.date) / 86400000;
-      if (d < 0 || d > SET_WINDOW_DAYS) return;
-      if (d < gap) { gap = d; best = e; }
-    });
+    const cands = all.filter(e => titleHasGuest(v.title, e.core));
+    if (!cands.length) return;
+    // ① 설명란에 촬영일이 적혀 있으면 그 날짜의 일정을 먼저 씁니다.
+    const shot = shootDateFromDesc(v.desc, v.publishedAt);
+    let best = null;
+    if (shot) best = cands.find(e => dayKey(e.date) === dayKey(shot)) || null;
+    // ② 없으면 업로드 앞의 가장 가까운 일정으로 판단해요.
+    if (!best) {
+      let gap = Infinity;
+      cands.forEach(e => {
+        const d = (v.publishedAt - e.date) / 86400000;
+        if (d < 0 || d > SET_WINDOW_DAYS) return;
+        if (d < gap) { gap = d; best = e; }
+      });
+    }
     if (best && best.tag === '라이브') claimed.add(v.videoId);
   });
   return claimed;
@@ -1983,6 +2024,7 @@ async function fetchVideosInRange(channelId, afterISO, beforeISO) {
       videoId: i.snippet.resourceId.videoId,
       privacy: i.status && i.status.privacyStatus,
       title: nfc(i.snippet.title),
+      desc: i.snippet.description || '',
       publishedAt: new Date(i.snippet.publishedAt)
     }));
     page.forEach(v => { if (v.publishedAt >= after && v.publishedAt <= before) items.push(v); });
@@ -2061,9 +2103,21 @@ async function refreshMainMonth(monthKeyStr) {
     const start = ev.date;
     const end = new Date(start.getTime() + SET_WINDOW_DAYS * 86400000);
     end.setHours(23, 59, 59, 999);
+    // 설명란에 촬영일이 적혀 있으면 그 날짜와 일치하는 영상만 이 회차로 봐요.
+    // (기입이 없는 영상은 기존처럼 업로드 기간으로 판단합니다.)
+    const evDay = new Date(start.getTime() + 9 * 3600000).toISOString().slice(0, 10);
     const cand = vids
-      .filter(v => !used.has(v.videoId) && titleHasGuest(v.title, ev.core) && !v.title.includes(EXCLUDE_KEYWORD)
-        && v.publishedAt >= start && v.publishedAt <= end)
+      .filter(v => {
+        if (used.has(v.videoId)) return false;
+        if (!titleHasGuest(v.title, ev.core)) return false;
+        if (v.title.includes(EXCLUDE_KEYWORD)) return false;
+        const shot = shootDateFromDesc(v.desc, v.publishedAt);
+        if (shot) {
+          const sd = new Date(shot.getTime() + 9 * 3600000).toISOString().slice(0, 10);
+          return sd === evDay;                       // 촬영일이 적혀 있으면 그 날짜만
+        }
+        return v.publishedAt >= start && v.publishedAt <= end;
+      })
       .sort((a, b) => a.publishedAt - b.publishedAt);
     const picked = [], parts = new Set();
     cand.forEach(v => {
