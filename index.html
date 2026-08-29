@@ -1651,6 +1651,17 @@ function nfc(str) {
 
 // 영상 설명란의 "8월 25일에 촬영되었습니다" 같은 문구에서 촬영일을 읽어요.
 // 기입이 빠진 영상도 있어서, 있으면 우선 쓰고 없으면 기존 방식(업로드일 기준)으로 넘어갑니다.
+// 촬영일 기입은 하루 정도 어긋나기도 하고 아예 빠지기도 해요.
+// 그래서 "이 회차 것이 아니다"라고 단정할 때만 씁니다 —
+// 촬영일이 같은 게스트의 '다른 일정' 날짜와 정확히 맞을 때만 배제해요.
+function shootConflicts(shot, thisEvDate, otherEvDates) {
+  if (!shot) return false;
+  const k = d => new Date(d.getTime() + 9 * 3600000).toISOString().slice(0, 10);
+  const sk = k(shot);
+  if (Math.abs((shot - thisEvDate) / 86400000) <= 2) return false;   // 이 회차와 ±2일이면 같은 건으로 봐요
+  return otherEvDates.some(d => k(d) === sk);
+}
+
 function shootDateFromDesc(desc, publishedAt) {
   if (!desc) return null;
   const t = nfc(desc);
@@ -1906,9 +1917,12 @@ async function refreshTopics() {
     let ev = null;
     const shot = shootDateFromDesc(v.desc, v.publishedAt);
     if (shot) {
-      const k = new Date(shot.getTime() + 9 * 3600000).toISOString().slice(0, 10);
-      ev = evRecent.find(e => titleHasGuest(v.title, e.core)
-        && new Date(e.date.getTime() + 9 * 3600000).toISOString().slice(0, 10) === k) || null;
+      let g = Infinity;
+      evRecent.forEach(e => {
+        if (!titleHasGuest(v.title, e.core)) return;
+        const diff = Math.abs((shot - e.date) / 86400000);
+        if (diff <= 2 && diff < g) { g = diff; ev = e; }
+      });
     }
     if (!ev) {
       let best = Infinity;
@@ -1979,7 +1993,14 @@ async function liveClaimedIds(vids) {
     // ① 설명란에 촬영일이 적혀 있으면 그 날짜의 일정을 먼저 씁니다.
     const shot = shootDateFromDesc(v.desc, v.publishedAt);
     let best = null;
-    if (shot) best = cands.find(e => dayKey(e.date) === dayKey(shot)) || null;
+    // 촬영일이 있으면 그 날짜와 가장 가까운(±2일) 일정을 씁니다.
+    if (shot) {
+      let g = Infinity;
+      cands.forEach(e => {
+        const diff = Math.abs((shot - e.date) / 86400000);
+        if (diff <= 2 && diff < g) { g = diff; best = e; }
+      });
+    }
     // ② 없으면 업로드 앞의 가장 가까운 일정으로 판단해요.
     if (!best) {
       let gap = Infinity;
@@ -2105,17 +2126,17 @@ async function refreshMainMonth(monthKeyStr) {
     end.setHours(23, 59, 59, 999);
     // 설명란에 촬영일이 적혀 있으면 그 날짜와 일치하는 영상만 이 회차로 봐요.
     // (기입이 없는 영상은 기존처럼 업로드 기간으로 판단합니다.)
-    const evDay = new Date(start.getTime() + 9 * 3600000).toISOString().slice(0, 10);
+    // 같은 게스트의 다른 촬영 일정 날짜들
+    const otherDates = events.filter(e => e !== ev && sameGuest(guestKey(e.name), guestKey(ev.name)))
+      .map(e => e.date);
     const cand = vids
       .filter(v => {
         if (used.has(v.videoId)) return false;
         if (!titleHasGuest(v.title, ev.core)) return false;
         if (v.title.includes(EXCLUDE_KEYWORD)) return false;
         const shot = shootDateFromDesc(v.desc, v.publishedAt);
-        if (shot) {
-          const sd = new Date(shot.getTime() + 9 * 3600000).toISOString().slice(0, 10);
-          return sd === evDay;                       // 촬영일이 적혀 있으면 그 날짜만
-        }
+        // 촬영일이 같은 게스트의 다른 회차를 가리키면 제외해요 (회차 섞임 방지).
+        if (shootConflicts(shot, start, otherDates)) return false;
         return v.publishedAt >= start && v.publishedAt <= end;
       })
       .sort((a, b) => a.publishedAt - b.publishedAt);
