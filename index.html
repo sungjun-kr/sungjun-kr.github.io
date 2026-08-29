@@ -1211,15 +1211,21 @@ function bookingCall(r, base) {
   // 표본 신뢰도: 1회 50%에서 시작해 출연 1회마다 10%p씩 올라가고 100%에서 멈춰요.
   //  1회 50% / 2회 60% / 3회 70% / 4회 80% / 5회 90% / 6회 이상 100%
   const reliability = Math.min(1, 0.5 + (r.count - 1) * 0.1);
-  const viewTerm = 1 + (viewIdx - 1) * reliability;
+  // 평균을 웃돈 부분만 표본만큼 인정해요 (1회 성과는 운일 수 있으니 절반만).
+  // 평균 아래는 그대로 반영합니다 — 그래야 조회수가 같을 때 출연이 많은 쪽이 항상 높게 나와요.
+  const viewTerm = viewIdx >= 1 ? 1 + (viewIdx - 1) * reliability : viewIdx;
 
-  const score = viewTerm * 0.85 + retIdx * 0.10 + (1 + tr) * 0.05;
+  // 출연 보너스 — 조회수가 같아도 많이 나온 게스트가 항상 더 높게 나오도록 더해요.
+  //  1회 +0.00 / 2회 +0.03 / 3회 +0.06 / 4회 +0.09 / 5회 +0.12 / 6회 이상 +0.15
+  const loyalty = (reliability - 0.5) / 0.5 * 0.15;
+  const score = viewTerm * 0.85 + retIdx * 0.10 + (1 + tr) * 0.05 + loyalty;
 
   const pctTxt = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(0)}%`;
   const parts = [`조회 ${pctTxt((viewIdx - 1) * 100)}`];
   if (typeof r.avgViewPct === 'number' && base.pct) parts.push(`시청률 ${pctTxt((retIdx - 1) * 100)}`);
   if (typeof r.trend === 'number') parts.push(`추세 ${pctTxt(r.trend * 100)}`);
-  parts.push(`${r.count}회 반영 ${(reliability * 100).toFixed(0)}%`);
+  parts.push(`${r.count}회 반영 ${(reliability * 100).toFixed(0)}%`
+    + (loyalty > 0 ? ` · 출연보너스 +${loyalty.toFixed(2)}` : ''));
 
   let verdict, cls;
   if (score >= 1.30) { verdict = '적극 섭외'; cls = 'perf-high'; }
@@ -1340,7 +1346,9 @@ function renderGuestRanking() {
     + '1회 출연은 50%만 인정하고 출연이 한 번 늘 때마다 10%p씩 올라가 6회 이상이면 100% 반영해요 '
     + '(1회 50% · 2회 60% · 3회 70% · 4회 80% · 5회 90% · 6회↑ 100%). '
     + '많이 나왔는데도 평균을 웃돌면 실력, 한 번뿐이면 운일 수 있다는 뜻입니다. '
-    + '여기에 시청지속률 10% + 직전 회차 대비 추세 5%를 더합니다. 1.00이 채널 평균 수준이고, '
+    + '여기에 시청지속률 10% + 직전 회차 대비 추세 5%를 더하고, 출연 횟수만큼 보너스를 얹어요 '
+    + '(2회 +0.03 · 3회 +0.06 · 4회 +0.09 · 5회 +0.12 · 6회↑ +0.15). '
+    + '덕분에 조회수가 같으면 더 많이 출연한 게스트가 항상 높게 나옵니다. 1.00이 채널 평균 수준이고, '
     + '<b>적극 섭외</b> 1.30↑ · <b>섭외 추천</b> 1.05↑ · <b>유지</b> 0.85↑ · <b>재검토</b> 0.65↑ · <b>섭외 보류</b> 그 아래예요. '
     + '1회 출연은 점수가 아무리 높아도 적극 섭외로 올리지 않습니다. '
     + '클릭률은 브라우저에서 가져올 수 없어 빠져 있고, 숫자만 본 참고값이니 콘텐츠 맥락과 함께 보셔야 합니다.';
