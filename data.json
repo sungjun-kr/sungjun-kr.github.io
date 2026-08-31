@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-31T05:21:57.032Z",
+  "updatedAt": "2026-08-31T05:30:12.006Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -4447,7 +4447,7 @@
             "avgViewPct": null
           }
         ],
-        "updatedAt": "2026-08-31T05:21:42.733Z"
+        "updatedAt": "2026-08-31T05:30:00.085Z"
       },
       {
         "month": "2026-07",
@@ -4652,7 +4652,7 @@
             "avgViewPct": null
           }
         ],
-        "updatedAt": "2026-08-31T05:21:51.081Z"
+        "updatedAt": "2026-08-31T05:30:07.586Z"
       },
       {
         "month": "2026-08",
@@ -4663,7 +4663,7 @@
             "title": "2차전지 하늘이 내린 기회 왔다 9월에 잭팟 제대로 터집니다 (네모경제 김민규 대표)",
             "pub": "2026-08-29",
             "privacy": "public",
-            "views": 24485,
+            "views": 24489,
             "durationSec": 3031,
             "isShort": false,
             "avgViewDurationSec": null,
@@ -4747,17 +4747,6 @@
             "avgViewPct": null
           },
           {
-            "videoId": "0KWmkrRKTZE",
-            "title": "이미 월가에 싹 다 퍼졌다 월요일 아침 삼성전자 뒤집히나 (네모경제 김민규 대표)",
-            "pub": "2026-08-02",
-            "privacy": "public",
-            "views": 38897,
-            "durationSec": 93,
-            "isShort": true,
-            "avgViewDurationSec": null,
-            "avgViewPct": null
-          },
-          {
             "videoId": "Z0gtU6bRdFs",
             "title": "월요일 아침 상한가 찍나 삼성 분위기 완전 난리났다 (네모경제 김민규 대표)",
             "pub": "2026-08-01",
@@ -4769,7 +4758,7 @@
             "avgViewPct": null
           }
         ],
-        "updatedAt": "2026-08-31T05:21:55.944Z"
+        "updatedAt": "2026-08-31T05:30:12.006Z"
       },
       {
         "month": "2026-09",
