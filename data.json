@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-29T05:52:59.592Z",
+  "updatedAt": "2026-08-31T05:21:57.032Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -4276,6 +4276,513 @@
   "blocked": [
     "김광석",
     "존리",
-    "이명찬"
-  ]
+    "이명찬",
+    "이유미"
+  ],
+  "nemo": {
+    "months": [
+      {
+        "month": "2026-03",
+        "label": "2026년 3월",
+        "videos": [],
+        "updatedAt": "2026-08-31T05:21:04.291Z"
+      },
+      {
+        "month": "2026-04",
+        "label": "2026년 4월",
+        "videos": [],
+        "updatedAt": "2026-08-31T05:21:18.882Z"
+      },
+      {
+        "month": "2026-05",
+        "label": "2026년 5월",
+        "videos": [],
+        "updatedAt": "2026-08-31T05:21:31.481Z"
+      },
+      {
+        "month": "2026-06",
+        "label": "2026년 6월",
+        "videos": [
+          {
+            "videoId": "mIMJOlOuHt0",
+            "title": "2차전지 반등에 또 속았다? 포스코 에코프로 주식 다시 빠지는 이유 (네모경제 김민규 대표)",
+            "pub": "2026-06-30",
+            "privacy": "public",
+            "views": 3959,
+            "durationSec": 893,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "AsqvYUT_mNI",
+            "title": "\"월가에 퍼진 충격적 소문\" 2차전지 포스코 에코프로 순식간에 폭등할 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-06-29",
+            "privacy": "public",
+            "views": 12254,
+            "durationSec": 824,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "upT-m2ai4jY",
+            "title": "\"월가에 소문 싹다 퍼졌다\" 다음주 삼성전자 일 터지나 (네모경제 김민규 대표)",
+            "pub": "2026-06-27",
+            "privacy": "public",
+            "views": 5447,
+            "durationSec": 4676,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "9MOfkplbevo",
+            "title": "\"지금 무슨 일이 벌어지고 있어요...\" 외국인 매도폭탄보다 끔찍한 것 다음주 지옥이 펼쳐질 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-06-26",
+            "privacy": "public",
+            "views": 2757,
+            "durationSec": 916,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "QLFraGhAGs4",
+            "title": "삼성전자 개미들 오늘 밤잠 설친다 내일 아침 엄청난 일 터질 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-06-25",
+            "privacy": "public",
+            "views": 2025,
+            "durationSec": 902,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "JZz3RhXFHZY",
+            "title": "다음주 진짜 지옥문 열리나 지금 삼성전자가 문제가 아닙니다 (네모경제 김민규 대표)",
+            "pub": "2026-06-25",
+            "privacy": "public",
+            "views": 2529,
+            "durationSec": 802,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "aWyd2ii_CfU",
+            "title": "\"월가에 소문 싹다 퍼졌다\" 내일 아침 삼성전자 난리날 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-06-23",
+            "privacy": "public",
+            "views": 16591,
+            "durationSec": 1097,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "9S5KsAWcpGc",
+            "title": "\"포스코 에코프로\" 2차전지 뜻밖의 호재 터졌다! 곧 짐작도 못할 일 터진다 (네모경제 김민규 대표)",
+            "pub": "2026-06-22",
+            "privacy": "public",
+            "views": 12913,
+            "durationSec": 951,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "qgpWDm0zHqk",
+            "title": "\"돈벼락 시작입니다\" 2차전지 뜻밖의 겹호재 터졌다 포스코 에코프로 싹다 사세요 (네모경제 김민규 대표)",
+            "pub": "2026-06-20",
+            "privacy": "public",
+            "views": 6117,
+            "durationSec": 3927,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "bn6AT4WE908",
+            "title": "\"2차전지 비상사태입니다\" 포스코 에코프로 1주라도 있다면 '이렇게' 하세요 (네모경제 김민규 대표)",
+            "pub": "2026-06-19",
+            "privacy": "public",
+            "views": 10427,
+            "durationSec": 1004,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "t7LpQ-vdbrQ",
+            "title": "\"2차전지 상황 심상치 않다\" 포스코 에코프로 갖고 있다면 '이렇게' 하세요 (네모경제 김민규 대표)",
+            "pub": "2026-06-18",
+            "privacy": "public",
+            "views": 7297,
+            "durationSec": 1142,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "-_4LULOJIx4",
+            "title": "2차전지 에코프로 포스코 폭등 신호 떴다 하반기에 최소 5배 오를 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-06-16",
+            "privacy": "public",
+            "views": 10224,
+            "durationSec": 901,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "1re30xq__c4",
+            "title": "\"돈복사 될일만 남았다\" 2차전지 초대형 겹호재 터졌다 포스코 에코프로 싹다 담아라 (네모경제 김민규 대표)",
+            "pub": "2026-06-15",
+            "privacy": "public",
+            "views": 4975,
+            "durationSec": 881,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          }
+        ],
+        "updatedAt": "2026-08-31T05:21:42.733Z"
+      },
+      {
+        "month": "2026-07",
+        "label": "2026년 7월",
+        "videos": [
+          {
+            "videoId": "4w1L_qJFWFM",
+            "title": "2차전지 판 지금 열렸다 포스코홀딩스 100만원 간다 (네모경제 김민규 대표)",
+            "pub": "2026-07-30",
+            "privacy": "public",
+            "views": 9737,
+            "durationSec": 1126,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "T5pZOzfWVhM",
+            "title": "\"지금 시장 이상합니다\" 언론은 아무말도 못하는 중, 한국 증시 지금 '이런' 상황입니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-30",
+            "privacy": "public",
+            "views": 2867,
+            "durationSec": 453,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "CZzZLT-DjE8",
+            "title": "청산 폭탄 맞고 쓰러진 한국 증시 목요일 더 무시무시할 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-29",
+            "privacy": "public",
+            "views": 9666,
+            "durationSec": 617,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "giQ9i-MWv2A",
+            "title": "\"한국 주식 줄줄이 탈출?\" 월가에 퍼진 충격적 소문 외인이 한국주식 싹 다 파는 이유 (네모경제 김민규 대표)",
+            "pub": "2026-07-28",
+            "privacy": "public",
+            "views": 9307,
+            "durationSec": 974,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "IGaqQMgG3s4",
+            "title": "\"개미들만 통곡 중\" 청산 폭탄 맞고 쓰러진 한국 증시 월요일 더 무시무시할 겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-25",
+            "privacy": "public",
+            "views": 2946,
+            "durationSec": 709,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "CUDKvVOqtxo",
+            "title": "\"2차전지의 화려한 부활\" 에코프로 전재산 털어서 사세요 7월에 잭팟 제대로 터집니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-24",
+            "privacy": "public",
+            "views": 10766,
+            "durationSec": 738,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "eBo6rMWh2PI",
+            "title": "\"기대해도 좋습니다\" 한국증시 진짜 반등 시작 내일 아침 상상 못할일 터진다 (네모경제 김민규 대표)",
+            "pub": "2026-07-23",
+            "privacy": "public",
+            "views": 1997,
+            "durationSec": 812,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "iqziCa36bpk",
+            "title": "\"개미들만 모르고 있어요\" 2차전지 앞으로 이렇게 된다 (네모경제 김민규 대표)",
+            "pub": "2026-07-22",
+            "privacy": "public",
+            "views": 13856,
+            "durationSec": 1171,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "aIilzCBAl2A",
+            "title": "2차전지 상황 심상치 않다 보유중이라면 '이렇게' 하세요 (네모경제 김민규 대표)",
+            "pub": "2026-07-21",
+            "privacy": "public",
+            "views": 8587,
+            "durationSec": 472,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "ex9I8LceaeA",
+            "title": "삼전 하이닉스 폭발적 상승 나온다 다음주 주가 무서워집니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-17",
+            "privacy": "public",
+            "views": 2881,
+            "durationSec": 850,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "-Atz2JAubWc",
+            "title": "\"폭락에 속지 마세요\" 삼전 하이닉스 폭발적 상승 나온다 다음주 주가 무서워집니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-15",
+            "privacy": "public",
+            "views": 1582,
+            "durationSec": 751,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "bQUkLhw6wtE",
+            "title": "삼성전자 던진 개미들 통곡 내일 아침 삼성전자 놀라운 일 터진다 (네모경제 김민규 대표)",
+            "pub": "2026-07-14",
+            "privacy": "public",
+            "views": 4599,
+            "durationSec": 704,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "Qgw8rAxUuSI",
+            "title": "\"돈복사 될일만 남았다\" 2차전지 상황 심상치 않다 보유중이라면 '이렇게' 하세요 (네모경제 김민규 대표)",
+            "pub": "2026-07-11",
+            "privacy": "public",
+            "views": 5048,
+            "durationSec": 701,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "dXJVBXNI0wU",
+            "title": "\"한국 주식 줄줄이 탈출?\" 월가에 퍼진 충격적 소문 외인이 한국주식 싹 다 파는 이유 (네모경제 김민규 대표)",
+            "pub": "2026-07-09",
+            "privacy": "public",
+            "views": 14588,
+            "durationSec": 853,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "fbHF-RWLSdo",
+            "title": "삼성전자 하이닉스 결판났다 한 주라도 있다면 '이렇게' 하세요 (네모경제 김민규 대표)",
+            "pub": "2026-07-09",
+            "privacy": "public",
+            "views": 893,
+            "durationSec": 944,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "ydnl22Jf3X4",
+            "title": "\"딱 한달 남았습니다\" 에코프로 전재산 털어서 사세요, 40배 잭팟 지금이 가장 저점 (네모경제 김민규 대표)",
+            "pub": "2026-07-08",
+            "privacy": "public",
+            "views": 15831,
+            "durationSec": 993,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "2FSwgOMLPWQ",
+            "title": "\"나중에 사고 싶어도 못사요\" 포스코 100만원 갑니다, 곧 역사적 대불장 나옵니다 (네모경제 김민규 대표)",
+            "pub": "2026-07-06",
+            "privacy": "public",
+            "views": 3529,
+            "durationSec": 1079,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "hErXTc1j3gU",
+            "title": "\"삼성전자 실적발표 다가온다\" 오늘 삼성전자 던진 개미들 통곡, 내일 아침 놀라운 일 터진다 (네모경제 김민규 대표)",
+            "pub": "2026-07-06",
+            "privacy": "public",
+            "views": 6823,
+            "durationSec": 932,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          }
+        ],
+        "updatedAt": "2026-08-31T05:21:51.081Z"
+      },
+      {
+        "month": "2026-08",
+        "label": "2026년 8월",
+        "videos": [
+          {
+            "videoId": "LXB3M2AtZzs",
+            "title": "2차전지 하늘이 내린 기회 왔다 9월에 잭팟 제대로 터집니다 (네모경제 김민규 대표)",
+            "pub": "2026-08-29",
+            "privacy": "public",
+            "views": 24485,
+            "durationSec": 3031,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "drCCBxH53lU",
+            "title": "지금 개미들만 모르고 있습니다 앞으로 2차전지 '이렇게' 됩니다 (네모경제 김민규 대표)",
+            "pub": "2026-08-27",
+            "privacy": "public",
+            "views": 12289,
+            "durationSec": 2426,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "LVDIY4-qW0A",
+            "title": "\"연기금이 쓸어담았다\" 2차전지 전재산 털어서 사세요 40배 잭팟 지금이 최저점 (네모경제 김민규 대표)",
+            "pub": "2026-08-25",
+            "privacy": "public",
+            "views": 6138,
+            "durationSec": 1708,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "8y1yrSVek-s",
+            "title": "2차전지 하늘이 내린 기회 왔다 '이때' 쓸어담으면 대박난다 (네모경제 김민규 대표)",
+            "pub": "2026-08-21",
+            "privacy": "public",
+            "views": 6402,
+            "durationSec": 2970,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "B8LhrDwuERE",
+            "title": "내일 아침 상한가 가나, 삼성 분위기 제대로 난리났다 (네모경제 김민규 대표)",
+            "pub": "2026-08-20",
+            "privacy": "public",
+            "views": 1033,
+            "durationSec": 3176,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "0Q6145b9fRI",
+            "title": "월가에 퍼진 충격적 소문, 삼성 역대급 폭등 신호 포착 (네모경제 김민규 대표)",
+            "pub": "2026-08-13",
+            "privacy": "public",
+            "views": 938,
+            "durationSec": 1792,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "U77gmjm0zPo",
+            "title": "지금 개미들만 모르고 있습니다 앞으로 2차전지 '이렇게' 됩니다 (네모경제 김민규 대표)",
+            "pub": "2026-08-12",
+            "privacy": "public",
+            "views": 5632,
+            "durationSec": 2593,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "nTFoUZklqgQ",
+            "title": "하락장에 2차전지 판 개미들 눈물 곧 상상못할 일 터질겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-08-04",
+            "privacy": "public",
+            "views": 7517,
+            "durationSec": 1276,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "0KWmkrRKTZE",
+            "title": "이미 월가에 싹 다 퍼졌다 월요일 아침 삼성전자 뒤집히나 (네모경제 김민규 대표)",
+            "pub": "2026-08-02",
+            "privacy": "public",
+            "views": 38897,
+            "durationSec": 93,
+            "isShort": true,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "Z0gtU6bRdFs",
+            "title": "월요일 아침 상한가 찍나 삼성 분위기 완전 난리났다 (네모경제 김민규 대표)",
+            "pub": "2026-08-01",
+            "privacy": "public",
+            "views": 2874,
+            "durationSec": 1191,
+            "isShort": false,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          }
+        ],
+        "updatedAt": "2026-08-31T05:21:55.944Z"
+      },
+      {
+        "month": "2026-09",
+        "label": "2026년 9월",
+        "videos": [],
+        "updatedAt": "2026-08-31T05:21:56.502Z"
+      },
+      {
+        "month": "2026-10",
+        "label": "2026년 10월",
+        "videos": [],
+        "updatedAt": "2026-08-31T05:21:57.032Z"
+      }
+    ]
+  }
 }
