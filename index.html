@@ -1436,7 +1436,7 @@ function renderTeam(members) {
 // 김민규 대표가 정규 게스트로 직접 출연한 회차는 편 라벨(1·2부…풀버전)이 붙어 있고
 // 본채널·게스트 섹터에서 이미 세므로, 여기서는 라벨이 붙은 영상을 빼서 겹치지 않게 합니다.
 
-// 한 달치 요약 — 쇼츠는 평균을 왜곡하니 지표 계산에서 빼요.
+// 한 달치 요약 — 쇼츠는 수집 단계에서 이미 빠지지만, 예전 데이터를 위해 여기서도 한 번 더 걸러요.
 function nemoAgg(m) {
   const vs = ((m && m.videos) || []).filter(v => !v.isShort);
   const total = vs.reduce((s, v) => s + (v.views || 0), 0);
@@ -1490,11 +1490,12 @@ function renderNemo() {
 
   const a = nemoAgg(cur);
   const pa = prev ? nemoAgg(prev) : null;
-  const shorts = (cur.videos || []).filter(v => v.isShort);
+  // 쇼츠는 목록에서도 빼요.
+  const rows = (cur.videos || []).filter(v => !v.isShort);
 
   const sum = document.createElement('div');
   sum.className = 'kpi-row';
-  sum.appendChild(statTile('영상 수', `${a.count}편`, shorts.length ? `쇼츠 ${shorts.length}편 별도` : null));
+  sum.appendChild(statTile('영상 수', `${a.count}편`));
   sum.appendChild(appendDelta(statTile('합계 조회수', fmtNum(a.total)), a.total, pa ? pa.total : null, prevLabel));
   sum.appendChild(appendDelta(statTile('영상당 평균 조회수', a.avg === null ? '–' : fmtNum(a.avg)),
     a.avg, pa ? pa.avg : null, prevLabel));
@@ -1502,7 +1503,7 @@ function renderNemo() {
   sum.appendChild(statTile('평균 시청률', fmtPct(a.pct)));
   listEl.appendChild(sum);
 
-  if (!(cur.videos || []).length) {
+  if (!rows.length) {
     const e = document.createElement('div');
     e.className = 'empty-state';
     e.textContent = '이 달에는 네모경제 영상이 없어요.';
@@ -1516,14 +1517,12 @@ function renderNemo() {
       + '<th class="num">평균 시청시간</th><th class="num">시청률</th></tr></thead>';
     const tbody = document.createElement('tbody');
     // 최신 업로드가 위로 오게 정렬해요.
-    const rows = (cur.videos || []).slice().sort((x, y) => (x.pub < y.pub ? 1 : -1));
+    rows.sort((x, y) => (x.pub < y.pub ? 1 : -1));
     rows.forEach(v => {
       const tr = document.createElement('tr');
-      // 쇼츠는 평균에서 뺐으니 색 비교도 하지 않아요.
-      const perf = v.isShort ? { cls: null, sub: null } : perfLevel(v.views, a.avg);
+      const perf = perfLevel(v.views, a.avg);
       const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
-      const short = v.isShort ? ' <span class="badge-priv">쇼츠</span>' : '';
-      tr.innerHTML = `<td>${escapeHtml(v.title || '')}${priv}${short}</td>`
+      tr.innerHTML = `<td>${escapeHtml(v.title || '')}${priv}</td>`
         + `<td>${escapeHtml(v.pub || '')}</td>`
         + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${fmtNum(v.views)}`
         + (perf.sub ? `<div class="stat-sub">${perf.sub}</div>` : '') + '</td>'
@@ -1540,7 +1539,7 @@ function renderNemo() {
   note.className = 'fine-print';
   note.textContent = '본채널(웅달책방)에 올라온 영상 중 제목에 "네모경제"가 들어간 코너 영상만 모았어요. '
     + '김민규 대표가 정규 게스트로 직접 출연한 회차는 편 라벨(1·2부…풀버전)이 붙어 본채널·게스트 섹터에서 이미 집계되므로, '
-    + '여기서는 라벨이 붙은 영상을 빼서 두 번 세지 않습니다. 쇼츠(3분 미만)는 목록에는 남기되 평균 계산에서는 빼요. '
+    + '여기서는 라벨이 붙은 영상을 빼서 두 번 세지 않습니다. 쇼츠(3분 미만)는 목록과 지표에서 모두 제외합니다. '
     + '업로드된 달을 기준으로 나눕니다.';
   listEl.appendChild(note);
 }
@@ -2273,7 +2272,8 @@ async function refreshNemoMonth(monthKeyStr) {
     fetchAnalyticsForVideos(ids)
   ]);
 
-  const videos = picked.map(v => {
+  // 쇼츠(3분 미만)는 코너 지표에서 빼요.
+  const videos = picked.filter(v => !(typeof durs[v.videoId] === 'number' && durs[v.videoId] < 180)).map(v => {
     const d = durs[v.videoId];
     const a = an[v.videoId] || {};
     return {
