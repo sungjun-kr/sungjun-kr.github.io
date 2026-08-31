@@ -258,6 +258,11 @@ const ARCHIVE_CHANNELS = [
   { key: '부동산', name: '웅달책방_부동산', channelId: 'UCddUfRViMKUSWm8-OstEGVA' }
 ];
 const ARCHIVE_GROUPS = ['라이브', '통합본'];
+// 네모경제 섹터 — 제목에 "(네모경제 김민규 대표)"가 붙은 코너 영상만 모아요.
+// 김민규 대표가 정규 게스트로 직접 나오는 회차는 1·2부…풀버전 라벨이 붙고 본채널/게스트 섹터에서
+// 이미 집계되므로, 라벨이 붙은 영상은 여기서 빼서 두 번 세지 않게 합니다.
+const NEMO_KEYWORD = '네모경제';
+const NEMO_PART_RE = /\d+\s*부|풀버전/;
 const GITHUB_OWNER = 'sungjun-kr';
 const GITHUB_REPO = 'sungjun-kr.github.io';
 const DATA_PATH = 'data.json';
@@ -388,11 +393,16 @@ function currentSectorLabel() {
       : activeScope === 'team'
       ? (((publishedData.team && publishedData.team.members) || [])[0] || {}).months || []
       : (publishedData.months || []);
-    const m = ms.find(x => x.month === activeMonth);
+    let m = ms.find(x => x.month === activeMonth);
+    // 네모경제는 본채널과 같은 달 목록을 쓰되, 아직 수집 안 한 달도 라벨이 나오게 해요.
+    if (!m && activeScope === 'nemo' && activeMonth) {
+      m = { label: `${activeMonth.slice(0, 4)}년 ${+activeMonth.slice(5)}월` };
+    }
     return m ? m.label.replace(/^\d{4}년\s*/, '') : '';
   })();
   if (activeScope === 'archive') return `${activeArchive} ${monthLbl}`.trim();
   if (activeScope === 'team') return `팀원 ${monthLbl}`.trim();
+  if (activeScope === 'nemo') return `네모경제 ${monthLbl}`.trim();
   if (activeScope === 'guests') return '게스트 목록';
   if (activeScope === 'analysis') return '분석';
   if (activeScope === 'topics') return '주제별';
@@ -414,7 +424,8 @@ function updateRefreshLabel() {
   const allBtn = $('refresh-all-btn');
   allBtn.hidden = derived || activeScope === 'topics' || !(isAdmin && accessToken);
   allBtn.textContent = activeScope === 'archive' ? '저장소 전체 새로고침'
-    : activeScope === 'team' ? '팀원 전체 새로고침' : '본채널 전체 새로고침';
+    : activeScope === 'team' ? '팀원 전체 새로고침'
+    : activeScope === 'nemo' ? '네모경제 전체 새로고침' : '본채널 전체 새로고침';
 }
 
 // 갱신 대상 월 목록 — 이미 있는 달 + 캘린더에 일정이 있는 달을 합쳐요 (새 달도 자동 포함).
@@ -457,6 +468,14 @@ $('refresh-all-btn').addEventListener('click', async () => {
           try { await refreshTeamMonth(t, mk); } catch (err) { failed.push(`${t} ${mk}`); }
           done++;
         }
+      }
+    } else if (activeScope === 'nemo') {
+      const months = await monthsToRefreshMain();
+      for (const m of months) {
+        btn.textContent = `수집 중… (${done + 1}/${months.length})`;
+        $('sync-status').textContent = `네모경제 ${m} 수집 중…`;
+        try { await refreshNemoMonth(m); } catch (err) { failed.push(m); }
+        done++;
       }
     } else if (activeScope === 'archive') {
       const months = monthsToRefreshArchive();
@@ -575,6 +594,8 @@ function render() {
     ? (((publishedData.archive && publishedData.archive.channels) || []).find(c => c.key === activeArchive) || {}).months || []
     : activeScope === 'team'
     ? (((publishedData.team && publishedData.team.members) || [])[0] || {}).months || []
+    : activeScope === 'nemo'
+    ? ((publishedData.nemo && publishedData.nemo.months) || [])
     : (publishedData.months || []);
   const cur = ms.find(m => m.month === activeMonth);
   const stamp = (cur && cur.updatedAt) || publishedData.updatedAt;
@@ -596,6 +617,7 @@ function renderInner() {
     const defs = [['main', '본채널']];
     if ((publishedData.months || []).length) defs.push(['guests', '게스트']);
     if ((publishedData.months || []).some(m => m.month >= ANALYSIS_FROM)) defs.push(['analysis', '분석']);
+    if ((publishedData.nemo && (publishedData.nemo.months || []).length) || isAdmin) defs.push(['nemo', '네모경제']);
     if (archive.length) defs.push(['archive', '저장소']);
     if (team.length || isAdmin) defs.push(['team', '팀원']);
     defs.forEach(([key, label]) => {
@@ -625,6 +647,11 @@ function renderInner() {
 
   if (activeScope === 'topics') {
     renderTopics();
+    return;
+  }
+
+  if (activeScope === 'nemo') {
+    renderNemo();
     return;
   }
 
@@ -1404,6 +1431,120 @@ function renderTeam(members) {
   wrap.appendChild(note);
 }
 
+// ---------------- 네모경제 (코너 영상) ----------------
+// 제목에 "네모경제"가 들어간 코너 영상만 모아요.
+// 김민규 대표가 정규 게스트로 직접 출연한 회차는 편 라벨(1·2부…풀버전)이 붙어 있고
+// 본채널·게스트 섹터에서 이미 세므로, 여기서는 라벨이 붙은 영상을 빼서 겹치지 않게 합니다.
+
+// 한 달치 요약 — 쇼츠는 평균을 왜곡하니 지표 계산에서 빼요.
+function nemoAgg(m) {
+  const vs = ((m && m.videos) || []).filter(v => !v.isShort);
+  const total = vs.reduce((s, v) => s + (v.views || 0), 0);
+  const pv = vs.filter(v => typeof v.avgViewPct === 'number');
+  const dv = vs.filter(v => typeof v.avgViewDurationSec === 'number');
+  return {
+    count: vs.length,
+    total,
+    avg: vs.length ? Math.round(total / vs.length) : null,
+    pct: pv.length ? pv.reduce((s, v) => s + v.avgViewPct, 0) / pv.length : null,
+    dur: dv.length ? Math.round(dv.reduce((s, v) => s + v.avgViewDurationSec, 0) / dv.length) : null
+  };
+}
+
+function renderNemo() {
+  $('archive-tabs').hidden = true;
+  const tabsEl = $('month-tabs');
+  tabsEl.innerHTML = '';
+  const listEl = $('guest-list');
+  listEl.innerHTML = '';
+
+  const src = (publishedData.nemo && publishedData.nemo.months) || [];
+  // 달 목록은 본채널과 맞춰요 — 아직 안 모은 달도 눌러서 새로고침할 수 있게.
+  const tabs = (publishedData.months || []).map(m => ({ month: m.month, label: m.label }));
+  src.forEach(m => { if (!tabs.find(t => t.month === m.month)) tabs.push({ month: m.month, label: m.label }); });
+  tabs.sort((a, b) => (a.month < b.month ? -1 : 1));
+
+  if (!tabs.length) {
+    listEl.innerHTML = '<div class="empty-state">아직 표시할 데이터가 없어요.</div>';
+    return;
+  }
+  if (!activeMonth || !tabs.find(t => t.month === activeMonth)) activeMonth = tabs[tabs.length - 1].month;
+  tabs.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (t.month === activeMonth ? ' active' : '');
+    btn.textContent = t.label;
+    btn.addEventListener('click', () => { activeMonth = t.month; render(); });
+    tabsEl.appendChild(btn);
+  });
+
+  const idx = tabs.findIndex(t => t.month === activeMonth);
+  const cur = src.find(m => m.month === activeMonth);
+  const prev = idx > 0 ? src.find(m => m.month === tabs[idx - 1].month) : null;
+  const prevLabel = idx > 0 ? tabs[idx - 1].label : null;
+
+  if (!cur) {
+    listEl.innerHTML = '<div class="empty-state">이 달은 아직 수집하지 않았어요.'
+      + (isAdmin ? ' 위 "네모경제 ' + tabs[idx].label.replace(/^\d{4}년\s*/, '') + ' 새로고침"을 눌러주세요.' : '') + '</div>';
+    return;
+  }
+
+  const a = nemoAgg(cur);
+  const pa = prev ? nemoAgg(prev) : null;
+  const shorts = (cur.videos || []).filter(v => v.isShort);
+
+  const sum = document.createElement('div');
+  sum.className = 'kpi-row';
+  sum.appendChild(statTile('영상 수', `${a.count}편`, shorts.length ? `쇼츠 ${shorts.length}편 별도` : null));
+  sum.appendChild(appendDelta(statTile('합계 조회수', fmtNum(a.total)), a.total, pa ? pa.total : null, prevLabel));
+  sum.appendChild(appendDelta(statTile('영상당 평균 조회수', a.avg === null ? '–' : fmtNum(a.avg)),
+    a.avg, pa ? pa.avg : null, prevLabel));
+  sum.appendChild(statTile('평균 시청 지속시간', fmtDuration(a.dur)));
+  sum.appendChild(statTile('평균 시청률', fmtPct(a.pct)));
+  listEl.appendChild(sum);
+
+  if (!(cur.videos || []).length) {
+    const e = document.createElement('div');
+    e.className = 'empty-state';
+    e.textContent = '이 달에는 네모경제 영상이 없어요.';
+    listEl.appendChild(e);
+  } else {
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+    const table = document.createElement('table');
+    table.className = 'video-table';
+    table.innerHTML = '<thead><tr><th>제목</th><th>업로드</th><th class="num">조회수</th>'
+      + '<th class="num">평균 시청시간</th><th class="num">시청률</th></tr></thead>';
+    const tbody = document.createElement('tbody');
+    // 최신 업로드가 위로 오게 정렬해요.
+    const rows = (cur.videos || []).slice().sort((x, y) => (x.pub < y.pub ? 1 : -1));
+    rows.forEach(v => {
+      const tr = document.createElement('tr');
+      // 쇼츠는 평균에서 뺐으니 색 비교도 하지 않아요.
+      const perf = v.isShort ? { cls: null, sub: null } : perfLevel(v.views, a.avg);
+      const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
+      const short = v.isShort ? ' <span class="badge-priv">쇼츠</span>' : '';
+      tr.innerHTML = `<td>${escapeHtml(v.title || '')}${priv}${short}</td>`
+        + `<td>${escapeHtml(v.pub || '')}</td>`
+        + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${fmtNum(v.views)}`
+        + (perf.sub ? `<div class="stat-sub">${perf.sub}</div>` : '') + '</td>'
+        + `<td class="num">${fmtDuration(v.avgViewDurationSec)}</td>`
+        + `<td class="num">${fmtPct(v.avgViewPct)}</td>`;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    card.appendChild(table);
+    listEl.appendChild(card);
+  }
+
+  const note = document.createElement('p');
+  note.className = 'fine-print';
+  note.textContent = '본채널(웅달책방)에 올라온 영상 중 제목에 "네모경제"가 들어간 코너 영상만 모았어요. '
+    + '김민규 대표가 정규 게스트로 직접 출연한 회차는 편 라벨(1·2부…풀버전)이 붙어 본채널·게스트 섹터에서 이미 집계되므로, '
+    + '여기서는 라벨이 붙은 영상을 빼서 두 번 세지 않습니다. 쇼츠(3분 미만)는 목록에는 남기되 평균 계산에서는 빼요. '
+    + '업로드된 달을 기준으로 나눕니다.';
+  listEl.appendChild(note);
+}
+
 function renderArchive(channels) {
   // 2단: 카테고리 탭
   if (!activeArchive || !channels.find(c => c.key === activeArchive)) {
@@ -2079,6 +2220,10 @@ async function refreshCurrentSector() {
       btn.textContent = '수집 중…';
       $('sync-status').textContent = '최근 14일 업로드분을 주제별로 모으는 중…';
       await refreshTopics();
+    } else if (activeScope === 'nemo') {
+      btn.textContent = '수집 중…';
+      $('sync-status').textContent = `네모경제 ${activeMonth} 수집 중…`;
+      await refreshNemoMonth(activeMonth);
     } else if (activeScope === 'team') {
       btn.textContent = '수집 중…';
       for (const t of TEAM_MEMBERS) {
@@ -2104,6 +2249,58 @@ async function refreshCurrentSector() {
     btn.textContent = label;
     updateRefreshLabel();
   }
+}
+
+// 네모경제 코너의 한 달만 재수집
+async function refreshNemoMonth(monthKeyStr) {
+  const [y, mo] = monthKeyStr.split('-').map(Number);
+  const monthStart = new Date(Date.UTC(y, mo - 1, 1, -9));
+  const monthEnd = new Date(Date.UTC(y, mo, 1, -9));
+
+  const all = await fetchVideosInRange(YOUTUBE_CHANNEL_ID, monthStart.toISOString(), monthEnd.toISOString());
+  // 제목에 "네모경제"가 있고, 편 라벨이 없는 영상만 — 라벨이 있으면 직접 출연 회차라 본채널에서 이미 셌어요.
+  const picked = all.filter(v => {
+    const t = nfc(v.title);
+    if (!t.includes(NEMO_KEYWORD)) return false;
+    if (NEMO_PART_RE.test(t)) return false;
+    return true;
+  });
+
+  const ids = picked.map(v => v.videoId);
+  const [durs, views, an] = await Promise.all([
+    fetchDurations(ids),
+    fetchViewCounts(ids),
+    fetchAnalyticsForVideos(ids)
+  ]);
+
+  const videos = picked.map(v => {
+    const d = durs[v.videoId];
+    const a = an[v.videoId] || {};
+    return {
+      videoId: v.videoId,
+      title: nfc(v.title),
+      pub: v.publishedAt.toISOString().slice(0, 10),
+      privacy: v.privacy,
+      views: typeof views[v.videoId] === 'number' ? views[v.videoId] : null,
+      durationSec: typeof d === 'number' ? d : null,
+      isShort: typeof d === 'number' && d < 180,
+      avgViewDurationSec: typeof a.avgViewDurationSec === 'number' ? a.avgViewDurationSec : null,
+      avgViewPct: typeof a.avgViewPct === 'number' ? a.avgViewPct : null
+    };
+  }).sort((x, y) => (x.pub < y.pub ? 1 : -1));
+
+  const entry = {
+    month: monthKeyStr,
+    label: `${y}년 ${mo}월`,
+    videos,
+    updatedAt: new Date().toISOString()
+  };
+  publishedData.nemo = publishedData.nemo || { months: [] };
+  publishedData.nemo.months = publishedData.nemo.months || [];
+  const i = publishedData.nemo.months.findIndex(m => m.month === monthKeyStr);
+  if (i >= 0) publishedData.nemo.months[i] = entry; else publishedData.nemo.months.push(entry);
+  publishedData.nemo.months.sort((a, b) => (a.month < b.month ? -1 : 1));
+  publishedData.updatedAt = new Date().toISOString();
 }
 
 // 본채널의 한 달만 재수집
