@@ -705,8 +705,9 @@ function renderInner() {
     msg.textContent = '아직 업로드된 게스트가 없어요. 캘린더에 잡힌 촬영 일정만 표시합니다.';
     listEl.appendChild(msg);
   }
-  // 요약 (집계 완료된 게스트 기준)
-  const g5 = current.guests;
+  // 요약 (집계 완료된 게스트 기준) — 업로드가 진행 중인 게스트는 평균을 왜곡하니 기준선에서 빼요.
+  const g5 = current.guests.filter(isComplete);
+  const inProg = current.guests.filter(g => !isComplete(g));
   const totV = g5.reduce((s, g) => s + (g.totalViews || 0), 0);
   // 당월 게스트당 평균 조회수 — 각 게스트 총 조회수의 색상 기준선
   const monthAvgViews = g5.length ? totV / g5.length : null;
@@ -715,14 +716,15 @@ function renderInner() {
     sumRow.className = 'kpi-row';
     const totVid = g5.reduce((s, g) => s + (g.videoCount || (g.videos || []).length), 0);
     // 직전 달과 같은 방식으로 계산해 비교해요.
-    const pg = (prevMonth && prevMonth.guests) ? prevMonth.guests : [];
+    const pg = (prevMonth && prevMonth.guests) ? prevMonth.guests.filter(isComplete) : [];
     const pTotV = pg.reduce((s, g) => s + (g.totalViews || 0), 0);
     const pTotVid = pg.reduce((s, g) => s + (g.videoCount || (g.videos || []).length), 0);
     const pPerGuest = pg.length ? Math.round(pTotV / pg.length) : null;
     const pPerVideo = pTotVid ? Math.round(pTotV / pTotVid) : null;
     const pLabel = prevMonth ? prevMonth.label : null;
 
-    sumRow.appendChild(statTile('집계 완료 게스트', `${g5.length}명`));
+    sumRow.appendChild(statTile('집계 완료 게스트', `${g5.length}명`,
+      inProg.length ? `업로드 중 ${inProg.length}명` : null));
     sumRow.appendChild(appendDelta(statTile('합계 조회수', fmtNum(totV)),
       totV, pg.length ? pTotV : null, pLabel));
     sumRow.appendChild(appendDelta(statTile('게스트당 평균 조회수', fmtNum(Math.round(monthAvgViews))),
@@ -773,8 +775,19 @@ function renderInner() {
     nameEl.className = 'guest-name';
     nameEl.textContent = g.name;
 
+    // 업로드가 아직 안 끝난 회차는 비교 지표 대신 '업로드 중'만 보여줘요.
+    const done = isComplete(g);
+    if (!done) {
+      const b = document.createElement('span');
+      b.className = 'badge-priv';
+      b.style.marginLeft = '6px';
+      b.textContent = '업로드 중';
+      b.title = `아직 ${g.hasFull ? '편수가 부족해요' : '풀버전이 안 올라왔어요'} — 월 평균·게스트 랭킹 집계에서는 빠집니다.`;
+      nameEl.appendChild(b);
+    }
+
     // 이름 옆 등급 배지 (총 조회수 절대 기준)
-    const grade = gradeOf(g.totalViews);
+    const grade = done ? gradeOf(g.totalViews) : null;
     if (grade) {
       const badge = document.createElement('span');
       badge.className = `grade grade-${grade}`;
@@ -784,7 +797,7 @@ function renderInner() {
     }
 
     // 전월 대비 등급 변화 (같은 인물이 직전 달에도 출연한 경우)
-    const chg = gradeChange(g, prevMonth);
+    const chg = done ? gradeChange(g, prevMonth) : null;
     if (chg) {
       const el = document.createElement('span');
       const dir = chg.diff > 0 ? 'up' : (chg.diff < 0 ? 'down' : 'same');
@@ -813,12 +826,12 @@ function renderInner() {
     const kpiRow = document.createElement('div');
     kpiRow.className = 'kpi-row';
     // 총 조회수는 당월 게스트 평균과 비교해 색으로 표시해요.
-    const perf = perfLevel(g.totalViews, monthAvgViews);
+    const perf = done ? perfLevel(g.totalViews, monthAvgViews) : { cls: null, sub: '업로드 완료 후 집계' };
     const totalTile = statTile('총 조회수', fmtNum(g.totalViews), perf.sub);
     const totalValEl = totalTile.querySelector('.stat-value');
     if (perf.cls) totalValEl.classList.add(perf.cls);
     // 평균 대비 아래에 '직전 출연 대비 증감'을 덧붙여요.
-    const prevApp = findPrevAppearance(g, months, curIdx);
+    const prevApp = done ? findPrevAppearance(g, months, curIdx) : null;
     if (prevApp && typeof prevApp.guest.totalViews === 'number') {
       const diff = g.totalViews - prevApp.guest.totalViews;
       const base = prevApp.guest.totalViews;
@@ -834,7 +847,7 @@ function renderInner() {
       const line = document.createElement('div');
       line.className = 'stat-sub';
       line.style.color = 'var(--muted)';
-      line.textContent = '직전 출연 없음';
+      line.textContent = done ? '직전 출연 없음' : '업로드 진행 중';
       totalTile.appendChild(line);
     }
     kpiRow.appendChild(totalTile);
@@ -1125,6 +1138,8 @@ function buildGuestRanking() {
   const clusters = [];
   (publishedData.months || []).forEach(m => {
     (m.guests || []).forEach(g => {
+      // 업로드가 끝나지 않은 회차는 1회당 평균을 왜곡하니 랭킹에서 빼요.
+      if (!isComplete(g)) return;
       const key = guestKey(g.name);
       if (!key) return;
       let c = clusters.find(x => sameGuest(x.key, key));
@@ -1667,7 +1682,7 @@ function gradeChange(guest, prevMonth) {
   if (!prevMonth || !prevMonth.guests || !prevMonth.guests.length) return null;
   const key = guestKey(guest.name);
   if (!key) return null;
-  const matches = prevMonth.guests.filter(g => sameGuest(key, guestKey(g.name)));
+  const matches = prevMonth.guests.filter(g => isComplete(g) && sameGuest(key, guestKey(g.name)));
   if (!matches.length) return null;
   // 같은 달에 여러 번 출연했다면 가장 최근 회차를 기준으로 비교해요.
   const prev = matches.slice().sort((a, b) => String(a.eventDate).localeCompare(String(b.eventDate))).pop();
@@ -1685,7 +1700,7 @@ function findPrevAppearance(guest, months, curIdx) {
   for (let i = curIdx; i >= 0; i--) {
     const m = months[i];
     if (!m || !m.guests) continue;
-    const cands = m.guests.filter(g => sameGuest(key, guestKey(g.name))
+    const cands = m.guests.filter(g => isComplete(g) && sameGuest(key, guestKey(g.name))
       && String(g.eventDate) < String(guest.eventDate));
     if (cands.length) {
       const prev = cands.slice().sort((a, b) => String(a.eventDate).localeCompare(String(b.eventDate))).pop();
@@ -1694,6 +1709,11 @@ function findPrevAppearance(guest, months, curIdx) {
   }
   return null;
 }
+
+// 세트가 다 올라왔는지 (풀버전 + 3편 이상).
+// 1부만 올라와도 화면에는 바로 나오지만, 평균·랭킹 같은 비교 지표는 완성된 세트만 씁니다.
+// 예전에 저장된 데이터에는 이 값이 없어서 완료로 봐요.
+function isComplete(g) { return !g || g.complete !== false; }
 
 // 총 조회수 절대 기준 등급 (월 평균과 무관)
 //  20만 이상 S / 15만~ A / 10만~ B / 8만 초과~ C / 8만 이하 D
@@ -2355,9 +2375,11 @@ async function refreshMainMonth(monthKeyStr) {
       }
     });
     const numParts = [...parts].filter(k => k !== 'full').length;
-    const ok = parts.has('full') && numParts >= MIN_PARTS;
+    // 1부가 올라온 순간부터 바로 반영해요. 세트가 다 차기 전까지는 '업로드 중'으로 표시합니다.
+    const complete = parts.has('full') && numParts >= MIN_PARTS;
+    const ok = picked.length > 0;
     if (ok) picked.forEach(p => used.add(p.videoId));
-    return { ...ev, picked, hasFull: parts.has('full'), numParts, ok };
+    return { ...ev, picked, hasFull: parts.has('full'), numParts, complete, ok };
   });
 
   const ids = [...new Set(sets.filter(s => s.ok).flatMap(s => s.picked.map(p => p.videoId)))];
@@ -2390,6 +2412,7 @@ async function refreshMainMonth(monthKeyStr) {
     const ad = avg('avgViewDurationSec'), ap = avg('avgViewPct');
     guests.push({
       name: s.name, eventDate: s.date.toISOString().slice(0, 10), category: s.category || null, videoCount: n,
+      complete: s.complete, hasFull: s.hasFull, numParts: s.numParts,
       totalViews, avgViews: Math.round(totalViews / n),
       avgViewDurationSec: ad == null ? null : Math.round(ad),
       avgViewPct: ap == null ? null : +ap.toFixed(2),
