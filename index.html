@@ -263,6 +263,10 @@ const ARCHIVE_GROUPS = ['라이브', '통합본'];
 // 이미 집계되므로, 라벨이 붙은 영상은 여기서 빼서 두 번 세지 않게 합니다.
 const NEMO_KEYWORD = '네모경제';
 const NEMO_PART_RE = /\d+\s*부|풀버전/;
+// 유효 조회수(engagedViews) — 유튜브 스튜디오 '고급 모드'의 그 값이에요.
+// Analytics API가 아직 안 주는 구간이 있어서, 실패하면 기본 지표만으로 다시 물어봅니다.
+const ANALYTICS_METRICS = 'averageViewDuration,averageViewPercentage,engagedViews';
+const ANALYTICS_METRICS_BASIC = 'averageViewDuration,averageViewPercentage';
 const GITHUB_OWNER = 'sungjun-kr';
 const GITHUB_REPO = 'sungjun-kr.github.io';
 const DATA_PATH = 'data.json';
@@ -754,6 +758,14 @@ function renderInner() {
       + '<span class="grade grade-C">C</span><span class="lg">8만~10만</span>'
       + '<span class="grade grade-D">D</span><span class="lg">8만 이하</span>';
     listEl.appendChild(gradeLegend);
+
+    const basis = document.createElement('p');
+    basis.className = 'fine-print';
+    basis.style.margin = '2px 0 10px';
+    const known = g5.filter(g => g.engagedKnown).length;
+    basis.textContent = '조회수는 유효 조회수(스튜디오 고급 모드) 기준입니다'
+      + (known === g5.length ? '.' : ` — 아직 유효 조회수를 못 받은 게스트 ${g5.length - known}명은 일반 조회수로 대체했어요.`);
+    listEl.appendChild(basis);
   }
 
   current.guests.forEach((g, idx) => {
@@ -867,14 +879,17 @@ function renderInner() {
       // 분석 섹터에 기록한 작업 로직을 편별로 함께 보여줘요.
       const logicRec = loadLogic()[logicKeyOf(g)] || {};
       const hasLogic = Object.keys(logicRec).length > 0;
-      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th>`
+      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>유효 조회수</th><th>평균 시청시간</th><th>시청률</th>`
         + (hasLogic ? `<th>작업 로직</th>` : '') + `</tr></thead>`;
+      // 유효 조회수를 받은 영상은 그 값을 쓰고, 아래에 일반 조회수를 함께 보여줘요.
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
         const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
         const sum = logicSummary(logicRec[v.part]);
-        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`
+        const sub = (typeof v.engagedViews === 'number' && v.engagedViews !== v.views)
+          ? `<div class="stat-sub" style="color:var(--muted)">일반 ${fmtNum(v.views)}</div>` : '';
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(effViews(v))}${sub}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`
           + (hasLogic ? `<td class="logic-sum">${sum ? escapeHtml(sum) : '–'}</td>` : '');
         tbody.appendChild(tr);
       });
@@ -1379,7 +1394,7 @@ function renderGuestRanking() {
 
   const note = document.createElement('p');
   note.className = 'fine-print';
-  note.textContent = '본채널 집계분만 대상이에요. 여러 번 출연한 게스트는 한 줄로 묶어 1회 출연당 평균을 냈고, '
+  note.textContent = '조회수는 유효 조회수(스튜디오 고급 모드) 기준이고, 아직 못 받은 영상은 일반 조회수로 대체합니다. 본채널 집계분만 대상이에요. 여러 번 출연한 게스트는 한 줄로 묶어 1회 출연당 평균을 냈고, '
     + '티어는 그 평균값 기준입니다 (S 20만 / A 15만 / B 10만 / C 8만 초과 / D 그 이하). '
     + '평균 대비 %는 전체 게스트의 1회 출연당 평균과 비교한 값이에요. 다음 촬영은 캘린더에 잡힌 예정 일정을 보여주며, 없으면 “일정 없음”으로 표시합니다.';
   const note2 = document.createElement('p');
@@ -1454,7 +1469,7 @@ function renderTeam(members) {
 // 한 달치 요약 — 쇼츠는 수집 단계에서 이미 빠지지만, 예전 데이터를 위해 여기서도 한 번 더 걸러요.
 function nemoAgg(m) {
   const vs = ((m && m.videos) || []).filter(v => !v.isShort);
-  const total = vs.reduce((s, v) => s + (v.views || 0), 0);
+  const total = vs.reduce((s, v) => s + (effViews(v) || 0), 0);
   const pv = vs.filter(v => typeof v.avgViewPct === 'number');
   const dv = vs.filter(v => typeof v.avgViewDurationSec === 'number');
   return {
@@ -1528,18 +1543,20 @@ function renderNemo() {
     card.className = 'guest-card';
     const table = document.createElement('table');
     table.className = 'video-table';
-    table.innerHTML = '<thead><tr><th>제목</th><th>업로드</th><th class="num">조회수</th>'
+    table.innerHTML = '<thead><tr><th>제목</th><th>업로드</th><th class="num">유효 조회수</th>'
       + '<th class="num">평균 시청시간</th><th class="num">시청률</th></tr></thead>';
     const tbody = document.createElement('tbody');
     // 최신 업로드가 위로 오게 정렬해요.
     rows.sort((x, y) => (x.pub < y.pub ? 1 : -1));
     rows.forEach(v => {
       const tr = document.createElement('tr');
-      const perf = perfLevel(v.views, a.avg);
+      const perf = perfLevel(effViews(v), a.avg);
       const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
       tr.innerHTML = `<td>${escapeHtml(v.title || '')}${priv}</td>`
         + `<td>${escapeHtml(v.pub || '')}</td>`
-        + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${fmtNum(v.views)}`
+        + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${fmtNum(effViews(v))}`
+        + (typeof v.engagedViews === 'number' && v.engagedViews !== v.views
+            ? `<div class="stat-sub" style="color:var(--muted)">일반 ${fmtNum(v.views)}</div>` : '')
         + (perf.sub ? `<div class="stat-sub">${perf.sub}</div>` : '') + '</td>'
         + `<td class="num">${fmtDuration(v.avgViewDurationSec)}</td>`
         + `<td class="num">${fmtPct(v.avgViewPct)}</td>`;
@@ -1555,7 +1572,7 @@ function renderNemo() {
   note.textContent = '본채널(웅달책방)에 올라온 영상 중 제목에 "네모경제"가 들어간 코너 영상만 모았어요. '
     + '김민규 대표가 정규 게스트로 직접 출연한 회차는 편 라벨(1·2부…풀버전)이 붙어 본채널·게스트 섹터에서 이미 집계되므로, '
     + '여기서는 라벨이 붙은 영상을 빼서 두 번 세지 않습니다. 쇼츠(3분 미만)는 목록과 지표에서 모두 제외합니다. '
-    + '업로드된 달을 기준으로 나눕니다.';
+    + '업로드된 달을 기준으로 나눕니다. 조회수는 유효 조회수(스튜디오 고급 모드) 기준이며, 아직 못 받은 영상은 일반 조회수로 대체해요.';
   listEl.appendChild(note);
 }
 
@@ -1770,6 +1787,23 @@ function statTile(label, value, sub) {
 }
 
 // 화면 하단에 크게 알림을 띄워요.
+// 조회수 계산 기준 — 유효 조회수가 있으면 그걸 쓰고, 아직 못 받았으면 일반 조회수로 버팁니다.
+function effViews(v) {
+  if (!v) return null;
+  if (typeof v.engagedViews === 'number') return v.engagedViews;
+  return typeof v.views === 'number' ? v.views : null;
+}
+
+// 시청 지표 수집이 실패하면 조용히 넘어가지 않고 화면에 빨간 알림을 띄워요.
+// (예전에는 실패해도 빈 값으로 덮어써서 지표가 사라졌습니다.)
+function analyticsFailure(failed, total, msg) {
+  if (!failed) return;
+  const text = `\u26a0 시청 지표(유효 조회수·시청률)를 못 받았어요 — ${failed}/${total} 요청 실패 (${String(msg).slice(0, 100)}). 기존 값은 그대로 뒀습니다.`;
+  showToast(text, false);
+  const el = $('sync-status');
+  if (el) { el.hidden = false; el.style.color = 'var(--critical)'; el.textContent = text; }
+}
+
 function showToast(msg, ok = true) {
   const el = $('toast');
   el.textContent = msg;
@@ -2015,24 +2049,42 @@ async function fetchAnalyticsForVideos(videoIds) {
   const result = {};
   const batches = [];
   for (let i = 0; i < videoIds.length; i += 50) batches.push(videoIds.slice(i, i + 50));
-  const pages = await Promise.all(batches.map(batch => {
+  const ask = (batch, metrics) => {
     const qs = new URLSearchParams({
       ids: `channel==${YOUTUBE_CHANNEL_ID}`,
       startDate: '2005-01-01',
       endDate: new Date().toISOString().slice(0, 10),
-      metrics: 'averageViewDuration,averageViewPercentage',
+      metrics,
       dimensions: 'video',
       filters: `video==${batch.join(',')}`,
       maxResults: '200'
     });
-    return authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`).catch(() => null);
+    return authFetch(`https://youtubeanalytics.googleapis.com/v2/reports?${qs}`);
+  };
+  let failed = 0, lastErr = '';
+  const pages = await Promise.all(batches.map(async batch => {
+    try { return await ask(batch, ANALYTICS_METRICS); }
+    catch (e1) {
+      // 유효 조회수를 아직 못 주는 경우가 있어 기본 지표만으로 한 번 더 시도해요.
+      try { return await ask(batch, ANALYTICS_METRICS_BASIC); }
+      catch (e2) { failed++; lastErr = e2.message; return null; }
+    }
   }));
   pages.forEach(data => {
-    ((data && data.rows) || []).forEach(row => {
-      const [videoId, avgViewDuration, avgViewPct] = row;
-      result[videoId] = { avgViewDurationSec: avgViewDuration, avgViewPct };
+    if (!data) return;
+    // 열 순서를 가정하지 않고 columnHeaders로 짝지어요 (지표를 추가해도 안 깨지도록).
+    const cols = (data.columnHeaders || []).map(c => c.name);
+    (data.rows || []).forEach(row => {
+      const o = {};
+      cols.forEach((c, i) => { o[c] = row[i]; });
+      result[o.video] = {
+        avgViewDurationSec: typeof o.averageViewDuration === 'number' ? o.averageViewDuration : null,
+        avgViewPct: typeof o.averageViewPercentage === 'number' ? o.averageViewPercentage : null,
+        engagedViews: typeof o.engagedViews === 'number' ? o.engagedViews : null
+      };
     });
   });
+  analyticsFailure(failed, batches.length, lastErr);
   return result;
 }
 
@@ -2304,6 +2356,7 @@ async function refreshNemoMonth(monthKeyStr) {
       views: typeof views[v.videoId] === 'number' ? views[v.videoId] : null,
       durationSec: typeof d === 'number' ? d : null,
       isShort: typeof d === 'number' && d < 180,
+      engagedViews: typeof a.engagedViews === 'number' ? a.engagedViews : null,
       avgViewDurationSec: typeof a.avgViewDurationSec === 'number' ? a.avgViewDurationSec : null,
       avgViewPct: typeof a.avgViewPct === 'number' ? a.avgViewPct : null
     };
@@ -2387,6 +2440,13 @@ async function refreshMainMonth(monthKeyStr) {
     fetchViewCounts(ids), fetchAnalyticsForVideos(ids)
   ]);
 
+  // 시청 지표를 못 받았을 때 예전 값을 잃지 않도록, 직전에 저장해둔 값을 찾아둬요.
+  const prevMonthEntry = (publishedData.months || []).find(m => m.month === monthKeyStr);
+  const prevVals = {};
+  ((prevMonthEntry || {}).guests || []).forEach(g => (g.videos || []).forEach(v => {
+    prevVals[`${g.name}|${g.eventDate}|${v.part}`] = v;
+  }));
+
   const guests = [], pending = [];
   sets.forEach(s => {
     if (!s.ok) {
@@ -2399,21 +2459,28 @@ async function refreshMainMonth(monthKeyStr) {
     }
     const videos = s.picked.map(p => {
       const a = analytics[p.videoId] || {};
+      const old = prevVals[`${s.name}|${s.date.toISOString().slice(0, 10)}|${p.part}`] || {};
+      // 이번에 못 받은 지표는 예전 값을 그대로 둡니다 (빈 값으로 덮어쓰지 않아요).
+      const keep = (now, before) => (typeof now === 'number' ? now : (typeof before === 'number' ? before : null));
       return {
         part: p.part, pub: p.pub, title: p.title || null, privacy: p.privacy || null,
-        views: viewCounts[p.videoId] ?? null,
-        avgViewDurationSec: a.avgViewDurationSec ?? null,
-        avgViewPct: a.avgViewPct ?? null
+        views: viewCounts[p.videoId] ?? old.views ?? null,
+        engagedViews: keep(a.engagedViews, old.engagedViews),
+        avgViewDurationSec: keep(a.avgViewDurationSec, old.avgViewDurationSec),
+        avgViewPct: keep(a.avgViewPct, old.avgViewPct)
       };
     }).sort((a, b) => partOrder(a.part) - partOrder(b.part));
     const n = videos.length || 1;
     const avg = k => { const q = videos.map(v => v[k]).filter(x => typeof x === 'number'); return q.length ? q.reduce((a, b) => a + b, 0) / q.length : null; };
-    const totalViews = videos.reduce((x, v) => x + (v.views || 0), 0);
+    // 집계는 유효 조회수 기준이에요 (아직 못 받은 영상은 일반 조회수로 대체).
+    const totalViews = videos.reduce((x, v) => x + (effViews(v) || 0), 0);
+    const totalRawViews = videos.reduce((x, v) => x + (v.views || 0), 0);
+    const engagedKnown = videos.every(v => typeof v.engagedViews === 'number');
     const ad = avg('avgViewDurationSec'), ap = avg('avgViewPct');
     guests.push({
       name: s.name, eventDate: s.date.toISOString().slice(0, 10), category: s.category || null, videoCount: n,
       complete: s.complete, hasFull: s.hasFull, numParts: s.numParts,
-      totalViews, avgViews: Math.round(totalViews / n),
+      totalViews, totalRawViews, engagedKnown, avgViews: Math.round(totalViews / n),
       avgViewDurationSec: ad == null ? null : Math.round(ad),
       avgViewPct: ap == null ? null : +ap.toFixed(2),
       videos
