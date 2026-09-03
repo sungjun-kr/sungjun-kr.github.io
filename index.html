@@ -351,7 +351,10 @@ $('admin-link').addEventListener('click', () => {
     redirect_uri: REDIRECT_URI,
     response_type: 'token',
     scope: SCOPES,
-    include_granted_scopes: 'true'
+    include_granted_scopes: 'true',
+    // 계정을 고를 수 있게 항상 선택 화면을 띄워요.
+    // 시청 지표(Analytics)는 그 채널을 소유한 계정으로 로그인해야 나옵니다.
+    prompt: 'select_account'
   });
   location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
 });
