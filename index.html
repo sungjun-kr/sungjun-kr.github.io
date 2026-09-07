@@ -758,12 +758,21 @@ function renderInner() {
 
     const gradeLegend = document.createElement('div');
     gradeLegend.className = 'legend';
-    gradeLegend.innerHTML = '<span class="fine-print">등급(총 조회수 절대 기준):</span>'
-      + '<span class="grade grade-S">S</span><span class="lg">20만↑</span>'
-      + '<span class="grade grade-A">A</span><span class="lg">15만~20만</span>'
-      + '<span class="grade grade-B">B</span><span class="lg">10만~15만</span>'
-      + '<span class="grade grade-C">C</span><span class="lg">8만~10만</span>'
-      + '<span class="grade grade-D">D</span><span class="lg">8만 이하</span>';
+    const anyNew = g5.some(g => isNewRule(gradeDateOf(g)));
+    const anyOld = g5.some(g => !isNewRule(gradeDateOf(g)));
+    const row = (label, a, b, c, d, e) => `<span class="fine-print">${label}</span>`
+      + `<span class="grade grade-S">S</span><span class="lg">${a}</span>`
+      + `<span class="grade grade-A">A</span><span class="lg">${b}</span>`
+      + `<span class="grade grade-B">B</span><span class="lg">${c}</span>`
+      + `<span class="grade grade-C">C</span><span class="lg">${d}</span>`
+      + `<span class="grade grade-D">D</span><span class="lg">${e}</span>`;
+    // 조회수 집계 방식이 8/24부터 바뀌어 기준선이 둘로 나뉘어요.
+    let html = '';
+    if (anyNew) html += row(anyOld ? '등급 (8/24 이후 업로드):' : '등급(총 조회수 절대 기준):',
+      '45만↑', '30만~45만', '20만~30만', '10만~20만', '10만 미만');
+    if (anyOld) html += (anyNew ? '<br>' : '') + row(anyNew ? '등급 (8/23 이전 업로드):' : '등급(총 조회수 절대 기준):',
+      '20만↑', '15만~20만', '10만~15만', '8만~10만', '8만 이하');
+    gradeLegend.innerHTML = html;
     listEl.appendChild(gradeLegend);
   }
 
@@ -798,12 +807,13 @@ function renderInner() {
     }
 
     // 이름 옆 등급 배지 (총 조회수 절대 기준)
-    const grade = done ? gradeOf(g.totalViews) : null;
+    const grade = done ? gradeOf(g.totalViews, gradeDateOf(g)) : null;
     if (grade) {
       const badge = document.createElement('span');
       badge.className = `grade grade-${grade}`;
       badge.textContent = grade;
-      badge.title = `총 조회수 ${fmtNum(g.totalViews)} → ${grade}등급`;
+      badge.title = `총 조회수 ${fmtNum(g.totalViews)} → ${grade}등급`
+        + (isNewRule(gradeDateOf(g)) ? ' (8/24 이후 기준)' : ' (8/23 이전 기준)');
       nameEl.appendChild(badge);
     }
 
@@ -1182,7 +1192,8 @@ function buildGuestRanking() {
     c.totalViews = c.appearances.reduce((s, a) => s + a.views, 0);
     c.avgPerAppearance = c.count ? Math.round(c.totalViews / c.count) : 0;
     c.last = c.appearances[c.appearances.length - 1];
-    c.tier = gradeOf(c.avgPerAppearance);
+    // 여러 회차를 묶은 평균이라, 가장 최근 출연일의 기준선을 씁니다.
+    c.tier = gradeOf(c.avgPerAppearance, c.last && c.last.date);
     // 시청 지표는 편수로 가중 평균해요 (편수가 많은 회차가 더 크게 반영되도록).
     const wsum = (k) => {
       let w = 0, v = 0;
@@ -1395,7 +1406,7 @@ function renderGuestRanking() {
 
   const note = document.createElement('p');
   note.className = 'fine-print';
-  note.textContent = '본채널 집계분만 대상이에요. 여러 번 출연한 게스트는 한 줄로 묶어 1회 출연당 평균을 냈고, '
+  note.textContent = '티어는 유튜브 조회수 집계 방식이 바뀐 2026-08-24를 경계로 기준선이 달라요 — 가장 최근 출연일이 속한 쪽 기준으로 매깁니다. 본채널 집계분만 대상이에요. 여러 번 출연한 게스트는 한 줄로 묶어 1회 출연당 평균을 냈고, '
     + '티어는 그 평균값 기준입니다 (S 20만 / A 15만 / B 10만 / C 8만 초과 / D 그 이하). '
     + '평균 대비 %는 전체 게스트의 1회 출연당 평균과 비교한 값이에요. 다음 촬영은 캘린더에 잡힌 예정 일정을 보여주며, 없으면 “일정 없음”으로 표시합니다.';
   const note2 = document.createElement('p');
@@ -1707,8 +1718,10 @@ function gradeChange(guest, prevMonth) {
   if (!matches.length) return null;
   // 같은 달에 여러 번 출연했다면 가장 최근 회차를 기준으로 비교해요.
   const prev = matches.slice().sort((a, b) => String(a.eventDate).localeCompare(String(b.eventDate))).pop();
-  const from = gradeOf(prev.totalViews);
-  const to = gradeOf(guest.totalViews);
+  const from = gradeOf(prev.totalViews, gradeDateOf(prev));
+  const to = gradeOf(guest.totalViews, gradeDateOf(guest));
+  // 기준선이 바뀐 경계를 넘는 비교는 등급이 뚝 떨어져 보여서 표시하지 않아요.
+  if (isNewRule(gradeDateOf(guest)) !== isNewRule(gradeDateOf(prev))) return null;
   if (!from || !to) return null;
   const diff = (GRADE_ORDER[to] ?? 0) - (GRADE_ORDER[from] ?? 0);
   return { from, to, diff, prevName: prev.name, prevViews: prev.totalViews, prevLabel: prevMonth.label };
@@ -1737,13 +1750,27 @@ function findPrevAppearance(guest, months, curIdx) {
 function isComplete(g) { return !g || g.complete !== false; }
 
 // 총 조회수 절대 기준 등급 (월 평균과 무관)
-//  20만 이상 S / 15만~ A / 10만~ B / 8만 초과~ C / 8만 이하 D
-function gradeOf(totalViews) {
+//  유튜브 조회수 집계 방식이 2026-08-24부터 바뀌어 숫자가 전반적으로 커졌어요.
+//  그래서 그날 이후 업로드분은 기준선을 따로 씁니다 (이전 회차는 예전 기준 그대로).
+//   8/24 이후 — 45만↑ S / 30만~ A / 20만~ B / 10만~ C / 10만 미만 D
+//   8/23 이전 — 20만↑ S / 15만~ A / 10만~ B / 8만 초과~ C / 8만 이하 D
+const VIEW_RULE_CHANGE = '2026-08-24';
+const GRADE_NEW = [[450000, 'S'], [300000, 'A'], [200000, 'B'], [100000, 'C']];
+const GRADE_OLD = [[200000, 'S'], [150000, 'A'], [100000, 'B'], [80001, 'C']];
+
+function isNewRule(dateStr) { return !!dateStr && String(dateStr) >= VIEW_RULE_CHANGE; }
+
+// 등급 기준일 — 그 회차의 첫 업로드일을 씁니다 (없으면 촬영일).
+function gradeDateOf(g) {
+  if (!g) return null;
+  const pubs = (g.videos || []).map(v => v.pub).filter(Boolean).sort();
+  return pubs[0] || g.eventDate || null;
+}
+
+function gradeOf(totalViews, dateStr) {
   if (typeof totalViews !== 'number') return null;
-  if (totalViews >= 200000) return 'S';
-  if (totalViews >= 150000) return 'A';
-  if (totalViews >= 100000) return 'B';
-  if (totalViews > 80000) return 'C';
+  const table = isNewRule(dateStr) ? GRADE_NEW : GRADE_OLD;
+  for (const [min, g] of table) if (totalViews >= min) return g;
   return 'D';
 }
 
