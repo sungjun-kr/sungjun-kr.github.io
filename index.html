@@ -265,6 +265,10 @@ const NEMO_KEYWORD = '네모경제';
 const NEMO_PART_RE = /\d+\s*부|풀버전/;
 // 유효 조회수(engagedViews) — 유튜브 스튜디오 '고급 모드'의 그 값이에요.
 // Analytics API가 아직 안 주는 구간이 있어서, 실패하면 기본 지표만으로 다시 물어봅니다.
+// 시청률·유효 조회수는 채널 소유자 계정으로 로그인해야만 받을 수 있어 지금은 화면에서 감춰뒀어요.
+// 다시 보이게 하려면 아래 두 값을 true로 바꾸면 됩니다 (수집은 계속 시도합니다).
+const SHOW_VIEW_PCT = false;
+const SHOW_ENGAGED = false;
 const ANALYTICS_METRICS = 'averageViewDuration,averageViewPercentage,engagedViews';
 const ANALYTICS_METRICS_BASIC = 'averageViewDuration,averageViewPercentage';
 const GITHUB_OWNER = 'sungjun-kr';
@@ -860,9 +864,9 @@ function renderInner() {
     kpiRow.appendChild(totalTile);
     kpiRow.appendChild(statTile('평균 조회수', fmtNum(g.avgViews)));
     kpiRow.appendChild(statTile('평균 시청 지속시간', fmtDuration(g.avgViewDurationSec)));
-    kpiRow.appendChild(statTile('평균 시청률', fmtPct(g.avgViewPct)));
+    if (SHOW_VIEW_PCT) kpiRow.appendChild(statTile('평균 시청률', fmtPct(g.avgViewPct)));
     // 유효 조회수 — 스튜디오 고급 모드 값. 참고용이라 평균·티어 계산에는 안 들어가요.
-    kpiRow.appendChild(statTile('유효 조회수', fmtNum(g.totalEngagedViews), '참고용'));
+    if (SHOW_ENGAGED) kpiRow.appendChild(statTile('유효 조회수', fmtNum(g.totalEngagedViews), '참고용'));
     card.appendChild(kpiRow);
 
     // 클릭 시 펼쳐지는 편별 상세
@@ -876,14 +880,16 @@ function renderInner() {
       // 분석 섹터에 기록한 작업 로직을 편별로 함께 보여줘요.
       const logicRec = loadLogic()[logicKeyOf(g)] || {};
       const hasLogic = Object.keys(logicRec).length > 0;
-      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th><th>시청률</th>`
+      table.innerHTML = `<thead><tr><th>편</th><th>업로드</th><th>조회수</th><th>평균 시청시간</th>`
+        + (SHOW_VIEW_PCT ? `<th>시청률</th>` : '')
         + (hasLogic ? `<th>작업 로직</th>` : '') + `</tr></thead>`;
       const tbody = document.createElement('tbody');
       g.videos.forEach(v => {
         const tr = document.createElement('tr');
         const priv = (v.privacy && v.privacy !== 'public') ? ' <span class="badge-priv">비공개</span>' : '';
         const sum = logicSummary(logicRec[v.part]);
-        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td><td class="num">${fmtPct(v.avgViewPct)}</td>`
+        tr.innerHTML = `<td>${escapeHtml(v.part || v.title)}${priv}</td><td>${escapeHtml(v.pub || '')}</td><td class="num">${fmtNum(v.views)}</td><td class="num">${fmtDuration(v.avgViewDurationSec)}</td>`
+          + (SHOW_VIEW_PCT ? `<td class="num">${fmtPct(v.avgViewPct)}</td>` : '')
           + (hasLogic ? `<td class="logic-sum">${sum ? escapeHtml(sum) : '–'}</td>` : '');
         tbody.appendChild(tr);
       });
@@ -1331,7 +1337,8 @@ function renderGuestRanking() {
     || b.avgPerAppearance - a.avgPerAppearance);
   table.innerHTML = '<thead><tr><th>#</th><th>게스트</th><th>섭외</th><th>티어</th>'
     + '<th class="num">총 출연</th><th class="num">1회당 평균</th><th class="num">평균 대비</th>'
-    + '<th class="num">시청률</th><th>최근 출연</th><th>다음 촬영</th><th>AI 분석</th></tr></thead>';
+    + (SHOW_VIEW_PCT ? '<th class="num">시청률</th>' : '')
+    + '<th>최근 출연</th><th>다음 촬영</th><th>AI 분석</th></tr></thead>';
   const tbody = document.createElement('tbody');
   let rank = 0;
   rows.forEach((r) => {
@@ -1356,7 +1363,7 @@ function renderGuestRanking() {
       + `<td class="num">${r.count}회</td>`
       + `<td class="num"><strong>${fmtNum(r.avgPerAppearance)}</strong></td>`
       + `<td class="num ${cls}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}%</td>`
-      + `<td class="num">${typeof r.avgViewPct === 'number' ? r.avgViewPct.toFixed(1) + '%' : '–'}</td>`
+      + (SHOW_VIEW_PCT ? `<td class="num">${typeof r.avgViewPct === 'number' ? r.avgViewPct.toFixed(1) + '%' : '–'}</td>` : '')
       + `<td>${escapeHtml(lastDate)}</td>`
       + `<td>${next}</td>`
       + `<td><span class="${r.call.cls}" style="font-weight:700">${r.call.verdict}</span>`
@@ -1527,8 +1534,8 @@ function renderNemo() {
   sum.appendChild(appendDelta(statTile('영상당 평균 조회수', a.avg === null ? '–' : fmtNum(a.avg)),
     a.avg, pa ? pa.avg : null, prevLabel));
   sum.appendChild(statTile('평균 시청 지속시간', fmtDuration(a.dur)));
-  sum.appendChild(statTile('평균 시청률', fmtPct(a.pct)));
-  sum.appendChild(statTile('유효 조회수', fmtNum(a.eng), '참고용'));
+  if (SHOW_VIEW_PCT) sum.appendChild(statTile('평균 시청률', fmtPct(a.pct)));
+  if (SHOW_ENGAGED) sum.appendChild(statTile('유효 조회수', fmtNum(a.eng), '참고용'));
   listEl.appendChild(sum);
 
   if (!rows.length) {
@@ -1542,7 +1549,8 @@ function renderNemo() {
     const table = document.createElement('table');
     table.className = 'video-table';
     table.innerHTML = '<thead><tr><th>제목</th><th>업로드</th><th class="num">조회수</th>'
-      + '<th class="num">평균 시청시간</th><th class="num">시청률</th></tr></thead>';
+      + '<th class="num">평균 시청시간</th>'
+      + (SHOW_VIEW_PCT ? '<th class="num">시청률</th>' : '') + '</tr></thead>';
     const tbody = document.createElement('tbody');
     // 최신 업로드가 위로 오게 정렬해요.
     rows.sort((x, y) => (x.pub < y.pub ? 1 : -1));
@@ -1555,7 +1563,7 @@ function renderNemo() {
         + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${fmtNum(v.views)}`
         + (perf.sub ? `<div class="stat-sub">${perf.sub}</div>` : '') + '</td>'
         + `<td class="num">${fmtDuration(v.avgViewDurationSec)}</td>`
-        + `<td class="num">${fmtPct(v.avgViewPct)}</td>`;
+        + (SHOW_VIEW_PCT ? `<td class="num">${fmtPct(v.avgViewPct)}</td>` : '');
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
@@ -1787,7 +1795,7 @@ function statTile(label, value, sub) {
 // (예전에는 실패해도 빈 값으로 덮어써서 지표가 사라졌습니다.)
 function analyticsFailure(failed, total, msg) {
   if (!failed) return;
-  const text = `\u26a0 시청 지표(유효 조회수·시청률)를 못 받았어요 — ${failed}/${total} 요청 실패 (${String(msg).slice(0, 100)}). 기존 값은 그대로 뒀습니다.`;
+  const text = `\u26a0 시청 지표(시청 지속시간 등)를 못 받았어요 — ${failed}/${total} 요청 실패 (${String(msg).slice(0, 100)}). 기존 값은 그대로 뒀습니다.`;
   showToast(text, false);
   const el = $('sync-status');
   if (el) { el.hidden = false; el.style.color = 'var(--critical)'; el.textContent = text; }
