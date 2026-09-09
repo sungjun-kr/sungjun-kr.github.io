@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-07T02:07:39.871Z",
+  "updatedAt": "2026-09-09T04:57:46.015Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -4515,9 +4515,9 @@
           "complete": true,
           "hasFull": true,
           "numParts": 3,
-          "totalViews": 236302,
+          "totalViews": 259446,
           "totalEngagedViews": null,
-          "avgViews": 59076,
+          "avgViews": 64862,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -4526,7 +4526,7 @@
               "pub": "2026-09-02",
               "title": "\"미국이 전재산 걸었다\" 일주일도 안 남았습니다 곧 비트코인 금 발칵 뒤집힌다 (김창익 대표 / 1부)",
               "privacy": "public",
-              "views": 67927,
+              "views": 68966,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4536,7 +4536,7 @@
               "pub": "2026-09-03",
               "title": "일론 머스크의 충격적 예언 곧 코인판이 발칵 뒤집힌다 (김창익 대표 / 2부)",
               "privacy": "public",
-              "views": 17804,
+              "views": 18353,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4546,7 +4546,7 @@
               "pub": "2026-09-04",
               "title": "클래리티법 결국 통과한다, 비트코인 초대형 호재 터졌다 (김창익 대표 / 3부)",
               "privacy": "public",
-              "views": 58718,
+              "views": 63835,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4556,7 +4556,7 @@
               "pub": "2026-09-06",
               "title": "\"미국이 전재산 걸었다\" 일주일도 안남았습니다 곧 비트코인, 금 완전 뒤집힌다 (김창익 대표 / 풀버전)",
               "privacy": "public",
-              "views": 91853,
+              "views": 108292,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4567,13 +4567,13 @@
           "name": "이철재 기자",
           "eventDate": "2026-09-02",
           "category": "교양",
-          "videoCount": 3,
-          "complete": false,
-          "hasFull": false,
-          "numParts": 3,
-          "totalViews": 38188,
+          "videoCount": 5,
+          "complete": true,
+          "hasFull": true,
+          "numParts": 4,
+          "totalViews": 91705,
           "totalEngagedViews": null,
-          "avgViews": 12729,
+          "avgViews": 18341,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -4582,7 +4582,7 @@
               "pub": "2026-09-04",
               "title": "한국 자폭드론에 전세계 발칵, 곧 무시무시한 일 터질 겁니다 (이철재 기자 / 1부)",
               "privacy": "public",
-              "views": 6485,
+              "views": 6504,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4592,7 +4592,7 @@
               "pub": "2026-09-05",
               "title": "KF-21 수출 초대박 발칵, 전세계가 줄 서기 시작했다 (이철재 기자 / 2부)",
               "privacy": "public",
-              "views": 13787,
+              "views": 15387,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4602,7 +4602,27 @@
               "pub": "2026-09-06",
               "title": "K9 억지부렸던 스페인 이제와서 땅치고 후회하는 이유 (이철재 기자 / 3부)",
               "privacy": "public",
-              "views": 17916,
+              "views": 25163,
+              "engagedViews": null,
+              "avgViewDurationSec": null,
+              "avgViewPct": null
+            },
+            {
+              "part": "4부",
+              "pub": "2026-09-07",
+              "title": "\"판세 180도 뒤집혔다\" 우크라 한국에 무기 내놔라 생떼 한국 반응에 전세계 놀란 진짜 이유 (이철재 기자 / 4부)",
+              "privacy": "public",
+              "views": 22100,
+              "engagedViews": null,
+              "avgViewDurationSec": null,
+              "avgViewPct": null
+            },
+            {
+              "part": "풀버전",
+              "pub": "2026-09-08",
+              "title": "우크라 한국에 무기달라고 난리 한국 반응에 전세계 놀란 진짜 이유 (이철재 기자 / 풀버전)",
+              "privacy": "public",
+              "views": 22551,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4617,9 +4637,9 @@
           "complete": false,
           "hasFull": false,
           "numParts": 4,
-          "totalViews": 127229,
+          "totalViews": 148864,
           "totalEngagedViews": null,
-          "avgViews": 31807,
+          "avgViews": 37216,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -4628,7 +4648,7 @@
               "pub": "2026-09-03",
               "title": "\"정말 큰 패착을 뒀습니다\" 중국 굉장히 위태롭습니다 충격적인 중국 실제 상황 (조현승 박사 / 1부)",
               "privacy": "public",
-              "views": 31149,
+              "views": 31699,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4638,7 +4658,7 @@
               "pub": "2026-09-04",
               "title": "클래리티법 결국 통과합니다, 비트코인 초대형 호재 터졌다 (조현승 박사 / 2부)",
               "privacy": "public",
-              "views": 61987,
+              "views": 67374,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4648,7 +4668,7 @@
               "pub": "2026-09-05",
               "title": "\"살다살다 이런 불경기는 처음\" 충격적인 한국경제 실제상황 (조현승 박사 / 3부)",
               "privacy": "public",
-              "views": 19205,
+              "views": 30092,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4658,7 +4678,33 @@
               "pub": "2026-09-06",
               "title": "\"엔화 초비상 사태 터졌다\" 앞으로 일본 피바람 분다 (조현승 박사 / 4부)",
               "privacy": "public",
-              "views": 14888,
+              "views": 19699,
+              "engagedViews": null,
+              "avgViewDurationSec": null,
+              "avgViewPct": null
+            }
+          ]
+        },
+        {
+          "name": "이영훈 영업이사",
+          "eventDate": "2026-09-08",
+          "category": "투자",
+          "videoCount": 1,
+          "complete": false,
+          "hasFull": false,
+          "numParts": 1,
+          "totalViews": 787,
+          "totalEngagedViews": null,
+          "avgViews": 787,
+          "avgViewDurationSec": null,
+          "avgViewPct": null,
+          "videos": [
+            {
+              "part": "1부",
+              "pub": "2026-09-09",
+              "title": "외국인 장난질 선을 넘었다? 강한 흔들림 나와도 속지 마세요 (이영훈 영업이사 / 1부)",
+              "privacy": "public",
+              "views": 787,
               "engagedViews": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
@@ -4667,12 +4713,6 @@
         }
       ],
       "pending": [
-        {
-          "name": "이영훈 영업이사",
-          "eventDate": "2026-09-08",
-          "uploaded": 0,
-          "note": "미업로드"
-        },
         {
           "name": "김민석 특파원",
           "eventDate": "2026-09-10",
@@ -4708,9 +4748,21 @@
           "eventDate": "2026-09-23",
           "uploaded": 0,
           "note": "미업로드"
+        },
+        {
+          "name": "류한수 교수",
+          "eventDate": "2026-09-23",
+          "uploaded": 0,
+          "note": "미업로드"
+        },
+        {
+          "name": "박현도 교수",
+          "eventDate": "2026-09-28",
+          "uploaded": 0,
+          "note": "미업로드"
         }
       ],
-      "updatedAt": "2026-09-07T02:07:19.753Z"
+      "updatedAt": "2026-09-09T04:57:46.015Z"
     },
     {
       "month": "2026-10",
