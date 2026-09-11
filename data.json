@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-10T06:19:35.176Z",
+  "updatedAt": "2026-09-11T03:29:12.840Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -4825,10 +4825,30 @@
               }
             },
             "updatedAt": "2026-09-10T04:00:36.297Z"
+          },
+          {
+            "month": "2026-09",
+            "label": "2026년 9월",
+            "videoCount": 39,
+            "avgViews": 8058,
+            "avgViewDurationSec": null,
+            "groups": {
+              "라이브": {
+                "videoCount": 30,
+                "avgViews": 6835,
+                "avgViewDurationSec": null
+              },
+              "통합본": {
+                "videoCount": 9,
+                "avgViews": 12136,
+                "avgViewDurationSec": null
+              }
+            },
+            "updatedAt": "2026-09-11T03:28:59.344Z"
           }
         ],
-        "subscribers": 2230,
-        "subsAt": "2026-09-10T04:00:36.491Z"
+        "subscribers": 2270,
+        "subsAt": "2026-09-11T03:28:59.483Z"
       },
       {
         "key": "교양",
@@ -4854,10 +4874,30 @@
               }
             },
             "updatedAt": "2026-09-10T04:00:54.168Z"
+          },
+          {
+            "month": "2026-09",
+            "label": "2026년 9월",
+            "videoCount": 21,
+            "avgViews": 13382,
+            "avgViewDurationSec": null,
+            "groups": {
+              "라이브": {
+                "videoCount": 5,
+                "avgViews": 4558,
+                "avgViewDurationSec": null
+              },
+              "통합본": {
+                "videoCount": 16,
+                "avgViews": 16140,
+                "avgViewDurationSec": null
+              }
+            },
+            "updatedAt": "2026-09-11T03:29:00.866Z"
           }
         ],
-        "subscribers": 7620,
-        "subsAt": "2026-09-10T04:00:54.357Z"
+        "subscribers": 8060,
+        "subsAt": "2026-09-11T03:29:00.994Z"
       },
       {
         "key": "부동산",
@@ -4883,10 +4923,25 @@
               }
             },
             "updatedAt": "2026-09-10T04:01:05.428Z"
+          },
+          {
+            "month": "2026-09",
+            "label": "2026년 9월",
+            "videoCount": 5,
+            "avgViews": 9762,
+            "avgViewDurationSec": null,
+            "groups": {
+              "통합본": {
+                "videoCount": 5,
+                "avgViews": 9762,
+                "avgViewDurationSec": null
+              }
+            },
+            "updatedAt": "2026-09-11T03:29:01.834Z"
           }
         ],
-        "subscribers": 411,
-        "subsAt": "2026-09-10T04:01:05.547Z"
+        "subscribers": 412,
+        "subsAt": "2026-09-11T03:29:01.960Z"
       }
     ]
   },
@@ -4916,6 +4971,17 @@
             "avgViewsPerVideo": 59062,
             "scheduled": 14,
             "updatedAt": "2026-09-10T03:59:54.170Z"
+          },
+          {
+            "month": "2026-09",
+            "label": "2026년 9월",
+            "guestCount": 3,
+            "videoCount": 15,
+            "totalViews": 380532,
+            "avgViewsPerGuest": 126844,
+            "avgViewsPerVideo": 25369,
+            "scheduled": 12,
+            "updatedAt": "2026-09-11T03:29:09.788Z"
           }
         ]
       },
@@ -4943,6 +5009,17 @@
             "avgViewsPerVideo": 63282,
             "scheduled": 10,
             "updatedAt": "2026-09-10T04:00:00.390Z"
+          },
+          {
+            "month": "2026-09",
+            "label": "2026년 9월",
+            "guestCount": 0,
+            "videoCount": 0,
+            "totalViews": 0,
+            "avgViewsPerGuest": null,
+            "avgViewsPerVideo": null,
+            "scheduled": 7,
+            "updatedAt": "2026-09-11T03:29:12.840Z"
           }
         ]
       }
@@ -5751,8 +5828,93 @@
       {
         "month": "2026-09",
         "label": "2026년 9월",
-        "videos": [],
-        "updatedAt": "2026-08-31T05:21:56.502Z"
+        "videos": [
+          {
+            "videoId": "RfvsCVVI1P8",
+            "title": "\"2차전지 눌릴 때 모아놓으세요\" 압도적 1등 대장주 '이 종목' (네모경제 김민규 대표)",
+            "pub": "2026-09-10",
+            "privacy": "public",
+            "views": 10167,
+            "durationSec": 3325,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "1d-kqApW1uQ",
+            "title": "내일 아침 상한가 가나, 삼전닉스 분위기 난리났다 (네모경제 김민규 대표)",
+            "pub": "2026-09-09",
+            "privacy": "public",
+            "views": 8793,
+            "durationSec": 3229,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "spEYBvoAojg",
+            "title": "2차전지 앞으로 100배 오른다 '이 주식'만 무식하게 모으세요 (네모경제 김민규 대표)",
+            "pub": "2026-09-08",
+            "privacy": "public",
+            "views": 11428,
+            "durationSec": 3031,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "B1F3BRPJf3k",
+            "title": "2차전지 판 지금 열렸다 에코프로 어마무시해집니다 (네모경제 김민규 대표)",
+            "pub": "2026-09-04",
+            "privacy": "public",
+            "views": 27898,
+            "durationSec": 2910,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "5dRwCyOPDbA",
+            "title": "하락장에 2차전지 판 개미들 눈물 곧 상상못할 일 터질겁니다 (네모경제 김민규 대표)",
+            "pub": "2026-09-03",
+            "privacy": "public",
+            "views": 12356,
+            "durationSec": 3661,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "nyfbLNeG5vI",
+            "title": "2차전지 앞으로 100배 오른다 '이 주식'만 무식하게 모으세요 (네모경제 김민규 대표)",
+            "pub": "2026-09-02",
+            "privacy": "public",
+            "views": 12782,
+            "durationSec": 2491,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          },
+          {
+            "videoId": "kIfc7xgc59E",
+            "title": "2차전지 앞으로 100배 오른다 '이 주식'만 무식하게 모으세요 (네모경제 김민규 대표)",
+            "pub": "2026-09-01",
+            "privacy": "public",
+            "views": 18439,
+            "durationSec": 3055,
+            "isShort": false,
+            "engagedViews": null,
+            "avgViewDurationSec": null,
+            "avgViewPct": null
+          }
+        ],
+        "updatedAt": "2026-09-11T03:29:06.546Z"
       },
       {
         "month": "2026-10",
