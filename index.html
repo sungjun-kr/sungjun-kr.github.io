@@ -1462,23 +1462,68 @@ function renderTeam(members) {
     const d = mem.months.find(x => x.month === activeMonth);
     const card = document.createElement('div');
     card.className = 'guest-card';
-    const head = document.createElement('div');
-    head.style.cssText = 'display:flex;align-items:baseline;gap:10px;margin-bottom:12px;';
-    head.innerHTML = `<span class="guest-name">${escapeHtml(mem.key)}</span>` +
-      `<span class="guest-date">${d ? `게스트 ${d.guestCount}명 · 영상 ${d.videoCount}편` : '데이터 없음'}</span>`;
+    const list = (d && d.guests) || [];
+
+    // 카드를 누르면 게스트 목록이 펼쳐져요.
+    const head = document.createElement('button');
+    head.className = 'guest-toggle' + (list.length ? '' : ' no-detail');
+    head.type = 'button';
+    head.setAttribute('aria-expanded', 'false');
+    const left = document.createElement('div');
+    left.className = 'guest-toggle-left';
+    left.innerHTML = `<span class="guest-name">${escapeHtml(mem.key)}</span>`
+      + `<span class="guest-date">${d ? `게스트 ${d.guestCount}명 · 영상 ${d.videoCount}편` : '데이터 없음'}</span>`;
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '▾';
+    chevron.hidden = !list.length;
+    head.appendChild(left);
+    head.appendChild(chevron);
     card.appendChild(head);
+
     const row = document.createElement('div');
     row.className = 'kpi-row';
     row.appendChild(statTile('게스트당 평균 조회수', d ? fmtNum(d.avgViewsPerGuest) : '–'));
     row.appendChild(statTile('영상당 평균 조회수', d ? fmtNum(d.avgViewsPerVideo) : '–'));
     card.appendChild(row);
+
+    if (list.length) {
+      const panel = document.createElement('div');
+      panel.className = 'detail-panel';
+      panel.hidden = true;
+      const table = document.createElement('table');
+      table.className = 'video-table';
+      table.innerHTML = '<thead><tr><th>게스트</th><th>촬영일</th><th class="num">영상</th>'
+        + '<th class="num">총 조회수</th><th class="num">평균 대비</th></tr></thead>';
+      const tbody = document.createElement('tbody');
+      list.forEach(g => {
+        // 색은 그 달 담당자 평균(게스트당)과 비교해서 매겨요.
+        const perf = perfLevel(g.totalViews, d.avgViewsPerGuest);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(g.name)}</td>`
+          + `<td>${escapeHtml(g.eventDate || '')}</td>`
+          + `<td class="num">${g.videoCount}편</td>`
+          + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${fmtNum(g.totalViews)}</td>`
+          + `<td class="num${perf.cls ? ' ' + perf.cls : ''}">${perf.sub ? escapeHtml(perf.sub.replace('평균 대비 ', '')) : '–'}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      panel.appendChild(table);
+      card.appendChild(panel);
+      head.addEventListener('click', () => {
+        const open = panel.hidden;
+        panel.hidden = !open;
+        head.setAttribute('aria-expanded', String(open));
+        card.classList.toggle('open', open);
+      });
+    }
     wrap.appendChild(card);
   });
 
   const note = document.createElement('p');
   note.className = 'fine-print';
   note.style.marginTop = '4px';
-  note.textContent = '캘린더 담당 태그 기준이에요. 본채널과 같이 풀버전까지 올라온 세트만 집계하며, 쇼츠·재업로드·특집은 제외합니다. 업로드가 진행 중인 게스트는 빠져요.';
+  note.textContent = '담당자 이름을 누르면 그 달 게스트 목록이 펼쳐져요. 캘린더 담당 태그 기준이에요. 본채널과 같이 풀버전까지 올라온 세트만 집계하며, 쇼츠·재업로드·특집은 제외합니다. 업로드가 진행 중인 게스트는 빠져요.';
   wrap.appendChild(note);
 }
 
@@ -2578,7 +2623,7 @@ async function refreshTeamMonth(tag, monthKeyStr) {
     const numParts = [...parts].filter(k => k !== 'full').length;
     if (parts.has('full') && numParts >= MIN_PARTS) {
       picked.forEach(id => used.add(id));
-      sets.push({ name: ev.name, ids: picked });
+      sets.push({ name: ev.name, date: ev.date, ids: picked });
     }
   });
 
@@ -2588,9 +2633,17 @@ async function refreshTeamMonth(tag, monthKeyStr) {
   const guestCount = sets.length;
   const videoCount = allIds.length;
 
+  // 카드를 펼쳤을 때 보여줄 게스트 목록 (조회수 많은 순)
+  const guests = sets.map(st => ({
+    name: st.name,
+    eventDate: st.date.toISOString().slice(0, 10),
+    videoCount: st.ids.length,
+    totalViews: st.ids.reduce((a, id) => a + (views[id] || 0), 0)
+  })).sort((a, b) => b.totalViews - a.totalViews);
+
   const entry = {
     month: monthKeyStr, label: `${y}년 ${mo}월`,
-    guestCount, videoCount, totalViews,
+    guestCount, videoCount, totalViews, guests,
     avgViewsPerGuest: guestCount ? Math.round(totalViews / guestCount) : null,
     avgViewsPerVideo: videoCount ? Math.round(totalViews / videoCount) : null,
     scheduled: events.length,
