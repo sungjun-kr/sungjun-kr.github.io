@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T04:34:26.006Z",
+  "updatedAt": "2026-09-16T05:03:35.087Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -5135,33 +5135,249 @@
             "label": "2026년 7월",
             "guestCount": 16,
             "videoCount": 80,
-            "totalViews": 2213294,
-            "avgViewsPerGuest": 138331,
-            "avgViewsPerVideo": 27666,
+            "totalViews": 2260492,
+            "guests": [
+              {
+                "name": "이영종 센터장",
+                "eventDate": "2026-07-16",
+                "videoCount": 5,
+                "totalViews": 496813
+              },
+              {
+                "name": "조한범 박사님",
+                "eventDate": "2026-07-27",
+                "videoCount": 5,
+                "totalViews": 375500
+              },
+              {
+                "name": "이장원 세무사님",
+                "eventDate": "2026-07-03",
+                "videoCount": 5,
+                "totalViews": 292575
+              },
+              {
+                "name": "장우진 대표",
+                "eventDate": "2026-07-24",
+                "videoCount": 5,
+                "totalViews": 168876
+              },
+              {
+                "name": "유창희 대표",
+                "eventDate": "2026-07-31",
+                "videoCount": 5,
+                "totalViews": 163648
+              },
+              {
+                "name": "강관우 대표",
+                "eventDate": "2026-07-22",
+                "videoCount": 5,
+                "totalViews": 151815
+              },
+              {
+                "name": "김학렬 소장님",
+                "eventDate": "2026-07-08",
+                "videoCount": 5,
+                "totalViews": 125875
+              },
+              {
+                "name": "호사카 유지 교수님",
+                "eventDate": "2026-07-15",
+                "videoCount": 5,
+                "totalViews": 91632
+              },
+              {
+                "name": "김대준 대표님",
+                "eventDate": "2026-07-27",
+                "videoCount": 5,
+                "totalViews": 84944
+              },
+              {
+                "name": "김제경 박사",
+                "eventDate": "2026-07-14",
+                "videoCount": 5,
+                "totalViews": 77599
+              },
+              {
+                "name": "이화진차장님",
+                "eventDate": "2026-07-07",
+                "videoCount": 5,
+                "totalViews": 58905
+              },
+              {
+                "name": "전인구 소장님",
+                "eventDate": "2026-07-21",
+                "videoCount": 5,
+                "totalViews": 57847
+              },
+              {
+                "name": "하창봉 대표님",
+                "eventDate": "2026-07-20",
+                "videoCount": 5,
+                "totalViews": 48162
+              },
+              {
+                "name": "이성호 세무사",
+                "eventDate": "2026-07-28",
+                "videoCount": 5,
+                "totalViews": 28664
+              },
+              {
+                "name": "한창수 교수님",
+                "eventDate": "2026-07-02",
+                "videoCount": 5,
+                "totalViews": 19060
+              },
+              {
+                "name": "최윤성 대표",
+                "eventDate": "2026-07-06",
+                "videoCount": 5,
+                "totalViews": 18577
+              }
+            ],
+            "avgViewsPerGuest": 141281,
+            "avgViewsPerVideo": 28256,
             "scheduled": 16,
-            "updatedAt": "2026-08-29T05:52:33.186Z"
+            "updatedAt": "2026-09-16T05:03:06.748Z"
           },
           {
             "month": "2026-08",
             "label": "2026년 8월",
             "guestCount": 14,
             "videoCount": 66,
-            "totalViews": 3898090,
-            "avgViewsPerGuest": 278435,
-            "avgViewsPerVideo": 59062,
+            "totalViews": 4039212,
+            "guests": [
+              {
+                "name": "이영종 센터장",
+                "eventDate": "2026-08-20",
+                "videoCount": 5,
+                "totalViews": 907185
+              },
+              {
+                "name": "이장원 세무사",
+                "eventDate": "2026-08-04",
+                "videoCount": 4,
+                "totalViews": 420859
+              },
+              {
+                "name": "신작가",
+                "eventDate": "2026-08-28",
+                "videoCount": 5,
+                "totalViews": 403047
+              },
+              {
+                "name": "유광종 소장님",
+                "eventDate": "2026-08-06",
+                "videoCount": 5,
+                "totalViews": 372287
+              },
+              {
+                "name": "김정호 교수",
+                "eventDate": "2026-08-10",
+                "videoCount": 5,
+                "totalViews": 360417
+              },
+              {
+                "name": "김제경 박사님",
+                "eventDate": "2026-08-27",
+                "videoCount": 4,
+                "totalViews": 327275
+              },
+              {
+                "name": "진재일 교수님",
+                "eventDate": "2026-08-26",
+                "videoCount": 5,
+                "totalViews": 292840
+              },
+              {
+                "name": "호사카 유지 교수",
+                "eventDate": "2026-08-14",
+                "videoCount": 4,
+                "totalViews": 237857
+              },
+              {
+                "name": "강민국 탈북민",
+                "eventDate": "2026-08-11",
+                "videoCount": 5,
+                "totalViews": 222726
+              },
+              {
+                "name": "박준영 대표님",
+                "eventDate": "2026-08-07",
+                "videoCount": 5,
+                "totalViews": 128517
+              },
+              {
+                "name": "조의준 대표",
+                "eventDate": "2026-08-05",
+                "videoCount": 5,
+                "totalViews": 125706
+              },
+              {
+                "name": "김동엽 대표님",
+                "eventDate": "2026-08-04",
+                "videoCount": 5,
+                "totalViews": 100185
+              },
+              {
+                "name": "빠숑 김학렬 소장님",
+                "eventDate": "2026-08-19",
+                "videoCount": 5,
+                "totalViews": 71925
+              },
+              {
+                "name": "김장열 센터장",
+                "eventDate": "2026-08-10",
+                "videoCount": 4,
+                "totalViews": 68386
+              }
+            ],
+            "avgViewsPerGuest": 288515,
+            "avgViewsPerVideo": 61200,
             "scheduled": 14,
-            "updatedAt": "2026-09-10T03:59:54.170Z"
+            "updatedAt": "2026-09-16T05:03:13.177Z"
           },
           {
             "month": "2026-09",
             "label": "2026년 9월",
-            "guestCount": 3,
-            "videoCount": 15,
-            "totalViews": 380532,
-            "avgViewsPerGuest": 126844,
-            "avgViewsPerVideo": 25369,
-            "scheduled": 12,
-            "updatedAt": "2026-09-11T03:29:09.788Z"
+            "guestCount": 5,
+            "videoCount": 24,
+            "totalViews": 980449,
+            "guests": [
+              {
+                "name": "이명찬 박사님",
+                "eventDate": "2026-09-08",
+                "videoCount": 5,
+                "totalViews": 517699
+              },
+              {
+                "name": "강관우 대표님",
+                "eventDate": "2026-09-01",
+                "videoCount": 5,
+                "totalViews": 153457
+              },
+              {
+                "name": "김대준 대표님",
+                "eventDate": "2026-09-03",
+                "videoCount": 5,
+                "totalViews": 141106
+              },
+              {
+                "name": "조훈희 교수님",
+                "eventDate": "2026-09-04",
+                "videoCount": 5,
+                "totalViews": 97283
+              },
+              {
+                "name": "김종효 이사",
+                "eventDate": "2026-09-10",
+                "videoCount": 4,
+                "totalViews": 70904
+              }
+            ],
+            "avgViewsPerGuest": 196090,
+            "avgViewsPerVideo": 40852,
+            "scheduled": 13,
+            "updatedAt": "2026-09-16T05:03:15.956Z"
           }
         ]
       },
@@ -5173,33 +5389,177 @@
             "label": "2026년 7월",
             "guestCount": 12,
             "videoCount": 60,
-            "totalViews": 1590540,
-            "avgViewsPerGuest": 132545,
-            "avgViewsPerVideo": 26509,
+            "totalViews": 1720871,
+            "guests": [
+              {
+                "name": "김태형 소장님",
+                "eventDate": "2026-07-23",
+                "videoCount": 5,
+                "totalViews": 314931
+              },
+              {
+                "name": "이영주 대표님",
+                "eventDate": "2026-07-15",
+                "videoCount": 5,
+                "totalViews": 275904
+              },
+              {
+                "name": "유신익 박사님",
+                "eventDate": "2026-07-22",
+                "videoCount": 5,
+                "totalViews": 162119
+              },
+              {
+                "name": "최성규 대표님",
+                "eventDate": "2026-07-24",
+                "videoCount": 5,
+                "totalViews": 158160
+              },
+              {
+                "name": "박진희 부장님",
+                "eventDate": "2026-07-29",
+                "videoCount": 5,
+                "totalViews": 151511
+              },
+              {
+                "name": "만산월 법사님",
+                "eventDate": "2026-07-09",
+                "videoCount": 5,
+                "totalViews": 137405
+              },
+              {
+                "name": "박현상 이사님",
+                "eventDate": "2026-07-27",
+                "videoCount": 5,
+                "totalViews": 117457
+              },
+              {
+                "name": "김민수 대표님",
+                "eventDate": "2026-07-08",
+                "videoCount": 5,
+                "totalViews": 99823
+              },
+              {
+                "name": "김지훈 대표님",
+                "eventDate": "2026-07-31",
+                "videoCount": 5,
+                "totalViews": 96907
+              },
+              {
+                "name": "김지훈 대표님",
+                "eventDate": "2026-07-10",
+                "videoCount": 5,
+                "totalViews": 90801
+              },
+              {
+                "name": "김창익 대표님",
+                "eventDate": "2026-07-08",
+                "videoCount": 5,
+                "totalViews": 78733
+              },
+              {
+                "name": "권효진 대표",
+                "eventDate": "2026-07-28",
+                "videoCount": 5,
+                "totalViews": 37120
+              }
+            ],
+            "avgViewsPerGuest": 143406,
+            "avgViewsPerVideo": 28681,
             "scheduled": 12,
-            "updatedAt": "2026-08-29T05:52:46.354Z"
+            "updatedAt": "2026-09-16T05:03:26.204Z"
           },
           {
             "month": "2026-08",
             "label": "2026년 8월",
             "guestCount": 10,
             "videoCount": 48,
-            "totalViews": 3037525,
-            "avgViewsPerGuest": 303753,
-            "avgViewsPerVideo": 63282,
+            "totalViews": 3204298,
+            "guests": [
+              {
+                "name": "염승환 이사님",
+                "eventDate": "2026-08-24",
+                "videoCount": 5,
+                "totalViews": 1527842
+              },
+              {
+                "name": "정창욱 교수님",
+                "eventDate": "2026-08-28",
+                "videoCount": 5,
+                "totalViews": 387716
+              },
+              {
+                "name": "이유미 원장님",
+                "eventDate": "2026-08-27",
+                "videoCount": 5,
+                "totalViews": 351778
+              },
+              {
+                "name": "김주성 작가님",
+                "eventDate": "2026-08-06",
+                "videoCount": 5,
+                "totalViews": 236029
+              },
+              {
+                "name": "김준우 대표님",
+                "eventDate": "2026-08-21",
+                "videoCount": 5,
+                "totalViews": 168101
+              },
+              {
+                "name": "김주성 작가님",
+                "eventDate": "2026-08-26",
+                "videoCount": 5,
+                "totalViews": 159859
+              },
+              {
+                "name": "만산월 법사님",
+                "eventDate": "2026-08-07",
+                "videoCount": 5,
+                "totalViews": 125953
+              },
+              {
+                "name": "김민수 대표님",
+                "eventDate": "2026-08-04",
+                "videoCount": 5,
+                "totalViews": 89023
+              },
+              {
+                "name": "박진희 부장님",
+                "eventDate": "2026-08-19",
+                "videoCount": 4,
+                "totalViews": 83926
+              },
+              {
+                "name": "강연옥 대표님",
+                "eventDate": "2026-08-21",
+                "videoCount": 4,
+                "totalViews": 74071
+              }
+            ],
+            "avgViewsPerGuest": 320430,
+            "avgViewsPerVideo": 66756,
             "scheduled": 10,
-            "updatedAt": "2026-09-10T04:00:00.390Z"
+            "updatedAt": "2026-09-16T05:03:32.449Z"
           },
           {
             "month": "2026-09",
             "label": "2026년 9월",
-            "guestCount": 0,
-            "videoCount": 0,
-            "totalViews": 0,
-            "avgViewsPerGuest": null,
-            "avgViewsPerVideo": null,
-            "scheduled": 7,
-            "updatedAt": "2026-09-11T03:29:12.840Z"
+            "guestCount": 1,
+            "videoCount": 5,
+            "totalViews": 424939,
+            "guests": [
+              {
+                "name": "김태형 소장님",
+                "eventDate": "2026-09-08",
+                "videoCount": 5,
+                "totalViews": 424939
+              }
+            ],
+            "avgViewsPerGuest": 424939,
+            "avgViewsPerVideo": 84988,
+            "scheduled": 8,
+            "updatedAt": "2026-09-16T05:03:35.087Z"
           }
         ]
       }
