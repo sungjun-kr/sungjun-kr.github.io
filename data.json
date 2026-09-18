@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-18T01:39:04.523Z",
+  "updatedAt": "2026-09-18T01:39:35.028Z",
   "channel": "웅달 책방",
   "basis": "촬영일(캘린더 일정) 기준 +14일 내 업로드분을 한 세트로 집계. 특집·라이브 편집본 제외, 풀버전까지 올라온 세트만 집계. 조회수는 실시간 누적값, 시청 지표는 YouTube Analytics(2~3일 지연).",
   "archiveBasis": "저장소는 해당 채널의 모든 영상을 업로드 월로 분류. 제목에 \"통합본\"이 있으면 통합본, N부만 있으면 라이브. 1~2분 길이 쇼츠는 제외.",
@@ -1847,8 +1847,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 261355,
-          "avgViews": 52271,
+          "totalViews": 261412,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 52282,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -1857,7 +1859,9 @@
               "pub": "2026-06-06",
               "title": "\"일단 현금 가지고 계세요\" 한국 주식 대폭락 온다? 6월 멍때리다가 계좌 녹을 수 있다 (차영주 소장 / 1부)",
               "privacy": "public",
-              "views": 26364,
+              "views": 26370,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1866,7 +1870,9 @@
               "pub": "2026-06-07",
               "title": "\"50만 전자 이제 시작\" 하락에 삼성 판 '개미들 눈물' 내일 아침 무서운 일 터진다? (차영주 소장 / 2부)",
               "privacy": "public",
-              "views": 209182,
+              "views": 209207,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1875,7 +1881,9 @@
               "pub": "2026-06-08",
               "title": "\"120만원 가는 큰 그림 나왔다\" 현대차 조짐이 심상치 않은 상황, 지금 숨도 안 쉬고 모아야 한다 (차영주 소장 / 3부)",
               "privacy": "public",
-              "views": 8106,
+              "views": 8131,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1885,6 +1893,8 @@
               "title": "\"지금 쓸어담아야 합니다\" 스페이스X 상장 후 폭등할 '이 기업' 지금 죽어라 사세요 (차영주 소장 / 4부)",
               "privacy": "public",
               "views": 6603,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1893,7 +1903,9 @@
               "pub": "2026-06-11",
               "title": "\"한주라도 무조건 이렇게 하세요\" 삼전닉스에 묘한 분위기 흐른다, 7월부터 정말 무서워진다 (차영주 소장 / 풀버전)",
               "privacy": "public",
-              "views": 11100,
+              "views": 11101,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -1907,8 +1919,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 267963,
-          "avgViews": 53593,
+          "totalViews": 269778,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 53956,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -1917,7 +1931,9 @@
               "pub": "2026-06-06",
               "title": "\"전세계가 발칵 뒤집혔다\" 외국인 관광객 한국오면 돌변, 다급해진 일본 전역 초비상 상태 (이명찬 박사 / 1부)",
               "privacy": "public",
-              "views": 37444,
+              "views": 37468,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1926,7 +1942,9 @@
               "pub": "2026-06-07",
               "title": "\"파리만 날리는 상황\" 지금 일본 난리난 실제 상황, 한국에 벌벌 기는 진짜 이유 (이명찬 박사 / 2부)",
               "privacy": "public",
-              "views": 5592,
+              "views": 5596,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1935,7 +1953,9 @@
               "pub": "2026-06-08",
               "title": "\"삼성전자에 발칵!\" 더 이상 힘겨운 다카이치, 쿠데타 급 난리난 일본 초비상 (이명찬 박사 / 3부)",
               "privacy": "public",
-              "views": 65898,
+              "views": 65914,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1944,7 +1964,9 @@
               "pub": "2026-06-09",
               "title": "\"남녀혼탕도 마찬가지로...\" 일본 사람들이 기모노 입을 때 속옷을 안 입는 진짜 이유 (이명찬 박사 / 4부)",
               "privacy": "public",
-              "views": 41549,
+              "views": 41688,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1953,7 +1975,9 @@
               "pub": "2026-06-12",
               "title": "\"한국 때문에 발칵!\" 더 이상 힘겨운 다카이치, 쿠데타 급 난리난 일본 초비상 (이명찬 박사 / 풀버전)",
               "privacy": "public",
-              "views": 117480,
+              "views": 119112,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -1967,8 +1991,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 107074,
-          "avgViews": 21415,
+          "totalViews": 107182,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 21436,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -1977,7 +2003,9 @@
               "pub": "2026-06-10",
               "title": "\"현금 가지고 계세요\" 한국 주식 대폭락 온다, 6월 멍때리다가 계좌 녹을 수 있다 (이희근 대표 / 1부)",
               "privacy": "public",
-              "views": 9363,
+              "views": 9366,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1987,6 +2015,8 @@
               "title": "\"가만히 있어도 2배 갑니다\" 삼성전자 조짐이 심상치 않다, 내일 아침 무서운 일 터진다 (이희근 대표 / 2부)",
               "privacy": "public",
               "views": 4450,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -1995,7 +2025,9 @@
               "pub": "2026-06-12",
               "title": "\"언론은 쉬쉬하고 있어요\" 월가 전역에 싹 다 퍼졌습니다 3일 뒤 현대차 난리날 겁니다 (이희근 대표 / 3부)",
               "privacy": "public",
-              "views": 14613,
+              "views": 14617,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2004,7 +2036,9 @@
               "pub": "2026-06-13",
               "title": "\"두산에너빌 아닙니다\" 원전과 조선 양손에 쥔 '이 주식' 지금 사도 100배 오릅니다 (이희근 대표 / 4부)",
               "privacy": "public",
-              "views": 25437,
+              "views": 25442,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2013,7 +2047,9 @@
               "pub": "2026-06-16",
               "title": "\"두산에너빌 아닙니다\" 원전과 조선 양손에 쥔 '이 주식' 지금 사도 100배 오릅니다 (이희근 대표 / 풀버전)",
               "privacy": "public",
-              "views": 53211,
+              "views": 53307,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2027,8 +2063,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 85829,
-          "avgViews": 17166,
+          "totalViews": 90482,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 18096,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2038,6 +2076,8 @@
               "title": "\"현금 이렇게만 하세요\" 한국 주식 대폭락 온다? 6월 멍떄리다가 계좌 녹을 수 있습니다 (김경록 고문 / 1부)",
               "privacy": "public",
               "views": 2117,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2046,7 +2086,9 @@
               "pub": "2026-06-12",
               "title": "\"칩플레이션의 시작\" 다음주 진짜 무서운 일 터지나, 삼성전자 분위기 심상치 않다 (김경록 고문 / 2부)",
               "privacy": "public",
-              "views": 8172,
+              "views": 8173,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2055,7 +2097,9 @@
               "pub": "2026-06-14",
               "title": "\"노후 준비? 쉽습니다\" 50대에 이 정도 들고 있으면, 평생 놀고 먹고 살 수 있다 (김경록 고문 / 3부)",
               "privacy": "public",
-              "views": 44912,
+              "views": 49356,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2064,7 +2108,9 @@
               "pub": "2026-06-15",
               "title": "\"스테이블코인의 등장으로...\" 조만간 금가격 난리날 겁니다, '이때' 보유 금 싹 다 파세요 (김경록 고문 / 4부)",
               "privacy": "public",
-              "views": 25427,
+              "views": 25486,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2073,7 +2119,9 @@
               "pub": "2026-06-17",
               "title": "\"은퇴 준비 빠를 수록 좋아요\" 50대 통장에 이 정도 있으면, 은퇴 후 평생 놀고 먹을 수 있습니다 (김경록 고문 / 풀버전)",
               "privacy": "public",
-              "views": 5201,
+              "views": 5350,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2087,8 +2135,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 66479,
-          "avgViews": 13296,
+          "totalViews": 66651,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 13330,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2098,6 +2148,8 @@
               "title": "\"일단 현금 가지고 계세요\" 한국 주식 대폭락 온다? 6월 멍때리다가 계좌 녹을 수 있다 (이영훈 영업이사 / 1부)",
               "privacy": "public",
               "views": 4282,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2106,7 +2158,9 @@
               "pub": "2026-06-12",
               "title": "삼성전자 다 판 '개미들 곡소리' 월요일 아침 무서운 일 터지나 (이영훈 영업이사 / 2부)",
               "privacy": "public",
-              "views": 6827,
+              "views": 6829,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2115,7 +2169,9 @@
               "pub": "2026-06-13",
               "title": "\"미친듯이 오른다\" 현대차 조짐이 심상치 않은 상황, 지금 숨도 안 쉬고 모아야 한다 (이영훈 영업이사 / 3부)",
               "privacy": "public",
-              "views": 20995,
+              "views": 21005,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2124,7 +2180,9 @@
               "pub": "2026-06-14",
               "title": "\"한화오션 아닙니다\" 조선주 영끌해 지금 사라? 조선 1등 100배 찍을 '이 주식' (이영훈 영업이사 / 4부)",
               "privacy": "public",
-              "views": 17085,
+              "views": 17243,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2133,7 +2191,9 @@
               "pub": "2026-06-15",
               "title": "\"미친듯이 오른다\" 현대차 주가 조짐이 심상치 않다, 현금 있다면 지금 숨도 안 쉬고 모아야 한다? (이영훈 영업이사 / 풀버전)",
               "privacy": "public",
-              "views": 17290,
+              "views": 17292,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2147,8 +2207,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 5,
-          "totalViews": 58813,
-          "avgViews": 9802,
+          "totalViews": 58835,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 9806,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2158,6 +2220,8 @@
               "title": "\"또 다시 불바다\" 미군 휴전 깨고 기습작전, 초토화 된 이란 현재 상황 (안승범 대표 / 1부)",
               "privacy": "public",
               "views": 1774,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2166,7 +2230,9 @@
               "pub": "2026-06-14",
               "title": "이란 갑자기 꼬리내린 이유, 초토화 된 테헤란 현재 상황 (안승범 대표 / 2부)",
               "privacy": "public",
-              "views": 2127,
+              "views": 2129,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2175,7 +2241,9 @@
               "pub": "2026-06-15",
               "title": "\"한국은 어차피 대박터졌다\" UAE 잠수함 충격 결단에 다급해진 캐나다 초비상 상태 (안승범 대표 / 3부)",
               "privacy": "public",
-              "views": 12736,
+              "views": 12746,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2185,6 +2253,8 @@
               "title": "\"중동 전역에 싹 다 퍼졌다\" UAE 한국에 태도 급변한 이유, K방산 앞으로 무시무시해진다 (안승범 대표 / 4부)",
               "privacy": "public",
               "views": 16514,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2193,7 +2263,9 @@
               "pub": "2026-06-17",
               "title": "\"일본 프랑스는 지금 미칠지경입니다\" 뜻밖의 판단 나온 KF-21 전투기 시장판이 뒤집혔다 (안승범 대표 / 5부)",
               "privacy": "public",
-              "views": 5754,
+              "views": 5757,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2202,7 +2274,9 @@
               "pub": "2026-06-19",
               "title": "\"한국은 어차피 대박이다\" UAE 잠수함 충격 결단에 다급해진 캐나다 초비상 사태 (안승범 대표 / 풀버전)",
               "privacy": "public",
-              "views": 19908,
+              "views": 19915,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2216,8 +2290,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 92115,
-          "avgViews": 18423,
+          "totalViews": 118208,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 23642,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2226,7 +2302,9 @@
               "pub": "2026-06-16",
               "title": "\"생각 자체가 다릅니다\" 혼자서 '이런 취미' 가지고 있으면, 지능이 높은 사람입니다 (이헌주 교수 / 1부)",
               "privacy": "public",
-              "views": 540,
+              "views": 541,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2235,7 +2313,9 @@
               "pub": "2026-06-19",
               "title": "\"99%가 이 행동을 합니다\" 정말 좋은 사람처럼 보이지만 가장 멀리해야 할 사람 1순위 (이헌주 교수 / 2부)",
               "privacy": "public",
-              "views": 707,
+              "views": 708,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2244,7 +2324,9 @@
               "pub": "2026-06-21",
               "title": "\"유독 이런 화법이 많아요\" 대화할 때 이런 말투를 쓴다면 높은 확률로 지능이 높은 사람입니다 (이헌주 교수 / 3부)",
               "privacy": "public",
-              "views": 12347,
+              "views": 12359,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2253,7 +2335,9 @@
               "pub": "2026-06-27",
               "title": "부모에게 사랑받지 못한 사람들의 특이한 특징들 (이헌주 교수 / 4부)",
               "privacy": "public",
-              "views": 3655,
+              "views": 3656,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2262,7 +2346,9 @@
               "pub": "2026-06-29",
               "title": "\"이런 사람들이 지능이 높아요\" 진짜 똑똑한 사람들과 대화하면 대부분 말투로 알 수 있습니다 (이헌주 교수 / 풀버전)",
               "privacy": "public",
-              "views": 74866,
+              "views": 100944,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2276,8 +2362,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 184430,
-          "avgViews": 36886,
+          "totalViews": 184481,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 36896,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2286,7 +2374,9 @@
               "pub": "2026-06-20",
               "title": "\"하이닉스 독주는 끝났습니다\" 지금은 하이닉스 말고 삼전 사세요, 곧 상상 못할 일이 터질 겁니다 (권영화 교수 / 1부)",
               "privacy": "public",
-              "views": 94363,
+              "views": 94376,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2295,7 +2385,9 @@
               "pub": "2026-06-21",
               "title": "\"제 2의 한미반도체 등장\" 1억으로 싹 다 기판주 사세요 삼성전기 보다 100배 오릅니다 (권영화 교수 / 2부)",
               "privacy": "public",
-              "views": 36679,
+              "views": 36703,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2304,7 +2396,9 @@
               "pub": "2026-06-22",
               "title": "\"이젠 고민할 시간도 아까워요\" 보유 현금으로 삼전닉스만 사세요 단, '이것'만 명심하셔야 합니다 (권영화 교수 / 3부)",
               "privacy": "public",
-              "views": 7128,
+              "views": 7130,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2313,7 +2407,9 @@
               "pub": "2026-06-23",
               "title": "\"지금 절대 흔들리지 마세요\" 삼성 다 팔고 개미들 이제 후회한다, 내일 아침부터 무서운 일 터집니다 (권영화 교수 / 4부)",
               "privacy": "public",
-              "views": 18542,
+              "views": 18543,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2322,7 +2418,9 @@
               "pub": "2026-06-24",
               "title": "\"시가총액 1위 재탈환\" 지금은 하이닉스 말고 삼전 사세요, 곧 상상 못할 일이 터집니다 (권영화 교수 / 풀버전)",
               "privacy": "public",
-              "views": 27718,
+              "views": 27729,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2336,8 +2434,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 65682,
-          "avgViews": 13136,
+          "totalViews": 66010,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 13202,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2346,7 +2446,9 @@
               "pub": "2026-06-21",
               "title": "\"지금 흔들리면 절대 안 된다\" 금 다 팔고 '개미들 곡소리' 금값 앞으로 무서울 겁니다 (금남일 대표 / 1부)",
               "privacy": "public",
-              "views": 6723,
+              "views": 6731,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2355,7 +2457,9 @@
               "pub": "2026-06-22",
               "title": "\"강세장 모멘텀 만들어졌다\" 현금 있으면 당장 금 사세요 '이 때' 미친듯이 오를 겁니다 (금남일 대표 / 2부)",
               "privacy": "public",
-              "views": 13308,
+              "views": 13343,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2364,7 +2468,9 @@
               "pub": "2026-06-23",
               "title": "\"금값 이제 시작입니다\" 금값 무시무시한 예측나왔다 가진 금 싹다 '이렇게' 하세요 (금남일 대표 / 3부)",
               "privacy": "public",
-              "views": 7094,
+              "views": 7153,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2373,7 +2479,9 @@
               "pub": "2026-06-24",
               "title": "\"정말 말도 안됩니다\" 은값 지금 심상치 않습니다 가진 은 전부 '이렇게' 하세요 (금남일 대표 / 4부)",
               "privacy": "public",
-              "views": 11884,
+              "views": 12010,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2382,7 +2490,9 @@
               "pub": "2026-06-26",
               "title": "\"강세장 모멘텀 만들어졌다\" 금값 앞으로 일주일도 안남았다, 월가에 싹 다 퍼진 충격적인 소문 (금남일 대표 / 풀버전)",
               "privacy": "public",
-              "views": 26673,
+              "views": 26773,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2396,8 +2506,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 120808,
-          "avgViews": 24162,
+          "totalViews": 120907,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 24181,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2406,7 +2518,9 @@
               "pub": "2026-06-23",
               "title": "\"실제는 더 심각하다\" 이란이 갑자기 항복한 이유, 테헤란 정권 엄청난 붕괴왔다 (김민석 특파원 / 1부)",
               "privacy": "public",
-              "views": 1070,
+              "views": 1071,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2416,6 +2530,8 @@
               "title": "\"전세계가 발칵 뒤집어졌다\" 캐나다 사실상 한국 택했다, 배짱부리던 독일은 지금 초비상 사태 (김민석 특파원 / 2부)",
               "privacy": "public",
               "views": 52203,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2425,6 +2541,8 @@
               "title": "\"김정은 벌벌 기는 이유\" 북한 붕괴 이번엔 진짜다 초토화된 평양 실제 상황 (김민석 특파원 / 3부)",
               "privacy": "public",
               "views": 1835,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2433,7 +2551,9 @@
               "pub": "2026-06-26",
               "title": "\"전쟁흐름 180도 바꼈다\" 우크라이나 역사적인 승리, 방심한 푸틴은 미칠 지경이다 (김민석 특파원 / 4부)",
               "privacy": "public",
-              "views": 39564,
+              "views": 39662,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2443,6 +2563,8 @@
               "title": "\"전쟁흐름 180도 바꼈다\" 공습 또 공습, 모스크바 초토화 방심한 푸틴은 미칠 지경이다 (김민석 특파원 / 풀버전)",
               "privacy": "public",
               "views": 26136,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2456,8 +2578,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 27885,
-          "avgViews": 5577,
+          "totalViews": 27923,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 5585,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2467,6 +2591,8 @@
               "title": "'지금 호르무즈가 문제가 아니다' 발칵 뒤집힌 트럼프 현재 상황 (이철재 기자 / 1부)",
               "privacy": "public",
               "views": 690,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2475,7 +2601,9 @@
               "pub": "2026-06-24",
               "title": "\"다음 목표는 북한\" 이란 끝나자마자 발 빼는 미국, 사실상 트럼프 전쟁 준비중 (이철재 기자 / 2부)",
               "privacy": "public",
-              "views": 1119,
+              "views": 1121,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2484,7 +2612,9 @@
               "pub": "2026-06-25",
               "title": "\"전세계가 발칵 뒤집어졌다\" 사실상 한국 택한 캐나다 배짱부린 독일 초비상 걸렸다 (이철재 기자 / 3부)",
               "privacy": "public",
-              "views": 4176,
+              "views": 4177,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2494,6 +2624,8 @@
               "title": "\"전황이 완전히 뒤집혔다\" 우크라이나의 역사적 승리에 까불던 푸틴은 지금 미칠 지경이다 (이철재 기자 / 4부)",
               "privacy": "public",
               "views": 6690,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2502,7 +2634,9 @@
               "pub": "2026-06-29",
               "title": "\"우크라이나의 집요한 타격\" 공습 또 공습, 드론에 박살난 러시아 러우전쟁 충격적인 실제상황 (이철재 기자 / 풀버전)",
               "privacy": "public",
-              "views": 15210,
+              "views": 15245,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2516,8 +2650,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 104213,
-          "avgViews": 20843,
+          "totalViews": 104239,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 20848,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2526,7 +2662,9 @@
               "pub": "2026-06-24",
               "title": "\"이때는 현금확보하세요\" 제발 정신 바짝 차리세요, 한국증시 대폭락 '이때' 오나 (차영주 소장 / 1부)",
               "privacy": "public",
-              "views": 8351,
+              "views": 8353,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2536,6 +2674,8 @@
               "title": "\"이걸 모르면 완전 거지됩니다\" 삼성전자 진짜 심상치 않다, 지금 안팔면 '이렇게' 됩니다 (차영주 소장 / 2부)",
               "privacy": "public",
               "views": 13061,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2544,7 +2684,9 @@
               "pub": "2026-06-26",
               "title": "\"이걸 모르면 완전 거지됩니다\" 삼성 다 팔고 개미들 이제 후회 월요일 아침 무서운 일 터진다 (차영주 소장 / 3부)",
               "privacy": "public",
-              "views": 18535,
+              "views": 18539,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2553,7 +2695,9 @@
               "pub": "2026-06-27",
               "title": "\"제 2의 한미반도체 등장\" 1억으로 싹 다 기판주 사세요, 월요일 아침 무서운일 터집니다 (차영주 소장 / 4부)",
               "privacy": "public",
-              "views": 4482,
+              "views": 4491,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2562,7 +2706,9 @@
               "pub": "2026-06-28",
               "title": "\"이걸 모르면 완전 거지됩니다\" 삼성 다 팔고 개미들 이제 후회, 월요일 아침 무서운 일 터진다 (차영주 소장 / 풀버전)",
               "privacy": "public",
-              "views": 59784,
+              "views": 59795,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2576,8 +2722,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 50076,
-          "avgViews": 10015,
+          "totalViews": 50180,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 10036,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2586,7 +2734,9 @@
               "pub": "2026-07-01",
               "title": "\"금과 시진핑의 몰락\" 금값 앞으로 정말 무섭습니다 가진 금 전부 '이렇게' 하세요 (조현승 박사 / 1부)",
               "privacy": "public",
-              "views": 25316,
+              "views": 25413,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2595,7 +2745,9 @@
               "pub": "2026-07-02",
               "title": "\"클래리티 법안 통과 임박\" 하락장에 코인 던진 개미들 통곡 곧 코인판 모조리 뒤집힌다 (조현승 박사 / 2부)",
               "privacy": "public",
-              "views": 5323,
+              "views": 5327,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2605,6 +2757,8 @@
               "title": "\"이란 경제 심각합니다\" 종전 협상은 미끼였다 이란 재건 사실상 불가능하다 (조현승 박사 / 3부)",
               "privacy": "public",
               "views": 1460,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2613,7 +2767,9 @@
               "pub": "2026-07-04",
               "title": "삼성 개미들 오늘 밤잠 설친다, 월요일 아침 엄청난 일 터진다 (조현승 박사 / 4부)",
               "privacy": "public",
-              "views": 5370,
+              "views": 5371,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2622,7 +2778,9 @@
               "pub": "2026-07-06",
               "title": "\"금과 시진핑의 몰락\" 금값 앞으로 정말 무섭습니다, 가진 금 전부 '이렇게' 하세요 (조현승 박사 / 풀버전)",
               "privacy": "public",
-              "views": 12607,
+              "views": 12609,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2636,8 +2794,10 @@
           "complete": true,
           "hasFull": true,
           "numParts": 4,
-          "totalViews": 147372,
-          "avgViews": 29474,
+          "totalViews": 147643,
+          "totalEngagedViews": null,
+          "totalWatchMinutes": null,
+          "avgViews": 29529,
           "avgViewDurationSec": null,
           "avgViewPct": null,
           "videos": [
@@ -2646,7 +2806,9 @@
               "pub": "2026-07-01",
               "title": "\"저라면 지금 '이렇게' 합니다\" 언론에서는 말 안해줍니다 오늘 아침 무서운 일 이미 터졌다 (이승조 무극선생 / 1부)",
               "privacy": "public",
-              "views": 44893,
+              "views": 45004,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2655,7 +2817,9 @@
               "pub": "2026-07-02",
               "title": "\"모르고 '이러면' 다 거지됩니다\" 삼전, 하이닉스 지금 당장 도망치세요 폭락 시작되면 계좌 녹습니다 (이승조 무극선생 / 2부)",
               "privacy": "public",
-              "views": 36571,
+              "views": 36613,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2664,7 +2828,9 @@
               "pub": "2026-07-03",
               "title": "\"이걸 모르시면 안돼요\" 하락장에 로봇주 판 개미들 오열 현대차 충격적인 전망 나왔다 (이승조 무극선생 / 3부)",
               "privacy": "public",
-              "views": 11158,
+              "views": 11215,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2673,7 +2839,9 @@
               "pub": "2026-07-04",
               "title": "\"2차전지는 '이것'들만 남겨라\" 하락장에 2차전지 판 개미들 눈물 7월에 본격적으로 주가 폭발한다 (이승조 무극선생 / 4부)",
               "privacy": "public",
-              "views": 23058,
+              "views": 23092,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             },
@@ -2682,7 +2850,9 @@
               "pub": "2026-07-05",
               "title": "\"저라면 지금 '이렇게' 합니다\" 언론에서는 말 안해줍니다 월요일 아침 무서운 일 터집니다 (이승조 무극선생 / 풀버전)",
               "privacy": "public",
-              "views": 31692,
+              "views": 31719,
+              "engagedViews": null,
+              "watchMinutes": null,
               "avgViewDurationSec": null,
               "avgViewPct": null
             }
@@ -2690,7 +2860,7 @@
         }
       ],
       "pending": [],
-      "updatedAt": "2026-09-01T01:04:19.837Z"
+      "updatedAt": "2026-09-18T01:39:35.028Z"
     },
     {
       "month": "2026-07",
